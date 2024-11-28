@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 
-
 namespace foodtopia.Models
 {
     public class Recipe
@@ -13,16 +12,16 @@ namespace foodtopia.Models
         public required string Country { get; set; }
         [Required(ErrorMessage = "Image url is required.")]
         public required string ImageUrl { get; set; }
+        public int HeartCount { get; set; } = 0;
         public decimal TasteAverage { get; set; }
         public decimal DifficultyAverage { get; set; }
         public int TasteReviewCount { get; set; }
         public int DifficultyReviewCount { get; set; }
         public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
-
-
         public Guid UserId { get; set; }
-
         public required User User { get; set; }
+
+        public required ICollection<HeartedRecipe> HeartedByUsers { get; set; }
         public required ICollection<Ingredient> Ingredients { get; set; }
         public required ICollection<Instruction> Instructions { get; set; }
         public required ICollection<Rating> Ratings { get; set; }

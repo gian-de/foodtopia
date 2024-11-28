@@ -5,7 +5,7 @@ namespace foodtopia.Models
     public class Ingredient
     {
         public Guid Id { get; set; }
-        public Guid RecpieId { get; set; }
+        public Guid RecipeId { get; set; }
         [Required(ErrorMessage = "Ingredient name is required.")]
         public required string Name { get; set; }
 
