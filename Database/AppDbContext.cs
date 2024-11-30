@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 using Microsoft.EntityFrameworkCore;
 using foodtopia.Models;
+using foodtopia.Database.Seeds;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace foodtopia.Database
 {
@@ -18,10 +15,14 @@ namespace foodtopia.Database
         public DbSet<Instruction> Instructions { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Rating> Ratings { get; set; }
+        public DbSet<Country> Countries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Seed data for Country
+            modelBuilder.Entity<Country>().HasData(CountrySeed.GetCountries());
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
@@ -34,9 +35,8 @@ namespace foodtopia.Database
                 .HasFilter("\"Email\" IS NOT NULL"); // this means that multiple null values are allowed, but non-null have to be unique.
 
             modelBuilder.Entity<HeartedRecipe>()
-            .HasIndex(hr => new { hr.UserId, hr.RecipeId })
-            .IsUnique();
-
+                .HasIndex(hr => new { hr.UserId, hr.RecipeId })
+                .IsUnique();
 
             // Cascade delete Ratings when a User is deleted
             modelBuilder.Entity<Rating>()
@@ -80,5 +80,12 @@ namespace foodtopia.Database
                 .HasForeignKey(ing => ing.RecipeId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
+        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        // {
+        //     optionsBuilder
+        //         .ConfigureWarnings(warnings =>
+        //             warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+        // }
+
     }
 }
