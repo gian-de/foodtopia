@@ -1,14 +1,15 @@
+
 using foodtopia.Database;
 using Microsoft.AspNetCore.Mvc;
 
 namespace foodtopia.Controllers
 {
-    [Route("api/recipes")]
+    [Route("api/countries")]
     [ApiController]
-    public class RecipeController : ControllerBase
+    public class CountryController : ControllerBase
     {
         private readonly AppDbContext _context;
-        public RecipeController(AppDbContext context)
+        public CountryController(AppDbContext context)
         {
             _context = context;
         }
@@ -16,15 +17,15 @@ namespace foodtopia.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var recipes = _context.Recipes.ToList();
+            var recipes = _context.Countries.ToList();
 
             return Ok(recipes);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] int id)
+        public IActionResult Get([FromRoute] Guid id)
         {
-            var recipe = _context.Recipes.Find(id);
+            var recipe = _context.Countries.Find(id);
 
             if (recipe == null) return NotFound();
 

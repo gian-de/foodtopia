@@ -80,12 +80,12 @@ namespace foodtopia.Database
                 .HasForeignKey(ing => ing.RecipeId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
-        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        // {
-        //     optionsBuilder
-        //         .ConfigureWarnings(warnings =>
-        //             warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
-        // }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder
+                .ConfigureWarnings(warnings =>
+                    warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+        }
 
     }
 }
