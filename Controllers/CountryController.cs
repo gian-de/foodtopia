@@ -17,19 +17,19 @@ namespace foodtopia.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var recipes = _context.Countries.ToList();
+            var countries = _context.Countries.ToList();
 
-            return Ok(recipes);
+            return Ok(countries);
         }
 
         [HttpGet("{id}")]
         public IActionResult Get([FromRoute] Guid id)
         {
-            var recipe = _context.Countries.Find(id);
+            var country = _context.Countries.Find(id);
 
-            if (recipe == null) return NotFound();
+            if (country == null) return NotFound();
 
-            return Ok(recipe);
+            return Ok(country);
         }
     }
 }
