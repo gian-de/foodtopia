@@ -18,13 +18,13 @@ namespace foodtopia.Models
         public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
 
         [Required(ErrorMessage = "Country origin is required.")]
-        public required string Country { get; set; }
-        public Country? CountryDetails { get; set; } // this is used to populate the imgpath also with having to chain an addition .include sql statement
-        public Guid UserId { get; set; }
-        public required User User { get; set; }
-        public required ICollection<HeartedRecipe> HeartedByUsers { get; set; }
+        public required string CountryId { get; set; }
+        public Country? CountryOrigin { get; set; } // this is used as a navigational property and to populate the imgpath also with having to chain an addition .include sql statement
+        public Guid? UserId { get; set; }
+        public User? User { get; set; }
+        public ICollection<HeartedRecipe>? HeartedByUsers { get; set; }
         public required ICollection<Ingredient> Ingredients { get; set; }
         public required ICollection<Instruction> Instructions { get; set; }
-        public required ICollection<Rating> Ratings { get; set; }
+        public ICollection<Rating>? Ratings { get; set; }
     }
 }

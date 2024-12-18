@@ -12,6 +12,6 @@ namespace foodtopia.Models
         public required string Step { get; set; }
         public int Order { get; set; }
 
-        public required Recipe Recipe { get; set; }
+        public Recipe? Recipe { get; set; }
     }
 }

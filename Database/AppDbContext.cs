@@ -21,8 +21,27 @@ namespace foodtopia.Database
         {
             base.OnModelCreating(modelBuilder);
 
-            // Seed data for Country
-            modelBuilder.Entity<Country>().HasData(CountrySeed.GetCountries());
+            var deletedUserGuid = Guid.Parse("00000000-0000-0000-0000-000000000001"); // Well-known GUID for "Deleted" user
+                                                                                      // Special user to represent deleted users and not leave data orphaned
+            modelBuilder.Entity<User>().HasData(
+                new User { Id = deletedUserGuid, IsDeleted = true, Username = "deleted", FirstName = "Deleted", LastName = "Deleted", Email = "deleted@placeholder.com", Password = "deleted" });
+
+            var countries = CountrySeed.GetCountries(); // variable to pass into both Country entity and argument for RecipeSeed Entity
+            // Seed data for Country 1st because the Recipe seed is dependent of it
+            modelBuilder.Entity<Country>().HasData(countries);
+
+            // Seed data for Recipes before Instruction and Ingredient seeds since they depend on RecipeId as foreign key
+            modelBuilder.Entity<Recipe>().HasData(RecipeSeed.GetRecipes(countries));
+
+            // Seed Instruction then Ingredients
+            modelBuilder.Entity<Ingredient>().HasData(IngredientSeed.GetIngredients());
+            modelBuilder.Entity<Instruction>().HasData(InstructionSeed.GetInstructions());
+
+            modelBuilder.Entity<Recipe>()
+                .HasOne(r => r.CountryOrigin) // Navigation property
+                .WithMany(c => c.Recipes)    // Reverse navigation property
+                .HasForeignKey(r => r.CountryId)
+                .HasPrincipalKey(c => c.Name);
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
@@ -37,6 +56,14 @@ namespace foodtopia.Database
             modelBuilder.Entity<HeartedRecipe>()
                 .HasIndex(hr => new { hr.UserId, hr.RecipeId })
                 .IsUnique();
+
+            // Prevent cascade delete of Recipe when User is deleted
+            modelBuilder.Entity<Recipe>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Recipes)
+                .HasForeignKey(r => r.UserId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Cascade delete Ratings when a User is deleted
             modelBuilder.Entity<Rating>()

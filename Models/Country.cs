@@ -12,5 +12,9 @@ namespace foodtopia.Models
 
         public ICollection<Recipe>? Recipes { get; set; }
 
+        public static implicit operator Country(string v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

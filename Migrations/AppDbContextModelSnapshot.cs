@@ -43,451 +43,451 @@ namespace foodtopia.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4363ecd6-3cd5-4c45-ba71-5e451e625f60"),
+                            Id = new Guid("2fca22ea-bbc0-499b-92f2-5384ba2ea61b"),
                             ImagePath = "images/flags/afghanistan.svg",
                             Name = "Afghanistan"
                         },
                         new
                         {
-                            Id = new Guid("ee808abe-b721-4139-a7c1-c7a765b4168b"),
+                            Id = new Guid("8fa6fc4f-c00b-4fb7-ae57-fe7841761884"),
                             ImagePath = "images/flags/albania.svg",
                             Name = "Albania"
                         },
                         new
                         {
-                            Id = new Guid("3ed10f2c-e078-482d-af82-41a16fa28101"),
+                            Id = new Guid("0e2220a1-a387-485a-abb6-81d228fda70b"),
                             ImagePath = "images/flags/algeria.svg",
                             Name = "Algeria"
                         },
                         new
                         {
-                            Id = new Guid("7971327f-8d93-44df-90d1-fedf7791e77d"),
+                            Id = new Guid("e26e315a-2117-42d8-8e93-000030491915"),
                             ImagePath = "images/flags/andorra.svg",
                             Name = "Andorra"
                         },
                         new
                         {
-                            Id = new Guid("e1ccedff-f38f-4ba0-9a17-e969b12be8ea"),
+                            Id = new Guid("ccd520bc-8a21-432a-94bf-1598d9c740ff"),
                             ImagePath = "images/flags/angola.svg",
                             Name = "Angola"
                         },
                         new
                         {
-                            Id = new Guid("2c9b1c07-3327-4e4a-aa93-b59da6eb6c38"),
+                            Id = new Guid("6a65cf6c-fe8b-4a96-bf8b-dde132c01652"),
                             ImagePath = "images/flags/antigua_barbuda.svg",
                             Name = "Antigua & Barbuda"
                         },
                         new
                         {
-                            Id = new Guid("9a1de6ae-921d-4dea-bf5e-28a604f986cb"),
+                            Id = new Guid("255fd803-184a-4df6-bf0e-73d0ded3b80e"),
                             ImagePath = "images/flags/argentina.svg",
                             Name = "Argentina"
                         },
                         new
                         {
-                            Id = new Guid("17971576-7e5d-4ee5-8aa7-1a630e39f7fa"),
+                            Id = new Guid("597e4e1c-8aab-4c16-933c-6f06ffc4c677"),
                             ImagePath = "images/flags/armenia.svg",
                             Name = "Armenia"
                         },
                         new
                         {
-                            Id = new Guid("c7877889-3c85-4609-9f18-f3ecc9e51ed5"),
+                            Id = new Guid("d167c871-d2ae-41d9-b10c-c516f1d84fb7"),
                             ImagePath = "images/flags/australia.svg",
                             Name = "Australia"
                         },
                         new
                         {
-                            Id = new Guid("88a8881f-b4c5-4d2f-bd25-053f0b2373c9"),
+                            Id = new Guid("e4ffcaa8-8302-4bd2-869e-9bed049ecf22"),
                             ImagePath = "images/flags/austria.svg",
                             Name = "Austria"
                         },
                         new
                         {
-                            Id = new Guid("8d6b0a3b-7b09-4724-a00b-e3ca0ba58662"),
+                            Id = new Guid("27f11b00-efca-4c71-8921-8097a6304aa9"),
                             ImagePath = "images/flags/azerbaijan.svg",
                             Name = "Azerbaijan"
                         },
                         new
                         {
-                            Id = new Guid("9ffb905d-8aa5-4930-b039-b42912ff429f"),
+                            Id = new Guid("29b3c0f0-4c2f-49b5-b0c8-6ce426444f42"),
                             ImagePath = "images/flags/bahamas.svg",
                             Name = "Bahamas"
                         },
                         new
                         {
-                            Id = new Guid("ba6c10a3-ceeb-462f-bc87-cf80992ae69d"),
+                            Id = new Guid("49d83e81-2b57-42f1-9ccb-59c8649289c4"),
                             ImagePath = "images/flags/belgium.svg",
                             Name = "Belgium"
                         },
                         new
                         {
-                            Id = new Guid("e64b7aa5-9599-4d4e-845e-5dc67b72343f"),
+                            Id = new Guid("350bdba7-99a7-4d7e-852d-2d1453a1ed53"),
                             ImagePath = "images/flags/bolivia.svg",
                             Name = "Bolivia"
                         },
                         new
                         {
-                            Id = new Guid("34b90489-5356-4ecc-a645-c78068d8440f"),
+                            Id = new Guid("07867f2a-7d5e-480e-a4e5-7dd1186caf2a"),
                             ImagePath = "images/flags/brazil.svg",
                             Name = "Brazil"
                         },
                         new
                         {
-                            Id = new Guid("b9e6c491-3118-4daf-b80c-379e69cb9729"),
+                            Id = new Guid("94d63849-bc52-491c-9cc1-4b381e92fb3a"),
                             ImagePath = "images/flags/cameroon.svg",
                             Name = "Cameroon"
                         },
                         new
                         {
-                            Id = new Guid("f47c5a8c-6f98-4406-9e09-438cc3774f14"),
+                            Id = new Guid("12955bd6-5191-4a47-8ceb-f2bcc3755672"),
                             ImagePath = "images/flags/canada.svg",
                             Name = "Canada"
                         },
                         new
                         {
-                            Id = new Guid("83c298a0-e3bf-424e-9dc2-dbcad98fc9ab"),
+                            Id = new Guid("5a39dcb5-e72a-46b1-9776-579b283947fe"),
                             ImagePath = "images/flags/chile.svg",
                             Name = "Chile"
                         },
                         new
                         {
-                            Id = new Guid("398fe826-bd67-45dc-b28f-a3aafd7627c3"),
+                            Id = new Guid("68d5a5c9-4c5c-4cbb-a2b5-c4f28ed5ba50"),
                             ImagePath = "images/flags/china.svg",
                             Name = "China"
                         },
                         new
                         {
-                            Id = new Guid("8633df51-74e7-440c-95fb-fd5689304cca"),
+                            Id = new Guid("62d0987a-ff47-4279-84fb-b9c7b0d27db7"),
                             ImagePath = "images/flags/colombia.svg",
                             Name = "Colombia"
                         },
                         new
                         {
-                            Id = new Guid("484e0fc9-0dd0-4b02-942a-5f857b58cec4"),
+                            Id = new Guid("99c82d1b-f546-48a3-99b6-b80ca7b42c96"),
                             ImagePath = "images/flags/costa_rica.svg",
                             Name = "Costa Rica"
                         },
                         new
                         {
-                            Id = new Guid("deb7f79d-acbb-49e6-a311-0411308ccb4b"),
+                            Id = new Guid("f3025efc-b63c-4f04-96be-63fc1e398a6e"),
                             ImagePath = "images/flags/croatia.svg",
                             Name = "Croatia"
                         },
                         new
                         {
-                            Id = new Guid("a6cb8885-d266-4526-be0b-ab68e67fceb2"),
+                            Id = new Guid("d62509d3-1bf3-4d4f-94ee-6f09d19d250e"),
                             ImagePath = "images/flags/cuba.svg",
                             Name = "Cuba"
                         },
                         new
                         {
-                            Id = new Guid("2ebbe1df-7d16-4288-ad74-a12dc9634582"),
+                            Id = new Guid("bad06bd8-61a7-405a-adfd-5f936c6cfc76"),
                             ImagePath = "images/flags/denmark.svg",
                             Name = "Denmark"
                         },
                         new
                         {
-                            Id = new Guid("f78425e9-a52f-47fd-8af5-75aef3d8a174"),
+                            Id = new Guid("807f96fe-858d-4009-a35a-e35d4074c193"),
                             ImagePath = "images/flags/dominican_republic.svg",
                             Name = "Dominican Republic"
                         },
                         new
                         {
-                            Id = new Guid("4c2bae94-b941-4b30-8a3f-a1740eb9c1d3"),
+                            Id = new Guid("bf489e3b-36ac-4fde-87b4-3b16bf909569"),
                             ImagePath = "images/flags/ecuador.svg",
                             Name = "Ecuador"
                         },
                         new
                         {
-                            Id = new Guid("4427039b-e399-4da8-9ffb-132fa6e11616"),
+                            Id = new Guid("ac0b2046-ebf5-4ee2-ad0f-6a16a0bed644"),
                             ImagePath = "images/flags/egypt.svg",
                             Name = "Egypt"
                         },
                         new
                         {
-                            Id = new Guid("d81153ba-804d-435f-a6f2-c06f1f55af10"),
+                            Id = new Guid("5c182102-9ba9-4f39-818a-024981d34f00"),
                             ImagePath = "images/flags/el_salvador.svg",
                             Name = "El Salvador"
                         },
                         new
                         {
-                            Id = new Guid("82a4539b-42cd-4054-9c36-42e7aa3871c8"),
+                            Id = new Guid("2bca4877-4d27-4138-8a04-3d10614b4de8"),
                             ImagePath = "images/flags/fiji.svg",
                             Name = "Fiji"
                         },
                         new
                         {
-                            Id = new Guid("548e504f-11d6-42a8-bd9b-1cbbaaa8da84"),
+                            Id = new Guid("c4dbeccd-a4e8-4993-b372-5f74bcb41eed"),
                             ImagePath = "images/flags/finland.svg",
                             Name = "Finland"
                         },
                         new
                         {
-                            Id = new Guid("e82f1b48-9ca0-4572-9dec-dee728789991"),
+                            Id = new Guid("744f2c22-0cc7-4b61-ae9f-1ce6e4b432a1"),
                             ImagePath = "images/flags/france.svg",
                             Name = "France"
                         },
                         new
                         {
-                            Id = new Guid("587e244b-ff40-43e2-88af-c00ab3d084a1"),
+                            Id = new Guid("f519ccb2-80a7-4a43-bb3a-e969e1d401aa"),
                             ImagePath = "images/flags/germany.svg",
                             Name = "Germany"
                         },
                         new
                         {
-                            Id = new Guid("1379cce1-ad03-4946-b910-da559b1034c9"),
+                            Id = new Guid("18355537-d564-4e2d-9028-4ab5fd4d0663"),
                             ImagePath = "images/flags/ghana.svg",
                             Name = "Ghana"
                         },
                         new
                         {
-                            Id = new Guid("9bed7012-0035-4cd3-8c67-c1377cb8e268"),
+                            Id = new Guid("ef5aefb0-d64f-477a-bcf4-0cd6db5e5181"),
                             ImagePath = "images/flags/greece.svg",
                             Name = "Greece"
                         },
                         new
                         {
-                            Id = new Guid("42d98cfd-9f5e-4003-859d-71f4489bf919"),
+                            Id = new Guid("fd5cb089-fe28-4ca5-825c-56dfcbe4e7f8"),
                             ImagePath = "images/flags/guatemala.svg",
                             Name = "Guatemala"
                         },
                         new
                         {
-                            Id = new Guid("a3ddfaae-3418-4132-a5a8-2530c95b9323"),
+                            Id = new Guid("dfef74ad-e435-4f3a-b4bd-93912f1acc5d"),
                             ImagePath = "images/flags/hungary.svg",
                             Name = "Hungary"
                         },
                         new
                         {
-                            Id = new Guid("3bb65b21-cc89-4558-bdbd-10feab4dc8d6"),
+                            Id = new Guid("56854093-8823-4c5f-ae57-ab3f1c23bd05"),
                             ImagePath = "images/flags/iceland.svg",
                             Name = "Iceland"
                         },
                         new
                         {
-                            Id = new Guid("70b316fb-21c9-4915-91bf-8ab0e96224df"),
+                            Id = new Guid("116f260f-1d41-4533-b174-190924d613bc"),
                             ImagePath = "images/flags/india.svg",
                             Name = "India"
                         },
                         new
                         {
-                            Id = new Guid("f6b70b45-700a-439e-8056-49d7db00248e"),
+                            Id = new Guid("fe2d3db0-e088-431c-bf87-54f571b95420"),
                             ImagePath = "images/flags/ireland.svg",
                             Name = "Ireland"
                         },
                         new
                         {
-                            Id = new Guid("7cec2548-6d4f-4d1d-b54b-3d3e916af964"),
+                            Id = new Guid("6d75dfd4-e735-4b52-90f0-11db4026762b"),
                             ImagePath = "images/flags/israel.svg",
                             Name = "Israel"
                         },
                         new
                         {
-                            Id = new Guid("88a22f90-a3e1-45c2-906e-eaeb02ba4345"),
+                            Id = new Guid("e0cafa7a-8fe1-453c-a6d9-cf53d4dbc222"),
                             ImagePath = "images/flags/italy.svg",
                             Name = "Italy"
                         },
                         new
                         {
-                            Id = new Guid("9bfaf335-873e-4d7e-a874-7301e4b70122"),
+                            Id = new Guid("9ed2ea24-df1e-41d4-8687-a07ae10b4f84"),
                             ImagePath = "images/flags/jamaica.svg",
                             Name = "Jamaica"
                         },
                         new
                         {
-                            Id = new Guid("2739aa14-5c53-4506-b4f7-34f47620609d"),
+                            Id = new Guid("3c9434d1-1884-4c00-817c-f181c3c3979f"),
                             ImagePath = "images/flags/japan.svg",
                             Name = "Japan"
                         },
                         new
                         {
-                            Id = new Guid("30260711-8836-433e-be4c-58081cb207e5"),
+                            Id = new Guid("517c7852-34d4-4c17-9c9f-380d0ad58b0d"),
                             ImagePath = "images/flags/kosovo.svg",
                             Name = "Kosovo"
                         },
                         new
                         {
-                            Id = new Guid("6f82c84c-a778-44f0-b33b-5f806ad2394c"),
+                            Id = new Guid("76c55869-0e8b-4804-8b67-dfecaf56b846"),
                             ImagePath = "images/flags/kuwait.svg",
                             Name = "Kuwait"
                         },
                         new
                         {
-                            Id = new Guid("bad3b103-91b9-46c0-9051-4f5764376f15"),
+                            Id = new Guid("c4866ece-fbc6-4be7-87d8-7c2bcfe76316"),
                             ImagePath = "images/flags/mexico.svg",
                             Name = "Mexico"
                         },
                         new
                         {
-                            Id = new Guid("a7240535-b698-4e01-a31c-a0fca12077ac"),
+                            Id = new Guid("09d4927f-d14f-410b-b720-778472b5d936"),
                             ImagePath = "images/flags/monaco.svg",
                             Name = "Monaco"
                         },
                         new
                         {
-                            Id = new Guid("b3185563-c611-4ef5-abd7-e9f25a9dae2a"),
+                            Id = new Guid("befb4bb8-04c7-4ba0-983d-ac4719063689"),
                             ImagePath = "images/flags/morocco.svg",
                             Name = "Morocco"
                         },
                         new
                         {
-                            Id = new Guid("581aabb1-e244-49ec-acb0-14c2a4a05fab"),
+                            Id = new Guid("19ec75dd-2522-4af2-9169-3cf1ebd79b84"),
                             ImagePath = "images/flags/netherlands.svg",
                             Name = "Netherlands"
                         },
                         new
                         {
-                            Id = new Guid("c8160b03-0bf1-47f5-9069-3b8dc9e139a6"),
+                            Id = new Guid("bbec73c1-7ebb-4863-a76d-33485fa86345"),
                             ImagePath = "images/flags/nigeria.svg",
                             Name = "Nigeria"
                         },
                         new
                         {
-                            Id = new Guid("a6d04c7c-c5cd-4d2b-a0b5-645c75461ef3"),
+                            Id = new Guid("f8732488-3859-4a12-ab84-0fb37b4f54bb"),
                             ImagePath = "images/flags/norway.svg",
                             Name = "Norway"
                         },
                         new
                         {
-                            Id = new Guid("d1c91e36-c9bb-485b-bb31-5b16d0f25857"),
+                            Id = new Guid("cb5c7f72-a8e2-4a3c-8229-6858dfc740c7"),
                             ImagePath = "images/flags/pakistan.svg",
                             Name = "Pakistan"
                         },
                         new
                         {
-                            Id = new Guid("b7dc7991-074a-4bf3-b193-613024fac646"),
+                            Id = new Guid("c4a15fd5-edec-42ea-939e-26981eb24ceb"),
                             ImagePath = "images/flags/palestine.svg",
                             Name = "Palestine"
                         },
                         new
                         {
-                            Id = new Guid("44d4d424-6a18-4039-a4a6-1ee811253927"),
+                            Id = new Guid("91a34f35-6749-4163-b4a3-7a98fa48618a"),
                             ImagePath = "images/flags/panama.svg",
                             Name = "Panama"
                         },
                         new
                         {
-                            Id = new Guid("b8bfefe5-b1ea-4eec-b092-68662d294b2c"),
+                            Id = new Guid("b41e0122-f06f-4e71-9d71-4d5b5ed9e60c"),
                             ImagePath = "images/flags/peru.svg",
                             Name = "Peru"
                         },
                         new
                         {
-                            Id = new Guid("9eeabcf1-36ad-4cd9-b423-77d4ab13cb5e"),
+                            Id = new Guid("4d617cd9-dc30-4980-ba34-a6ef92d71305"),
                             ImagePath = "images/flags/philippines.svg",
                             Name = "Philippines"
                         },
                         new
                         {
-                            Id = new Guid("b4fb7e9e-d5da-4bb1-8ad2-bbe3e98d3fcb"),
+                            Id = new Guid("1407e08d-adc4-4bd0-b90a-a368ef264455"),
                             ImagePath = "images/flags/poland.svg",
                             Name = "Poland"
                         },
                         new
                         {
-                            Id = new Guid("70316ee1-cd27-4a7e-a66e-bb5f4144b4cd"),
+                            Id = new Guid("65be717d-d2fb-4ea6-b894-99e9f0091a49"),
                             ImagePath = "images/flags/portugal.svg",
                             Name = "Portugal"
                         },
                         new
                         {
-                            Id = new Guid("9e3d9137-92e3-48a4-9585-f7dbe8010756"),
+                            Id = new Guid("a70e2845-69cb-4def-a566-af8a3a4cf79e"),
                             ImagePath = "images/flags/qatar.svg",
                             Name = "Qatar"
                         },
                         new
                         {
-                            Id = new Guid("4de723ee-cda8-4b9e-9b52-5c5333109cad"),
+                            Id = new Guid("2839f714-ae56-48bf-85a1-91c2f9044ea9"),
                             ImagePath = "images/flags/russia.svg",
                             Name = "Russia"
                         },
                         new
                         {
-                            Id = new Guid("e72352d6-84d7-4ead-81ec-ba418d5e7033"),
+                            Id = new Guid("ba982e45-1dcd-4f0a-8dfa-d8ae817d8f3f"),
                             ImagePath = "images/flags/saudi_arabia.svg",
                             Name = "Saudi Arabia"
                         },
                         new
                         {
-                            Id = new Guid("3f7ea33e-cb0b-496a-91a4-74f34d06f0b5"),
+                            Id = new Guid("409c302a-57e7-4714-8b46-41c5cd187943"),
                             ImagePath = "images/flags/serbia.svg",
                             Name = "Serbia"
                         },
                         new
                         {
-                            Id = new Guid("4cc7b5e5-41df-4f17-9d66-dbcf5ef41426"),
+                            Id = new Guid("49fe25ac-6e3e-47be-9ee3-b00715623d78"),
                             ImagePath = "images/flags/south_africa.svg",
                             Name = "South Africa"
                         },
                         new
                         {
-                            Id = new Guid("22f952a0-8bc7-469d-b1da-1477f08438eb"),
+                            Id = new Guid("c4f8b8f2-8fc4-43d5-bde2-b0e6f8af79d6"),
                             ImagePath = "images/flags/south_korea.svg",
                             Name = "South Korea"
                         },
                         new
                         {
-                            Id = new Guid("a8983c75-a36b-4279-8518-29fa294b72b2"),
+                            Id = new Guid("0a7d25bf-ef47-47f4-9d47-2f6a962ad381"),
                             ImagePath = "images/flags/spain.svg",
                             Name = "Spain"
                         },
                         new
                         {
-                            Id = new Guid("8486cbeb-9de7-457d-aabb-96a4958e59c7"),
+                            Id = new Guid("7c39b830-2f46-49ac-b7ce-4cb16207046d"),
                             ImagePath = "images/flags/sweden.svg",
                             Name = "Sweden"
                         },
                         new
                         {
-                            Id = new Guid("b6aadea5-ba3d-4571-8f9f-cc64a3d413c6"),
+                            Id = new Guid("8692f9e9-363c-445e-83f5-bf6c6231154c"),
                             ImagePath = "images/flags/thailand.svg",
                             Name = "Thailand"
                         },
                         new
                         {
-                            Id = new Guid("e06b3856-143d-4204-a8c6-7a4531eaf1be"),
+                            Id = new Guid("2e2b57fa-d5cd-4bce-ad2b-6bc94c15b9f4"),
                             ImagePath = "images/flags/trinidad&tobago.svg",
                             Name = "Trinidad & Tobago"
                         },
                         new
                         {
-                            Id = new Guid("7ebb5278-8282-4538-bc41-0554721484b9"),
+                            Id = new Guid("1781cc5f-844f-4b32-aa3d-15f4094aa6b7"),
                             ImagePath = "images/flags/turkey.svg",
                             Name = "Turkey"
                         },
                         new
                         {
-                            Id = new Guid("5f79b196-aec8-4fce-8b7a-b07dfce76e89"),
+                            Id = new Guid("05d7a713-e61c-4ab7-90be-6b1bb2509089"),
                             ImagePath = "images/flags/ukraine.svg",
                             Name = "Ukraine"
                         },
                         new
                         {
-                            Id = new Guid("3df6c61e-ace2-438f-bbce-33f2131131cb"),
+                            Id = new Guid("92cfe5b1-7d66-4596-a030-b7110e3df687"),
                             ImagePath = "images/flags/uae.svg",
                             Name = "UAE"
                         },
                         new
                         {
-                            Id = new Guid("3412127f-88c2-44bc-a645-c11632aaadcb"),
+                            Id = new Guid("785dbf4a-e576-4d45-b33f-d9be9542675d"),
                             ImagePath = "images/flags/uk.svg",
                             Name = "UK"
                         },
                         new
                         {
-                            Id = new Guid("555f29b6-afb5-4527-8baa-4280ce135b76"),
+                            Id = new Guid("df134ef8-3da0-4d5e-9798-b03c3c9a561a"),
                             ImagePath = "images/flags/usa.svg",
                             Name = "USA"
                         },
                         new
                         {
-                            Id = new Guid("a602059d-13c6-402f-a0cb-a1eaa55d7a73"),
+                            Id = new Guid("8cde6ca5-02d5-4da5-9a06-06fc361233db"),
                             ImagePath = "images/flags/venezuela.svg",
                             Name = "Venezuela"
                         },
                         new
                         {
-                            Id = new Guid("dafb48bf-efa5-4480-9bd9-630e3e4059f1"),
+                            Id = new Guid("70f350bf-721a-45aa-9512-e3b27d64599f"),
                             ImagePath = "images/flags/vietnam.svg",
                             Name = "Vietnam"
                         });
@@ -524,6 +524,9 @@ namespace foodtopia.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Measurement")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -539,6 +542,32 @@ namespace foodtopia.Migrations
                     b.HasIndex("RecipeId");
 
                     b.ToTable("Ingredients");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("3fe7ee1c-90a0-48ed-83fa-e6bed58d9715"),
+                            Measurement = "cups",
+                            Name = "Flour",
+                            Quantity = 2m,
+                            RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8")
+                        },
+                        new
+                        {
+                            Id = new Guid("5a348ad9-d468-4c33-b081-a90650f8c2a9"),
+                            Measurement = "",
+                            Name = "Egg",
+                            Quantity = 2m,
+                            RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8")
+                        },
+                        new
+                        {
+                            Id = new Guid("c37bed49-2246-4362-89be-c7ed09162da5"),
+                            Measurement = "cup",
+                            Name = "Sauce",
+                            Quantity = 1m,
+                            RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8")
+                        });
                 });
 
             modelBuilder.Entity("foodtopia.Models.Instruction", b =>
@@ -563,6 +592,57 @@ namespace foodtopia.Migrations
                     b.HasIndex("RecipeId");
 
                     b.ToTable("Instructions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c9e6a26d-a292-4faa-b8fa-c4bbfa9fc20a"),
+                            Order = 1,
+                            RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
+                            Step = "Crack eggs and add to mixing bowl."
+                        },
+                        new
+                        {
+                            Id = new Guid("b16f1311-dd43-44f6-976b-65ad4c959e20"),
+                            Order = 2,
+                            RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
+                            Step = "Whisk until eggs form into a foam-like white texture."
+                        },
+                        new
+                        {
+                            Id = new Guid("c105b1a5-2def-4c87-8793-895321767db3"),
+                            Order = 3,
+                            RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
+                            Step = "Add arrowroot starch to mixing bowl and other spices of your choosing."
+                        },
+                        new
+                        {
+                            Id = new Guid("1760ab81-141b-4db6-974b-04f66907a597"),
+                            Order = 4,
+                            RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
+                            Step = "Place inside the over that has been preheated to 350 degrees Fahrenheit for 8-10 minutes."
+                        },
+                        new
+                        {
+                            Id = new Guid("2dd0172c-d2a2-450f-8776-1cc199c3951e"),
+                            Order = 5,
+                            RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
+                            Step = "Layer the sauce, then the cheese and lastly the toppings."
+                        },
+                        new
+                        {
+                            Id = new Guid("23d32871-5d19-406c-995c-0aef0905fb3e"),
+                            Order = 6,
+                            RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
+                            Step = "Place back into the over for 12-15 minutes."
+                        },
+                        new
+                        {
+                            Id = new Guid("c87e1ec0-f9a9-48d5-bd68-104869e7b5cb"),
+                            Order = 7,
+                            RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
+                            Step = "Let the pizza cool for at least 5 minutes and enjoy!"
+                        });
                 });
 
             modelBuilder.Entity("foodtopia.Models.Rating", b =>
@@ -601,12 +681,9 @@ namespace foodtopia.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Country")
+                    b.Property<string>("CountryId")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid?>("CountryDetailsId")
-                        .HasColumnType("uuid");
 
                     b.Property<decimal>("DifficultyAverage")
                         .HasColumnType("numeric");
@@ -635,16 +712,31 @@ namespace foodtopia.Migrations
                     b.Property<int>("TasteReviewCount")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CountryDetailsId");
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Recipes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
+                            CountryId = "USA",
+                            DifficultyAverage = 0m,
+                            DifficultyReviewCount = 0,
+                            HeartCount = 0,
+                            ImageUrl = "images/recipes/low_calorie_pizza.jpg",
+                            Name = "Low calorie pizza",
+                            PublishedAt = new DateTime(2024, 12, 18, 12, 6, 44, 640, DateTimeKind.Utc).AddTicks(2260),
+                            TasteAverage = 0m,
+                            TasteReviewCount = 0
+                        });
                 });
 
             modelBuilder.Entity("foodtopia.Models.User", b =>
@@ -694,6 +786,19 @@ namespace foodtopia.Migrations
                         .HasFilter("\"Username\" IS NOT NULL");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                            Email = "deleted@placeholder.com",
+                            FirstName = "Deleted",
+                            IsDeleted = true,
+                            LastName = "Deleted",
+                            Password = "deleted",
+                            Role = "none",
+                            Username = "deleted"
+                        });
                 });
 
             modelBuilder.Entity("foodtopia.Models.HeartedRecipe", b =>
@@ -758,17 +863,19 @@ namespace foodtopia.Migrations
 
             modelBuilder.Entity("foodtopia.Models.Recipe", b =>
                 {
-                    b.HasOne("foodtopia.Models.Country", "CountryDetails")
+                    b.HasOne("foodtopia.Models.Country", "CountryOrigin")
                         .WithMany("Recipes")
-                        .HasForeignKey("CountryDetailsId");
+                        .HasForeignKey("CountryId")
+                        .HasPrincipalKey("Name")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("foodtopia.Models.User", "User")
                         .WithMany("Recipes")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("CountryDetails");
+                    b.Navigation("CountryOrigin");
 
                     b.Navigation("User");
                 });

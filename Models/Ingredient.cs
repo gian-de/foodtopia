@@ -10,8 +10,9 @@ namespace foodtopia.Models
         public required string Name { get; set; }
 
         [Required(ErrorMessage = "Quantity is required")]
-        public decimal Quantity { get; set; }
+        public required decimal Quantity { get; set; }
+        public string? Measurement { get; set; } = "";
 
-        public required Recipe Recipe { get; set; }
+        public Recipe? Recipe { get; set; }
     }
 }

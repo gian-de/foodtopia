@@ -26,9 +26,9 @@ namespace foodtopia.Models
         public required string Password { get; set; }
         public bool IsDeleted { get; set; } = false;
 
-        public required ICollection<HeartedRecipe> HeartedRecipes { get; set; }
-        public required ICollection<Recipe> Recipes { get; set; }
-        public required ICollection<Rating> Ratings { get; set; }
+        public ICollection<HeartedRecipe>? HeartedRecipes { get; set; }
+        public ICollection<Recipe>? Recipes { get; set; }
+        public ICollection<Rating>? Ratings { get; set; }
 
     }
 }
