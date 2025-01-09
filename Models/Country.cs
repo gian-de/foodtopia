@@ -9,12 +9,6 @@ namespace foodtopia.Models
         [Required]
         [Url(ErrorMessage = "Image must be a valid URL.")]
         public required string ImagePath { get; set; }
-
         public ICollection<Recipe>? Recipes { get; set; }
-
-        public static implicit operator Country(string v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
