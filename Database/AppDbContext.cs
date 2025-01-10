@@ -21,6 +21,8 @@ namespace foodtopia.Database
         {
             base.OnModelCreating(modelBuilder);
 
+
+
             var deletedUserGuid = Guid.Parse("00000000-0000-0000-0000-000000000001"); // Well-known GUID for "Deleted" user
                                                                                       // Special user to represent deleted users and not leave data orphaned
             modelBuilder.Entity<User>().HasData(
@@ -37,11 +39,11 @@ namespace foodtopia.Database
             modelBuilder.Entity<Ingredient>().HasData(IngredientSeed.GetIngredients());
             modelBuilder.Entity<Instruction>().HasData(InstructionSeed.GetInstructions());
 
-            modelBuilder.Entity<Recipe>()
-                .HasOne(r => r.CountryOrigin) // Navigation property
-                .WithMany(c => c.Recipes)    // Reverse navigation property
-                .HasForeignKey(r => r.CountryId)
-                .HasPrincipalKey(c => c.Name);
+            // modelBuilder.Entity<Recipe>()
+            //     .HasOne(r => r.CountryOrigin) // Navigation property
+            //     .WithMany(c => c.Recipes)    // Reverse navigation property
+            //     .HasForeignKey(r => r.CountryId)
+            //     .HasPrincipalKey(c => c.Name);
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
@@ -107,12 +109,12 @@ namespace foodtopia.Database
                 .HasForeignKey(ing => ing.RecipeId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
+        // hacky way to push through warnings that stops executing bug
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
                 .ConfigureWarnings(warnings =>
                     warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
         }
-
     }
 }

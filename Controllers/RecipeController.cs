@@ -1,5 +1,6 @@
 using foodtopia.Database;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace foodtopia.Controllers
 {
@@ -14,15 +15,16 @@ namespace foodtopia.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var recipes = _context.Recipes.ToList();
+            var recipes = await _context.Recipes
+            .ToListAsync();
 
             return Ok(recipes);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] int id)
+        public IActionResult GetOne([FromRoute] int id)
         {
             var recipe = _context.Recipes.Find(id);
 

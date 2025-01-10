@@ -13,7 +13,8 @@ namespace foodtopia.Database.Seeds
                     Id = RecipeSeedUUID.LowCaloriePizza,
                     Name = "Low calorie pizza",
                     UserId = null,
-                    CountryId = "USA",
+                    CountryId = CountrySeedUUID.USA,
+                    // CountryId = countries.FirstOrDefault(c => c.Name == "USA")?.Id,
                     ImageUrl = "images/recipes/low_calorie_pizza.jpg",
                     Ingredients = new List<Ingredient>(), // initialize as empty (since Recipe model has as "required") then shortly after seeded
                     Instructions = new List<Instruction>() // initialize as empty (since Recipe model has as "required") then shortly after seeded

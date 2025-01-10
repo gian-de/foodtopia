@@ -6,7 +6,8 @@ namespace foodtopia.DTOs.Country
     (
         Guid Id,
         string Name,
+        string Slug,
         string ImagePath,
-        ICollection<RecipeTldrDTO> Recipes
+        ICollection<RecipeTldrDTO>? Recipes
     );
 }

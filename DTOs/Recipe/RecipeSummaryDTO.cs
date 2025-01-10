@@ -6,7 +6,7 @@ namespace foodtopia.Dtos.Recipe
     (
         Guid Id,
         string Name,
-        string CountryId,
+        Guid CountryId,
         string ImageUrl,
         int HeartCount,
         decimal TasteAverage,

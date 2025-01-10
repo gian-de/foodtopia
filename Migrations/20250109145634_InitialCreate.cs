@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace foodtopia.Migrations
 {
     /// <inheritdoc />
-    public partial class MakeUserIdNullable : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,12 +19,12 @@ namespace foodtopia.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    ImagePath = table.Column<string>(type: "text", nullable: false)
+                    ImagePath = table.Column<string>(type: "text", nullable: false),
+                    Slug = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Countries", x => x.Id);
-                    table.UniqueConstraint("AK_Countries_Name", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -58,7 +58,7 @@ namespace foodtopia.Migrations
                     TasteReviewCount = table.Column<int>(type: "integer", nullable: false),
                     DifficultyReviewCount = table.Column<int>(type: "integer", nullable: false),
                     PublishedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CountryId = table.Column<string>(type: "text", nullable: false),
+                    CountryId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
@@ -68,7 +68,7 @@ namespace foodtopia.Migrations
                         name: "FK_Recipes_Countries_CountryId",
                         column: x => x.CountryId,
                         principalTable: "Countries",
-                        principalColumn: "Name",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Recipes_Users_UserId",
@@ -175,84 +175,84 @@ namespace foodtopia.Migrations
 
             migrationBuilder.InsertData(
                 table: "Countries",
-                columns: new[] { "Id", "ImagePath", "Name" },
+                columns: new[] { "Id", "ImagePath", "Name", "Slug" },
                 values: new object[,]
                 {
-                    { new Guid("05d7a713-e61c-4ab7-90be-6b1bb2509089"), "images/flags/ukraine.svg", "Ukraine" },
-                    { new Guid("07867f2a-7d5e-480e-a4e5-7dd1186caf2a"), "images/flags/brazil.svg", "Brazil" },
-                    { new Guid("09d4927f-d14f-410b-b720-778472b5d936"), "images/flags/monaco.svg", "Monaco" },
-                    { new Guid("0a7d25bf-ef47-47f4-9d47-2f6a962ad381"), "images/flags/spain.svg", "Spain" },
-                    { new Guid("0e2220a1-a387-485a-abb6-81d228fda70b"), "images/flags/algeria.svg", "Algeria" },
-                    { new Guid("116f260f-1d41-4533-b174-190924d613bc"), "images/flags/india.svg", "India" },
-                    { new Guid("12955bd6-5191-4a47-8ceb-f2bcc3755672"), "images/flags/canada.svg", "Canada" },
-                    { new Guid("1407e08d-adc4-4bd0-b90a-a368ef264455"), "images/flags/poland.svg", "Poland" },
-                    { new Guid("1781cc5f-844f-4b32-aa3d-15f4094aa6b7"), "images/flags/turkey.svg", "Turkey" },
-                    { new Guid("18355537-d564-4e2d-9028-4ab5fd4d0663"), "images/flags/ghana.svg", "Ghana" },
-                    { new Guid("19ec75dd-2522-4af2-9169-3cf1ebd79b84"), "images/flags/netherlands.svg", "Netherlands" },
-                    { new Guid("255fd803-184a-4df6-bf0e-73d0ded3b80e"), "images/flags/argentina.svg", "Argentina" },
-                    { new Guid("27f11b00-efca-4c71-8921-8097a6304aa9"), "images/flags/azerbaijan.svg", "Azerbaijan" },
-                    { new Guid("2839f714-ae56-48bf-85a1-91c2f9044ea9"), "images/flags/russia.svg", "Russia" },
-                    { new Guid("29b3c0f0-4c2f-49b5-b0c8-6ce426444f42"), "images/flags/bahamas.svg", "Bahamas" },
-                    { new Guid("2bca4877-4d27-4138-8a04-3d10614b4de8"), "images/flags/fiji.svg", "Fiji" },
-                    { new Guid("2e2b57fa-d5cd-4bce-ad2b-6bc94c15b9f4"), "images/flags/trinidad&tobago.svg", "Trinidad & Tobago" },
-                    { new Guid("2fca22ea-bbc0-499b-92f2-5384ba2ea61b"), "images/flags/afghanistan.svg", "Afghanistan" },
-                    { new Guid("350bdba7-99a7-4d7e-852d-2d1453a1ed53"), "images/flags/bolivia.svg", "Bolivia" },
-                    { new Guid("3c9434d1-1884-4c00-817c-f181c3c3979f"), "images/flags/japan.svg", "Japan" },
-                    { new Guid("409c302a-57e7-4714-8b46-41c5cd187943"), "images/flags/serbia.svg", "Serbia" },
-                    { new Guid("49d83e81-2b57-42f1-9ccb-59c8649289c4"), "images/flags/belgium.svg", "Belgium" },
-                    { new Guid("49fe25ac-6e3e-47be-9ee3-b00715623d78"), "images/flags/south_africa.svg", "South Africa" },
-                    { new Guid("4d617cd9-dc30-4980-ba34-a6ef92d71305"), "images/flags/philippines.svg", "Philippines" },
-                    { new Guid("517c7852-34d4-4c17-9c9f-380d0ad58b0d"), "images/flags/kosovo.svg", "Kosovo" },
-                    { new Guid("56854093-8823-4c5f-ae57-ab3f1c23bd05"), "images/flags/iceland.svg", "Iceland" },
-                    { new Guid("597e4e1c-8aab-4c16-933c-6f06ffc4c677"), "images/flags/armenia.svg", "Armenia" },
-                    { new Guid("5a39dcb5-e72a-46b1-9776-579b283947fe"), "images/flags/chile.svg", "Chile" },
-                    { new Guid("5c182102-9ba9-4f39-818a-024981d34f00"), "images/flags/el_salvador.svg", "El Salvador" },
-                    { new Guid("62d0987a-ff47-4279-84fb-b9c7b0d27db7"), "images/flags/colombia.svg", "Colombia" },
-                    { new Guid("65be717d-d2fb-4ea6-b894-99e9f0091a49"), "images/flags/portugal.svg", "Portugal" },
-                    { new Guid("68d5a5c9-4c5c-4cbb-a2b5-c4f28ed5ba50"), "images/flags/china.svg", "China" },
-                    { new Guid("6a65cf6c-fe8b-4a96-bf8b-dde132c01652"), "images/flags/antigua_barbuda.svg", "Antigua & Barbuda" },
-                    { new Guid("6d75dfd4-e735-4b52-90f0-11db4026762b"), "images/flags/israel.svg", "Israel" },
-                    { new Guid("70f350bf-721a-45aa-9512-e3b27d64599f"), "images/flags/vietnam.svg", "Vietnam" },
-                    { new Guid("744f2c22-0cc7-4b61-ae9f-1ce6e4b432a1"), "images/flags/france.svg", "France" },
-                    { new Guid("76c55869-0e8b-4804-8b67-dfecaf56b846"), "images/flags/kuwait.svg", "Kuwait" },
-                    { new Guid("785dbf4a-e576-4d45-b33f-d9be9542675d"), "images/flags/uk.svg", "UK" },
-                    { new Guid("7c39b830-2f46-49ac-b7ce-4cb16207046d"), "images/flags/sweden.svg", "Sweden" },
-                    { new Guid("807f96fe-858d-4009-a35a-e35d4074c193"), "images/flags/dominican_republic.svg", "Dominican Republic" },
-                    { new Guid("8692f9e9-363c-445e-83f5-bf6c6231154c"), "images/flags/thailand.svg", "Thailand" },
-                    { new Guid("8cde6ca5-02d5-4da5-9a06-06fc361233db"), "images/flags/venezuela.svg", "Venezuela" },
-                    { new Guid("8fa6fc4f-c00b-4fb7-ae57-fe7841761884"), "images/flags/albania.svg", "Albania" },
-                    { new Guid("91a34f35-6749-4163-b4a3-7a98fa48618a"), "images/flags/panama.svg", "Panama" },
-                    { new Guid("92cfe5b1-7d66-4596-a030-b7110e3df687"), "images/flags/uae.svg", "UAE" },
-                    { new Guid("94d63849-bc52-491c-9cc1-4b381e92fb3a"), "images/flags/cameroon.svg", "Cameroon" },
-                    { new Guid("99c82d1b-f546-48a3-99b6-b80ca7b42c96"), "images/flags/costa_rica.svg", "Costa Rica" },
-                    { new Guid("9ed2ea24-df1e-41d4-8687-a07ae10b4f84"), "images/flags/jamaica.svg", "Jamaica" },
-                    { new Guid("a70e2845-69cb-4def-a566-af8a3a4cf79e"), "images/flags/qatar.svg", "Qatar" },
-                    { new Guid("ac0b2046-ebf5-4ee2-ad0f-6a16a0bed644"), "images/flags/egypt.svg", "Egypt" },
-                    { new Guid("b41e0122-f06f-4e71-9d71-4d5b5ed9e60c"), "images/flags/peru.svg", "Peru" },
-                    { new Guid("ba982e45-1dcd-4f0a-8dfa-d8ae817d8f3f"), "images/flags/saudi_arabia.svg", "Saudi Arabia" },
-                    { new Guid("bad06bd8-61a7-405a-adfd-5f936c6cfc76"), "images/flags/denmark.svg", "Denmark" },
-                    { new Guid("bbec73c1-7ebb-4863-a76d-33485fa86345"), "images/flags/nigeria.svg", "Nigeria" },
-                    { new Guid("befb4bb8-04c7-4ba0-983d-ac4719063689"), "images/flags/morocco.svg", "Morocco" },
-                    { new Guid("bf489e3b-36ac-4fde-87b4-3b16bf909569"), "images/flags/ecuador.svg", "Ecuador" },
-                    { new Guid("c4866ece-fbc6-4be7-87d8-7c2bcfe76316"), "images/flags/mexico.svg", "Mexico" },
-                    { new Guid("c4a15fd5-edec-42ea-939e-26981eb24ceb"), "images/flags/palestine.svg", "Palestine" },
-                    { new Guid("c4dbeccd-a4e8-4993-b372-5f74bcb41eed"), "images/flags/finland.svg", "Finland" },
-                    { new Guid("c4f8b8f2-8fc4-43d5-bde2-b0e6f8af79d6"), "images/flags/south_korea.svg", "South Korea" },
-                    { new Guid("cb5c7f72-a8e2-4a3c-8229-6858dfc740c7"), "images/flags/pakistan.svg", "Pakistan" },
-                    { new Guid("ccd520bc-8a21-432a-94bf-1598d9c740ff"), "images/flags/angola.svg", "Angola" },
-                    { new Guid("d167c871-d2ae-41d9-b10c-c516f1d84fb7"), "images/flags/australia.svg", "Australia" },
-                    { new Guid("d62509d3-1bf3-4d4f-94ee-6f09d19d250e"), "images/flags/cuba.svg", "Cuba" },
-                    { new Guid("df134ef8-3da0-4d5e-9798-b03c3c9a561a"), "images/flags/usa.svg", "USA" },
-                    { new Guid("dfef74ad-e435-4f3a-b4bd-93912f1acc5d"), "images/flags/hungary.svg", "Hungary" },
-                    { new Guid("e0cafa7a-8fe1-453c-a6d9-cf53d4dbc222"), "images/flags/italy.svg", "Italy" },
-                    { new Guid("e26e315a-2117-42d8-8e93-000030491915"), "images/flags/andorra.svg", "Andorra" },
-                    { new Guid("e4ffcaa8-8302-4bd2-869e-9bed049ecf22"), "images/flags/austria.svg", "Austria" },
-                    { new Guid("ef5aefb0-d64f-477a-bcf4-0cd6db5e5181"), "images/flags/greece.svg", "Greece" },
-                    { new Guid("f3025efc-b63c-4f04-96be-63fc1e398a6e"), "images/flags/croatia.svg", "Croatia" },
-                    { new Guid("f519ccb2-80a7-4a43-bb3a-e969e1d401aa"), "images/flags/germany.svg", "Germany" },
-                    { new Guid("f8732488-3859-4a12-ab84-0fb37b4f54bb"), "images/flags/norway.svg", "Norway" },
-                    { new Guid("fd5cb089-fe28-4ca5-825c-56dfcbe4e7f8"), "images/flags/guatemala.svg", "Guatemala" },
-                    { new Guid("fe2d3db0-e088-431c-bf87-54f571b95420"), "images/flags/ireland.svg", "Ireland" }
+                    { new Guid("00d039ac-65ba-4c88-8776-e66d80aeda59"), "images/flags/vietnam.svg", "Vietnam", "vietnam" },
+                    { new Guid("01f4ac5c-11cb-46a3-b455-4c27c05cdca9"), "images/flags/guatemala.svg", "Guatemala", "guatemala" },
+                    { new Guid("038605c3-9499-4205-a0ac-f71ef43b47b3"), "images/flags/algeria.svg", "Algeria", "algeria" },
+                    { new Guid("0a34bbde-21c7-4746-8714-721a0c0597b3"), "images/flags/uk.svg", "UK", "united-kingdom" },
+                    { new Guid("13488b4b-539a-40ca-a40b-bea362bdbd1b"), "images/flags/norway.svg", "Norway", "norway" },
+                    { new Guid("16ddc3e7-9748-477e-b7c0-8d503b992e2e"), "images/flags/saudi_arabia.svg", "Saudi Arabia", "saudi-arabia" },
+                    { new Guid("18e8ff81-6234-4aa6-902e-69cefb26aca5"), "images/flags/finland.svg", "Finland", "finland" },
+                    { new Guid("1d8a47a1-1130-4ad4-8f4d-4e3c300d89ec"), "images/flags/colombia.svg", "Colombia", "colombia" },
+                    { new Guid("1dca600a-c5f0-45a9-be79-5e86b8b68f0e"), "images/flags/austria.svg", "Austria", "austria" },
+                    { new Guid("20d93819-4e82-4eee-b56d-20f08d2e0c5b"), "images/flags/mexico.svg", "Mexico", "mexico" },
+                    { new Guid("273719f6-22df-400b-99b8-6d499a7a2f9e"), "images/flags/nigeria.svg", "Nigeria", "nigeria" },
+                    { new Guid("2ca071fb-0cd8-4962-b85c-7342f9353e43"), "images/flags/ukraine.svg", "Ukraine", "ukraine" },
+                    { new Guid("31f03777-3e94-402d-b4eb-c7c6e9903108"), "images/flags/chile.svg", "Chile", "chile" },
+                    { new Guid("33195fed-3b63-46fb-b49c-15f7caf6ed1c"), "images/flags/hungary.svg", "Hungary", "hungary" },
+                    { new Guid("3a95d925-25cd-4073-bccb-78f58cc3fc4c"), "images/flags/denmark.svg", "Denmark", "denmark" },
+                    { new Guid("3ddd41b8-7ba7-4945-9c00-0b496f0953af"), "images/flags/kosovo.svg", "Kosovo", "kosovo" },
+                    { new Guid("413520ac-6f4b-45df-bd96-5e2aefed0be0"), "images/flags/japan.svg", "Japan", "japan" },
+                    { new Guid("463671c5-fc34-4294-b600-92ced08b4a41"), "images/flags/croatia.svg", "Croatia", "croatia" },
+                    { new Guid("48cb1fe1-dc53-4297-ab4c-d83b8515fbe5"), "images/flags/israel.svg", "Israel", "israel" },
+                    { new Guid("4ffd1636-b9c1-47aa-b20e-0d02a5182348"), "images/flags/albania.svg", "Albania", "albania" },
+                    { new Guid("5456e649-bf0a-4507-b60d-251aa750cc4c"), "images/flags/palestine.svg", "Palestine", "palestine" },
+                    { new Guid("597558ac-0f1c-4eeb-8751-71bf881d3d78"), "images/flags/cameroon.svg", "Cameroon", "cameroon" },
+                    { new Guid("59784003-0163-470e-8238-e63c2be3ebb0"), "images/flags/china.svg", "China", "china" },
+                    { new Guid("63a80847-172c-41e9-b35f-40d8c1237ab1"), "images/flags/pakistan.svg", "Pakistan", "pakistan" },
+                    { new Guid("63dee376-5006-44fc-a763-730cd9bbff8a"), "images/flags/canada.svg", "Canada", "canada" },
+                    { new Guid("65284b4a-374a-4144-9509-3598b4c270fd"), "images/flags/peru.svg", "Peru", "peru" },
+                    { new Guid("6e12219e-44e5-495a-8fbc-d0f74848014b"), "images/flags/bahamas.svg", "Bahamas", "bahamas" },
+                    { new Guid("732f69b7-13c1-449c-ac71-502bb36512e8"), "images/flags/india.svg", "India", "india" },
+                    { new Guid("76009c1d-0de7-44e7-a8ca-bd9d6a0a816b"), "images/flags/italy.svg", "Italy", "italy" },
+                    { new Guid("779f2d29-d9da-46d8-a78f-e6ca5a393a5b"), "images/flags/venezuela.svg", "Venezuela", "venezuela" },
+                    { new Guid("77bce5a9-8530-4a4c-92bf-1b922efaf625"), "images/flags/turkey.svg", "Turkey", "turkey" },
+                    { new Guid("7a6b2878-a943-4d1f-b7ab-458caeb158e8"), "images/flags/ireland.svg", "Ireland", "ireland" },
+                    { new Guid("7b1b2a17-156a-413d-b57e-c49fead48e22"), "images/flags/ghana.svg", "Ghana", "ghana" },
+                    { new Guid("7f8cc654-9cea-46c9-af92-ae1ee272677a"), "images/flags/philippines.svg", "Philippines", "philippines" },
+                    { new Guid("802f65b6-6c64-494f-a1eb-802d5cc594d6"), "images/flags/portugal.svg", "Portugal", "portugal" },
+                    { new Guid("8249285d-6244-4de6-a79a-55ca989bed88"), "images/flags/afghanistan.svg", "Afghanistan", "afghanistan" },
+                    { new Guid("8549307c-e92b-4c90-899c-35e67eb02732"), "images/flags/monaco.svg", "Monaco", "monaco" },
+                    { new Guid("86c98c7f-35f2-44e7-b44c-a2603cfd17c2"), "images/flags/kuwait.svg", "Kuwait", "kuwait" },
+                    { new Guid("86e7903b-1f81-4534-8f6a-1cb6b7ad5782"), "images/flags/serbia.svg", "Serbia", "serbia" },
+                    { new Guid("8b8aab18-f234-4919-b233-e27e6485811e"), "images/flags/australia.svg", "Australia", "australia" },
+                    { new Guid("8bd372dc-061f-4bfa-ae4e-53b726330f1b"), "images/flags/azerbaijan.svg", "Azerbaijan", "azerbaijan" },
+                    { new Guid("8c7a2ce6-9f2f-4bdd-83d6-b24801310760"), "images/flags/germany.svg", "Germany", "germany" },
+                    { new Guid("8ccb0c9f-5ade-4e99-b4e7-9e9809d20682"), "images/flags/poland.svg", "Poland", "poland" },
+                    { new Guid("8ed7b64f-1a56-4d9d-ba35-fd2f83047f1e"), "images/flags/netherlands.svg", "Netherlands", "netherlands" },
+                    { new Guid("8ffc8e08-3a94-4da1-a504-1cd3cb08eff5"), "images/flags/france.svg", "France", "france" },
+                    { new Guid("902d5369-17e0-45b9-9367-9ced0cedeb6c"), "images/flags/angola.svg", "Angola", "angola" },
+                    { new Guid("962dea70-2f53-4753-8ea4-52cbb31d4175"), "images/flags/brazil.svg", "Brazil", "brazil" },
+                    { new Guid("96b22919-3f04-43b3-a4c2-f9691e523936"), "images/flags/jamaica.svg", "Jamaica", "jamaica" },
+                    { new Guid("99e67deb-d8aa-48cf-b011-afc6e37ad21d"), "images/flags/costa_rica.svg", "Costa Rica", "costa-rica" },
+                    { new Guid("9b880c26-de06-41b1-8579-e31b7c70ebef"), "images/flags/cuba.svg", "Cuba", "cuba" },
+                    { new Guid("9c738db6-b1b0-4367-8173-30f60b8550fb"), "images/flags/qatar.svg", "Qatar", "qatar" },
+                    { new Guid("9e42a217-8054-4cee-8b7a-087fe95a79f9"), "images/flags/argentina.svg", "Argentina", "argentina" },
+                    { new Guid("9eb0882c-e56c-4a7e-8c03-e1997f1b787e"), "images/flags/iceland.svg", "Iceland", "iceland" },
+                    { new Guid("a05f52e8-51f7-4626-8329-feb7f5cb5249"), "images/flags/south_korea.svg", "South Korea", "south-korea" },
+                    { new Guid("a308e22f-bf3c-4787-97ba-ed2baf1db7ba"), "images/flags/armenia.svg", "Armenia", "armenia" },
+                    { new Guid("a6ddb27c-0eba-4c64-b926-95a839ce03e8"), "images/flags/dominican_republic.svg", "Dominican Republic", "dominica-republic" },
+                    { new Guid("b61f5b0d-a6b5-4189-9af2-3752028727ed"), "images/flags/thailand.svg", "Thailand", "thailand" },
+                    { new Guid("beeb07ec-a1f2-474f-aaca-67e544db05b3"), "images/flags/antigua_barbuda.svg", "Antigua & Barbuda", "antigua-and-barbuda" },
+                    { new Guid("bf94588a-8cb3-46d9-a17e-5878cdafe268"), "images/flags/panama.svg", "Panama", "panama" },
+                    { new Guid("c28bd523-8245-46bf-83fa-8c1e95a764e4"), "images/flags/trinidad&tobago.svg", "Trinidad & Tobago", "trinidad-and-tobago" },
+                    { new Guid("c3dbc242-ab34-4c47-9707-a2195187915e"), "images/flags/south_africa.svg", "South Africa", "south-africa" },
+                    { new Guid("c7be5a6f-4a9a-4da4-8910-7e3f9355f3cb"), "images/flags/egypt.svg", "Egypt", "egypt" },
+                    { new Guid("cf88669c-827f-463a-a6cf-75cb10faa93b"), "images/flags/el_salvador.svg", "El Salvador", "el-salvador" },
+                    { new Guid("d37b096d-86dc-4deb-ba2a-ed067b1d3cc2"), "images/flags/russia.svg", "Russia", "russia" },
+                    { new Guid("da874b21-e67c-4560-993b-e61c4ea282fd"), "images/flags/uae.svg", "UAE", "united-arab-emirates" },
+                    { new Guid("dfe7829b-4d19-4db5-ae73-d896709e3d33"), "images/flags/spain.svg", "Spain", "spain" },
+                    { new Guid("e60e384e-a7cf-411a-9362-76d0aeec619b"), "images/flags/belgium.svg", "Belgium", "belgium" },
+                    { new Guid("eb014b54-2b8e-4ce8-ac17-d0b14c60e1ae"), "images/flags/greece.svg", "Greece", "greece" },
+                    { new Guid("f1269377-754b-437e-b8e2-3c3b26d160d7"), "images/flags/fiji.svg", "Fiji", "fiji" },
+                    { new Guid("f30dd8f5-4c4a-4eb4-b28d-0e559b1dea75"), "images/flags/sweden.svg", "Sweden", "sweden" },
+                    { new Guid("f3e6e63c-a7a0-4090-9326-ccd5e2dc5008"), "images/flags/morocco.svg", "Morocco", "morocco" },
+                    { new Guid("f79788fc-c9a9-4f15-9ea3-ce375205d15c"), "images/flags/andorra.svg", "Andorra", "andorra" },
+                    { new Guid("f9899140-d549-4c9e-8d05-e12b5ea83623"), "images/flags/ecuador.svg", "Ecuador", "ecuador" },
+                    { new Guid("fbbee294-de2d-4f6a-93ab-b6df3853e64a"), "images/flags/bolivia.svg", "Bolivia", "bolivia" },
+                    { new Guid("fc61634e-ea99-43d5-9657-26745fc53530"), "images/flags/usa.svg", "USA", "usa" }
                 });
 
             migrationBuilder.InsertData(
@@ -263,16 +263,16 @@ namespace foodtopia.Migrations
             migrationBuilder.InsertData(
                 table: "Recipes",
                 columns: new[] { "Id", "CountryId", "DifficultyAverage", "DifficultyReviewCount", "HeartCount", "ImageUrl", "Name", "PublishedAt", "TasteAverage", "TasteReviewCount", "UserId" },
-                values: new object[] { new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "USA", 0m, 0, 0, "images/recipes/low_calorie_pizza.jpg", "Low calorie pizza", new DateTime(2024, 12, 18, 12, 6, 44, 640, DateTimeKind.Utc).AddTicks(2260), 0m, 0, null });
+                values: new object[] { new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), new Guid("fc61634e-ea99-43d5-9657-26745fc53530"), 0m, 0, 0, "images/recipes/low_calorie_pizza.jpg", "Low calorie pizza", new DateTime(2025, 1, 9, 14, 56, 34, 295, DateTimeKind.Utc).AddTicks(6180), 0m, 0, null });
 
             migrationBuilder.InsertData(
                 table: "Ingredients",
                 columns: new[] { "Id", "Measurement", "Name", "Quantity", "RecipeId" },
                 values: new object[,]
                 {
-                    { new Guid("3fe7ee1c-90a0-48ed-83fa-e6bed58d9715"), "cups", "Flour", 2m, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8") },
-                    { new Guid("5a348ad9-d468-4c33-b081-a90650f8c2a9"), "", "Egg", 2m, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8") },
-                    { new Guid("c37bed49-2246-4362-89be-c7ed09162da5"), "cup", "Sauce", 1m, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8") }
+                    { new Guid("624aaf79-8a0a-4e07-b7ae-3228ac6b8bd9"), "cups", "Flour", 2m, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8") },
+                    { new Guid("d3d4f946-ad13-4c2b-960e-9cea2cc38329"), "cup", "Sauce", 1m, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8") },
+                    { new Guid("e393ee0f-750e-4073-b3d9-e63bf19ab5fe"), "", "Egg", 2m, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8") }
                 });
 
             migrationBuilder.InsertData(
@@ -280,13 +280,13 @@ namespace foodtopia.Migrations
                 columns: new[] { "Id", "Order", "RecipeId", "Step" },
                 values: new object[,]
                 {
-                    { new Guid("1760ab81-141b-4db6-974b-04f66907a597"), 4, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Place inside the over that has been preheated to 350 degrees Fahrenheit for 8-10 minutes." },
-                    { new Guid("23d32871-5d19-406c-995c-0aef0905fb3e"), 6, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Place back into the over for 12-15 minutes." },
-                    { new Guid("2dd0172c-d2a2-450f-8776-1cc199c3951e"), 5, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Layer the sauce, then the cheese and lastly the toppings." },
-                    { new Guid("b16f1311-dd43-44f6-976b-65ad4c959e20"), 2, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Whisk until eggs form into a foam-like white texture." },
-                    { new Guid("c105b1a5-2def-4c87-8793-895321767db3"), 3, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Add arrowroot starch to mixing bowl and other spices of your choosing." },
-                    { new Guid("c87e1ec0-f9a9-48d5-bd68-104869e7b5cb"), 7, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Let the pizza cool for at least 5 minutes and enjoy!" },
-                    { new Guid("c9e6a26d-a292-4faa-b8fa-c4bbfa9fc20a"), 1, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Crack eggs and add to mixing bowl." }
+                    { new Guid("5051f18a-8618-4beb-b97b-e8e624ab2200"), 2, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Whisk until eggs form into a foam-like white texture." },
+                    { new Guid("60c30f84-d112-4c80-9837-e97600a43434"), 1, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Crack eggs and add to mixing bowl." },
+                    { new Guid("95a60176-994b-42f7-a5e0-10dafa06da2f"), 3, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Add arrowroot starch to mixing bowl and other spices of your choosing." },
+                    { new Guid("b4308569-9e4e-43c4-b211-329eadf3e62b"), 4, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Place inside the over that has been preheated to 350 degrees Fahrenheit for 8-10 minutes." },
+                    { new Guid("d0468a9c-b3ef-42f8-823a-6fb4adb003ec"), 6, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Place back into the over for 12-15 minutes." },
+                    { new Guid("e45c3910-4120-4c3f-a73c-9fd7841ffbab"), 7, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Let the pizza cool for at least 5 minutes and enjoy!" },
+                    { new Guid("ee9d51cd-6663-4fe0-8219-c4aa83967adc"), 5, new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), "Layer the sauce, then the cheese and lastly the toppings." }
                 });
 
             migrationBuilder.CreateIndex(

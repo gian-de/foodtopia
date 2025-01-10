@@ -1,5 +1,4 @@
 using foodtopia.Database;
-using foodtopia.Dtos.Recipe;
 using foodtopia.DTOs.Country;
 using foodtopia.DTOs.Recipe;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +25,7 @@ namespace foodtopia.Controllers
                 (
                     c.Id,
                     c.Name,
+                    c.Slug,
                     c.ImagePath,
                     c.Recipes.Select(r => new RecipeTldrDTO
                     (
@@ -43,10 +43,30 @@ namespace foodtopia.Controllers
             return Ok(countries);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] Guid id)
+        [HttpGet("{slug}")]
+        public async Task<IActionResult> GetOne([FromRoute] string slug)
         {
-            var country = _context.Countries.Find(id);
+            var country = await _context.Countries
+            .Include(c => c.Recipes)
+            .Where(c => c.Slug == slug)
+            .Select(c => new CountryDTO
+            (
+                c.Id,
+                c.Name,
+                c.Slug,
+                c.ImagePath,
+                c.Recipes.Select(r => new RecipeTldrDTO
+                (
+                    r.Id,
+                    r.Name,
+                    r.CountryId,
+                    r.ImageUrl,
+                    r.HeartCount,
+                    r.TasteAverage,
+                    r.DifficultyAverage
+                )).ToList()
+            ))
+            .FirstOrDefaultAsync();
 
             if (country == null) return NotFound();
 
