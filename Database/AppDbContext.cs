@@ -39,11 +39,15 @@ namespace foodtopia.Database
             modelBuilder.Entity<Ingredient>().HasData(IngredientSeed.GetIngredients());
             modelBuilder.Entity<Instruction>().HasData(InstructionSeed.GetInstructions());
 
-            // modelBuilder.Entity<Recipe>()
-            //     .HasOne(r => r.CountryOrigin) // Navigation property
-            //     .WithMany(c => c.Recipes)    // Reverse navigation property
-            //     .HasForeignKey(r => r.CountryId)
-            //     .HasPrincipalKey(c => c.Name);
+
+            modelBuilder.Entity<Recipe>()
+                .HasOne(r => r.Country)
+                .WithMany(c => c.Recipes)
+                .HasForeignKey(r => r.CountryId);
+
+            modelBuilder.Entity<Country>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)

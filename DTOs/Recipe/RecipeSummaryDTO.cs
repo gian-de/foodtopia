@@ -1,3 +1,8 @@
+using foodtopia.DTOs.Country;
+using foodtopia.DTOs.Ingredient;
+using foodtopia.DTOs.Instruction;
+using foodtopia.DTOs.Rating;
+using foodtopia.DTOs.User;
 using foodtopia.Models;
 
 namespace foodtopia.Dtos.Recipe
@@ -6,7 +11,6 @@ namespace foodtopia.Dtos.Recipe
     (
         Guid Id,
         string Name,
-        Guid CountryId,
         string ImageUrl,
         int HeartCount,
         decimal TasteAverage,
@@ -14,11 +18,11 @@ namespace foodtopia.Dtos.Recipe
         int TasteReviewCount,
         int DifficultyReviewCount,
         DateTime PublishedAt,
-        User User,
-        ICollection<Ingredient> Ingredients,
-        ICollection<Instruction> Instructions,
-        ICollection<Rating> Ratings,
-        // add as num next to heart icon
-        ICollection<HeartedRecipe> HeartedByUsersCount
+        UserTldrDTO? User,
+        Guid CountryId,
+        CountryDTO Country,
+        ICollection<IngredientDTO> Ingredients,
+        ICollection<InstructionDTO> Instructions,
+        ICollection<RatingDTO>? Ratings
     );
 }

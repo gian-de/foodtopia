@@ -8,8 +8,8 @@ namespace foodtopia.DTOs.Recipe
         string Name,
         Guid CountryId,
         string ImageUrl,
-        int HeartCount,
         decimal TasteAverage,
-        decimal DifficultyAverage
+        decimal DifficultyAverage,
+        int HeartCount
     );
 }

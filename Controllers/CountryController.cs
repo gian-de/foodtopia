@@ -21,6 +21,8 @@ namespace foodtopia.Controllers
         {
             var countries = await _context.Countries
                 .Include(c => c.Recipes)
+                .ThenInclude(r => r.HeartedByUsers) // Include Recipes's other foreign key relationship
+                .OrderBy(c => c.Name)
                 .Select(c => new CountryDTO
                 (
                     c.Id,
@@ -33,9 +35,9 @@ namespace foodtopia.Controllers
                         r.Name,
                         r.CountryId,
                         r.ImageUrl,
-                        r.HeartCount,
-                        r.TasteReviewCount,
-                        r.DifficultyReviewCount
+                        r.TasteAverage,
+                        r.DifficultyAverage,
+                        r.HeartedByUsers != null ? r.HeartedByUsers.Count : 0
                     )).ToList()
                 ))
                 .ToListAsync();
@@ -48,6 +50,7 @@ namespace foodtopia.Controllers
         {
             var country = await _context.Countries
             .Include(c => c.Recipes)
+            .ThenInclude(r => r.HeartedByUsers) // Include Recipes's other foreign key relationship
             .Where(c => c.Slug == slug)
             .Select(c => new CountryDTO
             (
@@ -61,9 +64,9 @@ namespace foodtopia.Controllers
                     r.Name,
                     r.CountryId,
                     r.ImageUrl,
-                    r.HeartCount,
                     r.TasteAverage,
-                    r.DifficultyAverage
+                    r.DifficultyAverage,
+                    r.HeartedByUsers != null ? r.HeartedByUsers.Count : 0
                 )).ToList()
             ))
             .FirstOrDefaultAsync();
