@@ -1,4 +1,5 @@
 using foodtopia.Database;
+using foodtopia.Dtos.Recipe;
 using foodtopia.Mappings.Recipes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace foodtopia.Controllers
             .Include(r => r.Country)
             .Include(r => r.User)
             .Include(r => r.Ingredients)
-            .Include(r => r.Instructions)
+            .Include(r => r.Instructions.OrderBy(ins => ins.Order))
             .Include(r => r.Ratings)
             .ToListAsync();
 
