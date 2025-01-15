@@ -33,13 +33,23 @@ namespace foodtopia.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetOne([FromRoute] int id)
+        public async Task<IActionResult> GetOne([FromRoute] Guid id)
         {
-            var recipe = _context.Recipes.Find(id);
 
-            if (recipe == null) return NotFound();
+            var recipe = await _context.Recipes
+            .Where(r => r.Id == id)
+            .Include(r => r.Country)
+            .Include(r => r.User)
+            .Include(r => r.Ingredients)
+            .Include(r => r.Instructions.OrderBy(ins => ins.Order))
+            .Include(r => r.Ratings)
+            .FirstOrDefaultAsync();
 
-            return Ok(recipe);
+            if (recipe == null) return NotFound(new { Message = $"Recipe with id {id} was not found." });
+
+            var recipeDTO = recipe.ToRecipeSummaryDTO();
+
+            return Ok(recipeDTO);
         }
     }
 }
