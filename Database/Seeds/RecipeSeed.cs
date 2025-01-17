@@ -50,7 +50,7 @@ namespace foodtopia.Database.Seeds
                 },
                 new Recipe
                 {
-                    Id = RecipeSeedUUID.PeckingDuck,
+                    Id = RecipeSeedUUID.PekingDuck,
                     Name = "Peking Duck",
                     UserId = null,
                     CountryId = CountrySeedUUID.China,
@@ -74,7 +74,7 @@ namespace foodtopia.Database.Seeds
                     Name = "Feijoada",
                     UserId = null,
                     CountryId = CountrySeedUUID.Brazil,
-                    ImageUrl = "images/recipes/feijoada.jpg",
+                    ImageUrl = "images/recipes/feijoada.png",
                     Ingredients = new List<Ingredient>(),
                     Instructions = new List<Instruction>()
                 },
@@ -114,7 +114,7 @@ namespace foodtopia.Database.Seeds
                     Name = "Ceviche",
                     UserId = null,
                     CountryId = CountrySeedUUID.Peru,
-                    ImageUrl = "images/recipes/ceviche.jpg",
+                    ImageUrl = "images/recipes/ceviche.jpeg",
                     Ingredients = new List<Ingredient>(),
                     Instructions = new List<Instruction>()
                 },

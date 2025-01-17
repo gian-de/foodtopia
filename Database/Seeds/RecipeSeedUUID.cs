@@ -4,7 +4,7 @@ public static class RecipeSeedUUID
     public static readonly Guid ClassicCheeseburger = Guid.Parse("2b53f900-d736-4393-a585-1f6624c177b2");
     public static readonly Guid TacosAlPastor = Guid.Parse("bc259740-607d-4a1d-9347-c38713669a6c");
     public static readonly Guid ChickenBiryani = Guid.Parse("6792204d-6f00-4a94-923b-1a93564f4c49");
-    public static readonly Guid PeckingDuck = Guid.Parse("89d816e6-a468-42c9-91a2-ead8fb21fe4c");
+    public static readonly Guid PekingDuck = Guid.Parse("89d816e6-a468-42c9-91a2-ead8fb21fe4c");
     public static readonly Guid BeefStroganoff = Guid.Parse("9ae1f555-9bc4-498f-817d-e8c76f2095b0");
     public static readonly Guid Feijoada = Guid.Parse("ba2a4db4-bbe5-4dde-a153-e46885b8c7c0");
     public static readonly Guid Sushi = Guid.Parse("c0f46fa1-463f-47c4-a17f-02c8c417882a");

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using foodtopia.Database;
@@ -11,9 +12,11 @@ using foodtopia.Database;
 namespace foodtopia.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250116200317_SeedDataCountryGuidAndRecipes2")]
+    partial class SeedDataCountryGuidAndRecipes2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2150,7 +2153,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/low_calorie_pizza.jpg",
                             Name = "Low calorie pizza",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(3420),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(6100),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2162,7 +2165,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/classic_cheeseburger.jpg",
                             Name = "Classic Cheeseburger",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5330),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8930),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2174,7 +2177,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/tacos_al_pastor.jpg",
                             Name = "Tacos al Pastor",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5330),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8930),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2186,7 +2189,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/chicken_biryani.jpg",
                             Name = "Chicken Biryani",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5330),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8930),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2198,7 +2201,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/peking_duck.jpg",
                             Name = "Peking Duck",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5340),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8930),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2210,7 +2213,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/beef_stroganoff.jpg",
                             Name = "Beef Stroganoff",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5340),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8950),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2220,9 +2223,9 @@ namespace foodtopia.Migrations
                             CountryId = new Guid("64c7e557-7a14-454b-97c5-bbcf4cb274dd"),
                             DifficultyAverage = 0m,
                             DifficultyReviewCount = 0,
-                            ImageUrl = "images/recipes/feijoada.png",
+                            ImageUrl = "images/recipes/feijoada.jpg",
                             Name = "Feijoada",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5340),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8950),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2234,7 +2237,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/sushi.jpg",
                             Name = "Sushi",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5340),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8950),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2246,7 +2249,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/pad_thai.jpg",
                             Name = "Pad Thai",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5340),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8950),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2258,7 +2261,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/pho.jpg",
                             Name = "Pho",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5350),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8950),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2268,9 +2271,9 @@ namespace foodtopia.Migrations
                             CountryId = new Guid("ca309321-8afa-468f-8ace-8027b519e2dc"),
                             DifficultyAverage = 0m,
                             DifficultyReviewCount = 0,
-                            ImageUrl = "images/recipes/ceviche.jpeg",
+                            ImageUrl = "images/recipes/ceviche.jpg",
                             Name = "Ceviche",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5350),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8960),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2282,7 +2285,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/kebab.jpg",
                             Name = "Kebab",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5360),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8960),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2294,7 +2297,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/butter_chicken.jpg",
                             Name = "Butter Chicken",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5360),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8960),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2306,7 +2309,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/bobotie.jpg",
                             Name = "Bobotie",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5360),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8960),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2318,7 +2321,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/kimchi.jpg",
                             Name = "Kimchi",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5360),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8960),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2330,7 +2333,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/pierogi.jpg",
                             Name = "Pierogi",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5360),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8960),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2342,7 +2345,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/fish_and_chips.jpg",
                             Name = "Fish and Chips",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5360),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8960),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2354,7 +2357,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/moussaka.jpg",
                             Name = "Moussaka",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5370),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8970),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2366,7 +2369,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/lasagna.jpg",
                             Name = "Lasagna",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5370),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8970),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2378,7 +2381,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/croissant.jpg",
                             Name = "Croissant",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5370),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8970),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2390,7 +2393,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/shawarma.jpg",
                             Name = "Shawarma",
-                            PublishedAt = new DateTime(2025, 1, 17, 5, 38, 35, 762, DateTimeKind.Utc).AddTicks(5370),
+                            PublishedAt = new DateTime(2025, 1, 16, 20, 3, 16, 194, DateTimeKind.Utc).AddTicks(8970),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         });
