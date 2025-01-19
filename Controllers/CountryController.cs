@@ -20,7 +20,7 @@ namespace foodtopia.Controllers
         public async Task<IActionResult> GetAll()
         {
             var countries = await _context.Countries
-                .Include(c => c.Recipes)
+                .Include(c => c.Recipes!)
                 .ThenInclude(r => r.HeartedByUsers) // Include Recipes's other foreign key relationship
                 .OrderBy(c => c.Name)
                 .Select(c => new CountryDTO
@@ -29,7 +29,8 @@ namespace foodtopia.Controllers
                     c.Name,
                     c.Slug,
                     c.ImagePath,
-                    c.Recipes.Select(r => new RecipeTldrDTO
+                    c.Recipes != null
+                    ? c.Recipes.Select(r => new RecipeTldrDTO
                     (
                         r.Id,
                         r.Name,
@@ -39,6 +40,7 @@ namespace foodtopia.Controllers
                         r.DifficultyAverage,
                         r.HeartedByUsers != null ? r.HeartedByUsers.Count : 0
                     )).ToList()
+                    : new List<RecipeTldrDTO>()
                 ))
                 .ToListAsync();
 
@@ -49,7 +51,7 @@ namespace foodtopia.Controllers
         public async Task<IActionResult> GetOne([FromRoute] string slug)
         {
             var country = await _context.Countries
-            .Include(c => c.Recipes)
+            .Include(c => c.Recipes!)
             .ThenInclude(r => r.HeartedByUsers) // Include Recipes's other foreign key relationship
             .Where(c => c.Slug == slug)
             .Select(c => new CountryDTO

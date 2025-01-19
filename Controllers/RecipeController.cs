@@ -20,12 +20,12 @@ namespace foodtopia.Controllers
         public async Task<IActionResult> GetAll()
         {
             var recipes = await _context.Recipes
-            .Include(r => r.Country)
-            .Include(r => r.User)
-            .Include(r => r.Ingredients)
-            .Include(r => r.Instructions.OrderBy(ins => ins.Order))
-            .Include(r => r.Ratings)
-            .ToListAsync();
+                .Include(r => r.Country)
+                .Include(r => r.User)
+                .Include(r => r.Ingredients)
+                .Include(r => r.Instructions.OrderBy(ins => ins.Order))
+                .Include(r => r.Ratings)
+                .ToListAsync();
 
             var recipeDTOs = recipes.Select(r => r.ToRecipeSummaryDTO()).ToList();
 
