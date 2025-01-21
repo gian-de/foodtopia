@@ -1,6 +1,7 @@
 using foodtopia.Database;
 using foodtopia.Dtos.Recipe;
 using foodtopia.Mappings.Recipes;
+using foodtopia.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,19 +18,38 @@ namespace foodtopia.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var recipes = await _context.Recipes
+            if (page < 1 || pageSize < 1) return BadRequest(new { Message = "Page and or Page size must be greater than 0." });
+
+            var totalRecipes = await _context.Recipes.CountAsync();
+
+            var recipesDTOs = await _context.Recipes
                 .Include(r => r.Country)
                 .Include(r => r.User)
                 .Include(r => r.Ingredients)
                 .Include(r => r.Instructions.OrderBy(ins => ins.Order))
                 .Include(r => r.Ratings)
+                .OrderBy(r => r.PublishedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(r => r.ToRecipeSummaryDTO())
                 .ToListAsync();
 
-            var recipeDTOs = recipes.Select(r => r.ToRecipeSummaryDTO()).ToList();
+            // var recipeDTOs = recipes.Select(r => r.ToRecipeSummaryDTO()).ToList();
 
-            return Ok(recipeDTOs);
+            var response = new
+            {
+                TotalCount = totalRecipes,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalRecipes / (double)pageSize),
+                Recipes = recipesDTOs
+            };
+
+            return Ok(response);
         }
 
         [HttpGet("{id}")]

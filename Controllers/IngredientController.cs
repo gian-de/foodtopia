@@ -41,7 +41,7 @@ namespace foodtopia.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            if (recipes == null) return NotFound(new { Message = $"No recipes found..." });
+            if (!recipes.Any()) return NotFound(new { Message = $"No recipes found..." });
 
             var recipeDTOs = recipes.Select(r => r.ToRecipeSummaryDTO()).ToList();
 
