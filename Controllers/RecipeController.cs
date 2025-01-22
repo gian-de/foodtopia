@@ -20,25 +20,45 @@ namespace foodtopia.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(
             [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "PublishedAt",
+            [FromQuery] string sortDirection = "desc")
         {
             if (page < 1 || pageSize < 1) return BadRequest(new { Message = "Page and or Page size must be greater than 0." });
 
-            var totalRecipes = await _context.Recipes.CountAsync();
+            var isDescending = sortDirection.ToLower() == "desc";
 
-            var recipesDTOs = await _context.Recipes
+            var query = _context.Recipes
                 .Include(r => r.Country)
                 .Include(r => r.User)
                 .Include(r => r.Ingredients)
                 .Include(r => r.Instructions.OrderBy(ins => ins.Order))
                 .Include(r => r.Ratings)
-                .OrderBy(r => r.PublishedAt)
+                .AsQueryable();
+
+            query = sortBy.ToLower() switch
+            {
+                "heartedbyusers" => isDescending
+                    ? query.OrderByDescending(r => r.HeartedByUsers.Count)
+                    : query.OrderBy(r => r.HeartedByUsers.Count),
+                "tasteaverage" => isDescending
+                    ? query.OrderByDescending(r => r.Ratings.Average(rt => rt.TasteRating))
+                    : query.OrderBy(r => r.Ratings.Average(rt => rt.TasteRating)),
+                "difficultyaverage" => isDescending
+                    ? query.OrderByDescending(r => r.Ratings.Average(rt => rt.DifficultyRating))
+                    : query.OrderBy(r => r.Ratings.Average(rt => rt.DifficultyRating)),
+                _ => isDescending
+                    ? query.OrderByDescending(r => r.PublishedAt)
+                    : query.OrderBy(r => r.PublishedAt)
+            };
+
+
+            var totalRecipes = await query.CountAsync();
+            var recipesDTOs = await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(r => r.ToRecipeSummaryDTO())
                 .ToListAsync();
-
-            // var recipeDTOs = recipes.Select(r => r.ToRecipeSummaryDTO()).ToList();
 
             var response = new
             {

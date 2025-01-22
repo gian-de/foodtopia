@@ -27,7 +27,7 @@ namespace foodtopia.Controllers
             var lowercaseIngredients = ingredients.Select(i => i.ToLower()).ToArray();
 
             var totalRecipes = await _context.Recipes
-                .Where(r => lowercaseIngredients.All(ing => r.Ingredients.Any(i => i.Name.Contains(ing))))
+                .Where(r => lowercaseIngredients.All(ing => r.Ingredients.Any(i => i.Name.ToLower().Contains(ing))))
                 .CountAsync();
 
             var recipes = await _context.Recipes
