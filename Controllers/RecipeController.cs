@@ -1,7 +1,6 @@
 using foodtopia.Database;
-using foodtopia.Dtos.Recipe;
+using foodtopia.DTOs.Recipe;
 using foodtopia.Mappings.Recipes;
-using foodtopia.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -73,7 +72,7 @@ namespace foodtopia.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOne([FromRoute] Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
 
             var recipe = await _context.Recipes
@@ -90,6 +89,25 @@ namespace foodtopia.Controllers
             var recipeDTO = recipe.ToRecipeSummaryDTO();
 
             return Ok(recipeDTO);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateRecipe([FromBody] CreateRecipeRequestDTO recipeRequestDTO)
+        {
+            if (!ModelState.IsValid) return BadRequest(new { Message = "Invalid request data." });
+
+            var country = await _context.Countries.FindAsync(recipeRequestDTO.CountryId);
+            if (country == null) return NotFound(new { Message = "Country associated couldn't be found." });
+
+            // TODO User auth check
+
+            var recipeModel = recipeRequestDTO.ToRecipeFromCreateDTO();
+            _context.Recipes.Add(recipeModel);
+            await _context.SaveChangesAsync();
+
+            var recipeResponseDTO = recipeModel.ToRecipeSummaryDTO();
+
+            return CreatedAtAction(nameof(GetById), new { id = recipeModel.Id }, recipeResponseDTO);
         }
     }
 }

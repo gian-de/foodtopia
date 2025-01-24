@@ -9,8 +9,8 @@ namespace foodtopia.Models
 
         [Required(ErrorMessage = "Cannot be left blank.")]
         [StringLength(600, MinimumLength = 3, ErrorMessage = "Must be longer than 3 and shorter than 600 characters.")]
-        public required string Step { get; set; }
         public required int Order { get; set; }
+        public required string Step { get; set; }
         public Recipe? Recipe { get; set; }
     }
 }

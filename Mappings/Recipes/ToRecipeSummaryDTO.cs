@@ -38,7 +38,7 @@ namespace foodtopia.Mappings.Recipes
                     Recipes: null
                 ),
                 Ingredients: recipeModel.Ingredients.Select(ing => new IngredientDTO(ing.Id, ing.Name, ing.Quantity, ing.Measurement)).ToList(),
-                Instructions: recipeModel.Instructions.Select(inst => new InstructionDTO(inst.Id, inst.Step, inst.Order)).ToList(),
+                Instructions: recipeModel.Instructions.Select(inst => new InstructionDTO(inst.Id, inst.Order, inst.Step)).ToList(),
                 Ratings: recipeModel.Ratings?.Select(r => new RatingDTO(
                                                         r.Id,
                                                         r.TasteRating,
