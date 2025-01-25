@@ -3,7 +3,7 @@ using foodtopia.DTOs.Instruction;
 
 namespace foodtopia.DTOs.Recipe
 {
-    public class CreateRecipeRequestDTO
+    public class RecipeCreateRequestDTO
     {
         public string Name { get; set; }
         public Guid CountryId { get; set; }

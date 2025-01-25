@@ -5,7 +5,7 @@ namespace foodtopia.Mappings.Recipes
 {
     public static class RecipeCreate
     {
-        public static Recipe ToRecipeFromCreateDTO(this CreateRecipeRequestDTO recipeRequestDTO)
+        public static Recipe ToRecipeFromCreateDTO(this RecipeCreateRequestDTO recipeRequestDTO)
         {
             return new Recipe
             {
@@ -23,7 +23,7 @@ namespace foodtopia.Mappings.Recipes
                 Instructions = recipeRequestDTO.Instructions.Select(ins => new Instruction
                 {
                     Order = ins.Order,
-                    Step = ins.Step
+                    Text = ins.Text
                 }).ToList()
             };
         }

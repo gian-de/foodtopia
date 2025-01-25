@@ -4,6 +4,6 @@ namespace foodtopia.DTOs.Instruction
     (
         Guid Id,
         int Order,
-        string Step
+        string Text
     );
 }

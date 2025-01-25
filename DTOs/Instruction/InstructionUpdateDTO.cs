@@ -1,6 +1,6 @@
 namespace foodtopia.DTOs.Instruction
 {
-    public record InstructionCreateDTO
+    public record InstructionUpdateDTO
     (
         int Order,
         string Text

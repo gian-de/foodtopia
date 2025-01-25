@@ -1,6 +1,7 @@
 using foodtopia.Database;
 using foodtopia.DTOs.Recipe;
 using foodtopia.Mappings.Recipes;
+using foodtopia.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -92,7 +93,7 @@ namespace foodtopia.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateRecipe([FromBody] CreateRecipeRequestDTO recipeRequestDTO)
+        public async Task<IActionResult> CreateRecipe([FromBody] RecipeCreateRequestDTO recipeRequestDTO)
         {
             if (!ModelState.IsValid) return BadRequest(new { Message = "Invalid request data." });
 
@@ -108,6 +109,104 @@ namespace foodtopia.Controllers
             var recipeResponseDTO = recipeModel.ToRecipeSummaryDTO();
 
             return CreatedAtAction(nameof(GetById), new { id = recipeModel.Id }, recipeResponseDTO);
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateRecipe(Guid id, [FromBody] RecipeUpdateRequestDTO recipeRequest)
+        {
+            if (recipeRequest == null) return BadRequest(new { Message = "Recipe data is required." });
+
+            var recipeModel = await _context.Recipes
+                .Include(r => r.Instructions)
+                .Include(r => r.Instructions)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (recipeModel == null) return NotFound(new { Message = $"Recipe with Id {id} was not found." });
+
+            // Check fields provided in recipeRequest, if true -> update 
+            if (!string.IsNullOrWhiteSpace(recipeRequest.Name))
+            {
+                recipeModel.Name = recipeRequest.Name;
+            }
+
+            if (recipeRequest.CountryId.HasValue && recipeRequest.CountryId.Value != recipeModel.CountryId)
+            {
+                // check if CountryId exists
+                var countryExists = await _context.Countries.AnyAsync(c => c.Id == recipeRequest.CountryId.Value);
+
+                if (!countryExists) return BadRequest(new { Message = $"Country Id provided does not exist: {recipeRequest.CountryId.Value}" });
+
+                recipeModel.CountryId = recipeRequest.CountryId.Value;
+            }
+
+            if (!string.IsNullOrWhiteSpace(recipeRequest.ImageUrl))
+            {
+                recipeModel.ImageUrl = recipeRequest.ImageUrl;
+            }
+
+            if (recipeRequest.Ingredients != null && recipeRequest.Ingredients.Any())
+            {
+                _context.Ingredients.RemoveRange(recipeModel.Ingredients);
+                // map requestDTO to recipeModel -> insert to db
+                recipeModel.Ingredients = recipeRequest.Ingredients.Select(ing => new Ingredient
+                {
+                    Name = ing.Name,
+                    Quantity = ing.Quantity,
+                    Measurement = ing.Measurement
+                }).ToList();
+            }
+
+            if (recipeRequest.Instructions != null && recipeRequest.Instructions.Any())
+            {
+                _context.Instructions.RemoveRange(recipeModel.Instructions);
+                // map requestDTO to recipeModel -> insert to db
+                recipeModel.Instructions = recipeRequest.Instructions.Select(ins => new Instruction
+                {
+                    Order = ins.Order,
+                    Text = ins.Text
+                }).ToList();
+            }
+
+            await _context.SaveChangesAsync();
+
+            // refetch the updated Recipe
+            var updatedRecipeModel = await _context.Recipes
+                .Include(r => r.Country)
+                .Include(r => r.User)
+                .Include(r => r.Ingredients)
+                .Include(r => r.Instructions.OrderBy(ins => ins.Order))
+                .Include(r => r.Ratings)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            // map updated Recipe Model back to DTO
+            var updatedRecipeDTO = updatedRecipeModel?.ToRecipeSummaryDTO();
+
+            return Ok(updatedRecipeDTO);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRecipe(Guid id)
+        {
+            var recipeModel = await _context.Recipes
+                .Include(r => r.Country)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (recipeModel == null) return NotFound(new { Message = $"Recipe with ID {id} was not found." });
+
+            _context.Recipes.Remove(recipeModel);
+            await _context.SaveChangesAsync();
+
+            var deletedRecipeDTO = new RecipeDeleteDTO
+            (
+                recipeModel.Name,
+                recipeModel.Country!.Name
+            );
+
+            return Ok(new
+            {
+                Message = "Recipe successfully deleted.",
+                DeletedRecipe = deletedRecipeDTO
+            });
         }
     }
 }
