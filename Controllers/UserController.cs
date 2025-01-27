@@ -1,5 +1,3 @@
-
-
 using foodtopia.Database;
 using Microsoft.AspNetCore.Mvc;
 

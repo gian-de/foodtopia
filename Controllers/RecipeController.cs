@@ -18,7 +18,7 @@ namespace foodtopia.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(
+        public async Task<IActionResult> GetAllRecipes(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
             [FromQuery] string sortBy = "PublishedAt",
@@ -72,8 +72,8 @@ namespace foodtopia.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetRecipeById([FromRoute] Guid id)
         {
 
             var recipe = await _context.Recipes
@@ -85,7 +85,7 @@ namespace foodtopia.Controllers
             .Include(r => r.Ratings)
             .FirstOrDefaultAsync();
 
-            if (recipe == null) return NotFound(new { Message = $"Recipe with id {id} was not found." });
+            if (recipe is null) return NotFound(new { Message = $"Recipe with id {id} was not found." });
 
             var recipeDTO = recipe.ToRecipeSummaryDTO();
 
@@ -98,7 +98,7 @@ namespace foodtopia.Controllers
             if (!ModelState.IsValid) return BadRequest(new { Message = "Invalid request data." });
 
             var country = await _context.Countries.FindAsync(recipeRequestDTO.CountryId);
-            if (country == null) return NotFound(new { Message = "Country associated couldn't be found." });
+            if (country is null) return NotFound(new { Message = "Country associated couldn't be found." });
 
             // TODO User auth check
 
@@ -108,20 +108,20 @@ namespace foodtopia.Controllers
 
             var recipeResponseDTO = recipeModel.ToRecipeSummaryDTO();
 
-            return CreatedAtAction(nameof(GetById), new { id = recipeModel.Id }, recipeResponseDTO);
+            return CreatedAtAction(nameof(GetRecipeById), new { id = recipeModel.Id }, recipeResponseDTO);
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateRecipe(Guid id, [FromBody] RecipeUpdateRequestDTO recipeRequest)
+        public async Task<IActionResult> UpdateRecipe([FromRoute] Guid id, [FromBody] RecipeUpdateRequestDTO recipeRequest)
         {
-            if (recipeRequest == null) return BadRequest(new { Message = "Recipe data is required." });
+            if (recipeRequest is null) return BadRequest(new { Message = "Recipe data is required." });
 
             var recipeModel = await _context.Recipes
                 .Include(r => r.Instructions)
                 .Include(r => r.Instructions)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
-            if (recipeModel == null) return NotFound(new { Message = $"Recipe with Id {id} was not found." });
+            if (recipeModel is null) return NotFound(new { Message = $"Recipe with Id {id} was not found." });
 
             // Check fields provided in recipeRequest, if true -> update 
             if (!string.IsNullOrWhiteSpace(recipeRequest.Name))
@@ -156,7 +156,7 @@ namespace foodtopia.Controllers
                 }).ToList();
             }
 
-            if (recipeRequest.Instructions != null && recipeRequest.Instructions.Any())
+            if (recipeRequest.Instructions != null && recipeRequest.Instructions.Count() > 0)
             {
                 _context.Instructions.RemoveRange(recipeModel.Instructions);
                 // map requestDTO to recipeModel -> insert to db
@@ -184,14 +184,14 @@ namespace foodtopia.Controllers
             return Ok(updatedRecipeDTO);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRecipe(Guid id)
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteRecipe([FromRoute] Guid id)
         {
             var recipeModel = await _context.Recipes
                 .Include(r => r.Country)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
-            if (recipeModel == null) return NotFound(new { Message = $"Recipe with ID {id} was not found." });
+            if (recipeModel is null) return NotFound(new { Message = $"Recipe with ID {id} was not found." });
 
             _context.Recipes.Remove(recipeModel);
             await _context.SaveChangesAsync();

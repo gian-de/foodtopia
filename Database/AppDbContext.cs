@@ -2,10 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using foodtopia.Models;
 using foodtopia.Database.Seeds;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace foodtopia.Database
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<AppUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
