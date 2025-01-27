@@ -3,9 +3,8 @@ using foodtopia.DTOs.Ingredient;
 using foodtopia.DTOs.Instruction;
 using foodtopia.DTOs.Rating;
 using foodtopia.DTOs.User;
-using foodtopia.Models;
 
-namespace foodtopia.Dtos.Recipe
+namespace foodtopia.DTOs.Recipe
 {
     public record RecipeSummaryDTO
     (

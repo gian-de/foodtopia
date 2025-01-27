@@ -1,8 +1,8 @@
-using foodtopia.Dtos.Recipe;
 using foodtopia.DTOs.Country;
 using foodtopia.DTOs.Ingredient;
 using foodtopia.DTOs.Instruction;
 using foodtopia.DTOs.Rating;
+using foodtopia.DTOs.Recipe;
 using foodtopia.DTOs.User;
 using foodtopia.Models;
 
@@ -31,7 +31,7 @@ namespace foodtopia.Mappings.Recipes
                     : null,
                 CountryId: recipeModel.CountryId,
                 Country: new CountryDTO(
-                    Id: recipeModel.Country.Id,
+                    Id: recipeModel.Country!.Id,
                     Name: recipeModel.Country.Name,
                     Slug: recipeModel.Country.Slug,
                     ImagePath: recipeModel.Country.ImagePath,
