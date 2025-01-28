@@ -1,5 +1,6 @@
 using foodtopia.Database;
 using foodtopia.DTOs.Recipe;
+using foodtopia.Helpers;
 using foodtopia.Mappings.Recipes;
 using foodtopia.Models;
 using Microsoft.EntityFrameworkCore;
@@ -12,14 +13,6 @@ namespace foodtopia.Services
         public RecipeService(AppDbContext context)
         {
             _context = context;
-        }
-        public class PagedResult<T>
-        {
-            public int TotalCount { get; set; }
-            public int CurrentPage { get; set; }
-            public int PageSize { get; set; }
-            public int TotalPages { get; set; }
-            public List<T> Items { get; set; }
         }
         public async Task<PagedResult<RecipeSummaryDTO>> GetAllRecipesAsync(
             int page,
@@ -69,7 +62,7 @@ namespace foodtopia.Services
                 CurrentPage = page,
                 PageSize = pageSize,
                 TotalPages = (int)Math.Ceiling(totalRecipes / (double)pageSize),
-                Items = recipesDTOs
+                Results = recipesDTOs
             };
         }
 

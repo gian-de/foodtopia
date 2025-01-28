@@ -56,6 +56,7 @@ builder.Services.AddAuthentication(options =>
 );
 
 builder.Services.AddScoped<RecipeService>();
+builder.Services.AddScoped<IngredientService>();
 
 builder.Services.AddControllers();
 
@@ -64,8 +65,8 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins("http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 
