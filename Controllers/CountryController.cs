@@ -1,6 +1,6 @@
-using foodtopia.Database;
 using foodtopia.DTOs.Country;
 using foodtopia.DTOs.Recipe;
+using foodtopia.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,72 +10,31 @@ namespace foodtopia.Controllers
     [ApiController]
     public class CountryController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public CountryController(AppDbContext context)
+        private readonly CountryService _countryService;
+        public CountryController(CountryService countryService)
         {
-            _context = context;
+            _countryService = countryService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var countries = await _context.Countries
-                .Include(c => c.Recipes!)
-                .ThenInclude(r => r.HeartedByUsers) // Include Recipes's other foreign key relationship
-                .OrderBy(c => c.Name)
-                .Select(c => new CountryDTO
-                (
-                    c.Id,
-                    c.Name,
-                    c.Slug,
-                    c.ImagePath,
-                    c.Recipes != null
-                    ? c.Recipes.Select(r => new RecipeTldrDTO
-                    (
-                        r.Id,
-                        r.Name,
-                        r.CountryId,
-                        r.ImageUrl,
-                        r.TasteAverage,
-                        r.DifficultyAverage,
-                        r.HeartedByUsers != null ? r.HeartedByUsers.Count : 0
-                    )).ToList()
-                    : new List<RecipeTldrDTO>()
-                ))
-                .ToListAsync();
-
+            var countries = await _countryService.GetAllCountriesAsync();
             return Ok(countries);
         }
 
         [HttpGet("{slug}")]
         public async Task<IActionResult> GetOne([FromRoute] string slug)
         {
-            var country = await _context.Countries
-            .Include(c => c.Recipes!)
-            .ThenInclude(r => r.HeartedByUsers) // Include Recipes's other foreign key relationship
-            .Where(c => c.Slug == slug)
-            .Select(c => new CountryDTO
-            (
-                c.Id,
-                c.Name,
-                c.Slug,
-                c.ImagePath,
-                c.Recipes.Select(r => new RecipeTldrDTO
-                (
-                    r.Id,
-                    r.Name,
-                    r.CountryId,
-                    r.ImageUrl,
-                    r.TasteAverage,
-                    r.DifficultyAverage,
-                    r.HeartedByUsers != null ? r.HeartedByUsers.Count : 0
-                )).ToList()
-            ))
-            .FirstOrDefaultAsync();
-
-            if (country == null) return NotFound();
-
-            return Ok(country);
+            try
+            {
+                var country = await _countryService.GetCountryBySlugAsync(slug);
+                return Ok(country);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
         }
     }
 }

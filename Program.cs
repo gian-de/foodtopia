@@ -55,6 +55,7 @@ builder.Services.AddAuthentication(options =>
 }
 );
 
+builder.Services.AddScoped<CountryService>();
 builder.Services.AddScoped<RecipeService>();
 builder.Services.AddScoped<IngredientService>();
 
