@@ -3,6 +3,7 @@ using foodtopia.Models;
 using foodtopia.Database.Seeds;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace foodtopia.Database
 {
@@ -22,7 +23,7 @@ namespace foodtopia.Database
         {
             base.OnModelCreating(modelBuilder);
 
-
+            modelBuilder.Entity<IdentityRole>().HasData(RoleSeed.GetRoles());
 
             var deletedUserGuid = Guid.Parse("00000000-0000-0000-0000-000000000001"); // Well-known GUID for "Deleted" user
                                                                                       // Special user to represent deleted users and not leave data orphaned

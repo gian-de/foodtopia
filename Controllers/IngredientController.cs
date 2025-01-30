@@ -1,9 +1,9 @@
-using foodtopia.Database;
 using foodtopia.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace foodtopia.Controllers
 {
+    [Route("api/")]
     [ApiController]
     public class IngredientController : ControllerBase
     {
@@ -14,7 +14,7 @@ namespace foodtopia.Controllers
         }
 
 
-        [HttpGet("api/search-by-ingredients")]
+        [HttpGet("search-by-ingredients")]
         public async Task<IActionResult> SearchByIngredients(
             [FromQuery] string[] ingredients,
             [FromQuery] int page = 1,
