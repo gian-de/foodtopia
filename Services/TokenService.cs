@@ -14,7 +14,10 @@ namespace foodtopia.Services
         public TokenService(IConfiguration config)
         {
             _config = config;
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]));
+
+            var signingKey = Environment.GetEnvironmentVariable("JWT_SIGNING_KEY");
+
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
         }
         public string CreateToken(AppUser user)
         {

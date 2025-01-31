@@ -9,8 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 DotNetEnv.Env.Load();
-var signingKey = Environment.GetEnvironmentVariable("JWT_SIGNING_KEY");
-if (string.IsNullOrEmpty(signingKey)) throw new Exception("JWT_SIGNING_KEY env variable in not set.");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,17 +41,20 @@ builder.Services.AddAuthentication(options =>
     options.DefaultSignInScheme =
     options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidIssuer = builder.Configuration["JWT:Issuer"],
-        ValidAudience = builder.Configuration["JWT:Audience"],
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey))
-    };
-}
+        var signingKey = Environment.GetEnvironmentVariable("JWT_SIGNING_KEY");
+        if (string.IsNullOrEmpty(signingKey)) throw new Exception("JWT_SIGNING_KEY env variable in not set.");
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey))
+        };
+    }
 );
 
 builder.Services.AddScoped<ITokenService, TokenService>();
