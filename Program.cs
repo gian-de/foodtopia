@@ -1,5 +1,6 @@
 using System.Text;
 using foodtopia.Database;
+using foodtopia.Interfaces;
 using foodtopia.Models;
 using foodtopia.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -54,6 +55,8 @@ builder.Services.AddAuthentication(options =>
     };
 }
 );
+
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddScoped<CountryService>();
 builder.Services.AddScoped<RecipeService>();

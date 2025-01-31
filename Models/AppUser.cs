@@ -4,6 +4,6 @@ namespace foodtopia.Models
 {
     public class AppUser : IdentityUser
     {
-        
+
     }
 }
