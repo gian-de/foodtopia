@@ -1,5 +1,6 @@
 using foodtopia.DTOs.Recipe;
 using foodtopia.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace foodtopia.Controllers
