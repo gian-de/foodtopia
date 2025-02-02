@@ -1,4 +1,4 @@
-using foodtopia.Services;
+using foodtopia.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace foodtopia.Controllers
@@ -7,8 +7,8 @@ namespace foodtopia.Controllers
     [ApiController]
     public class CountryController : ControllerBase
     {
-        private readonly CountryService _countryService;
-        public CountryController(CountryService countryService)
+        private readonly ICountryService _countryService;
+        public CountryController(ICountryService countryService)
         {
             _countryService = countryService;
         }

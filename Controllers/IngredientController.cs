@@ -1,4 +1,4 @@
-using foodtopia.Services;
+using foodtopia.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace foodtopia.Controllers
@@ -7,8 +7,8 @@ namespace foodtopia.Controllers
     [ApiController]
     public class IngredientController : ControllerBase
     {
-        private readonly IngredientService _ingredientService;
-        public IngredientController(IngredientService ingredientService)
+        private readonly IIngredientService _ingredientService;
+        public IngredientController(IIngredientService ingredientService)
         {
             _ingredientService = ingredientService;
         }

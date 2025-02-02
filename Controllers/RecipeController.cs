@@ -1,6 +1,5 @@
 using foodtopia.DTOs.Recipe;
-using foodtopia.Services;
-using Microsoft.AspNetCore.Authorization;
+using foodtopia.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace foodtopia.Controllers
@@ -9,8 +8,8 @@ namespace foodtopia.Controllers
     [ApiController]
     public class RecipeController : ControllerBase
     {
-        private readonly RecipeService _recipeService;
-        public RecipeController(RecipeService recipeService)
+        private readonly IRecipeService _recipeService;
+        public RecipeController(IRecipeService recipeService)
         {
             _recipeService = recipeService;
         }

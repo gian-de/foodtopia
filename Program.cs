@@ -59,9 +59,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-builder.Services.AddScoped<CountryService>();
-builder.Services.AddScoped<RecipeService>();
-builder.Services.AddScoped<IngredientService>();
+builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddScoped<IRecipeService, RecipeService>();
+builder.Services.AddScoped<IIngredientService, IngredientService>();
 
 builder.Services.AddControllers();
 

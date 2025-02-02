@@ -1,11 +1,12 @@
 using foodtopia.Database;
 using foodtopia.DTOs.Country;
 using foodtopia.DTOs.Recipe;
+using foodtopia.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace foodtopia.Services
 {
-    public class CountryService
+    public class CountryService : ICountryService
     {
         private readonly AppDbContext _context;
 

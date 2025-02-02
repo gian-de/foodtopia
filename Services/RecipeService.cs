@@ -1,13 +1,14 @@
 using foodtopia.Database;
 using foodtopia.DTOs.Recipe;
 using foodtopia.Helpers;
+using foodtopia.Interfaces;
 using foodtopia.Mappings.Recipes;
 using foodtopia.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace foodtopia.Services
 {
-    public class RecipeService
+    public class RecipeService : IRecipeService
     {
         private readonly AppDbContext _context;
         public RecipeService(AppDbContext context)
