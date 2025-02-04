@@ -17,8 +17,6 @@ namespace foodtopia.Services
         public async Task<List<RecipeSummaryDTO>> GetUserHeartedRecipeAsync(AppUser user)
         {
             if (user is null) throw new ArgumentNullException(nameof(user), "User must be authenticated first!");
-            // convert Claims Id to Guid, since HeartedRecipe Model is of type Guid
-            // Guid userId = Guid.Parse(user.Id);
 
             // since ToRecipeSummaryDTO() is only usable in memory, first load entities then map to DTO
             var recipes = await _context.HeartedRecipes

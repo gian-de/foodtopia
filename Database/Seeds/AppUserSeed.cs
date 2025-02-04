@@ -12,7 +12,6 @@ namespace foodtopia.Database.Seeds
             {
                 new AppUser
                 {
-                    // Id = AppUserSeedUUID.PeterParker.ToString(),
                     Id = AppUserSeedUUID.PeterParker,
                     UserName = "Spider-man",
                     NormalizedUserName="SPIDER-MAN",
@@ -22,7 +21,6 @@ namespace foodtopia.Database.Seeds
                 },
                 new AppUser
                 {
-                    // Id = AppUserSeedUUID.AdamWarlock.ToString(),
                     Id = AppUserSeedUUID.AdamWarlock,
                     UserName = "Warlock",
                     NormalizedUserName = "WARLOCK",
@@ -32,7 +30,6 @@ namespace foodtopia.Database.Seeds
                 },
                 new AppUser
                 {
-                    // Id = AppUserSeedUUID.RocketRaccoon.ToString(),
                     Id = AppUserSeedUUID.RocketRaccoon,
                     UserName = "Rocket",
                     NormalizedUserName = "ROCKET",
@@ -42,7 +39,6 @@ namespace foodtopia.Database.Seeds
                 },
                 new AppUser
                 {
-                    // Id = AppUserSeedUUID.DrStrange.ToString(),
                     Id = AppUserSeedUUID.DrStrange,
                     UserName = "DrStrange",
                     NormalizedUserName = "DRSTRANGE",
@@ -52,7 +48,6 @@ namespace foodtopia.Database.Seeds
                 },
                 new AppUser
                 {
-                    // Id = AppUserSeedUUID.Ironfist.ToString(),
                     Id = AppUserSeedUUID.Ironfist,
                     UserName = "IronFist",
                     NormalizedUserName = "IRONFIST",

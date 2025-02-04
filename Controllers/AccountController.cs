@@ -69,13 +69,13 @@ namespace foodtopia.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDTO loginDTO)
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
             var incorrectLoginCredentialMessage = "Username or password incorrect.";
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == loginDTO.Username.ToLower());
+            var user = await _userManager.FindByNameAsync(loginDTO.Username);
 
             if (user is null) return Unauthorized(incorrectLoginCredentialMessage);
 
