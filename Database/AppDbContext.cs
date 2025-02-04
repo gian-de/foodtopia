@@ -7,11 +7,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace foodtopia.Database
 {
-    public class AppDbContext : IdentityDbContext<AppUser>
+    public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<HeartedRecipe> HeartedRecipes { get; set; }
         public DbSet<Instruction> Instructions { get; set; }
@@ -23,25 +22,6 @@ namespace foodtopia.Database
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<IdentityRole>().HasData(RoleSeed.GetRoles());
-
-            var deletedUserGuid = Guid.Parse("00000000-0000-0000-0000-000000000001"); // Well-known GUID for "Deleted" user
-                                                                                      // Special user to represent deleted users and not leave data orphaned
-            modelBuilder.Entity<User>().HasData(
-                new User { Id = deletedUserGuid, IsDeleted = true, Username = "deleted", FirstName = "Deleted", LastName = "Deleted", Email = "deleted@placeholder.com", Password = "deleted" });
-
-            var countries = CountrySeed.GetCountries(); // variable to pass into both Country entity and argument for RecipeSeed Entity
-            // Seed data for Country 1st because the Recipe seed is dependent of it
-            modelBuilder.Entity<Country>().HasData(countries);
-
-            // Seed data for Recipes before Instruction and Ingredient seeds since they depend on RecipeId as foreign key
-            modelBuilder.Entity<Recipe>().HasData(RecipeSeed.GetRecipes(countries));
-
-            // Seed Instruction then Ingredients
-            modelBuilder.Entity<Ingredient>().HasData(IngredientSeed.GetIngredients());
-            modelBuilder.Entity<Instruction>().HasData(InstructionSeed.GetInstructions());
-
-
             modelBuilder.Entity<Recipe>()
                 .HasOne(r => r.Country)
                 .WithMany(c => c.Recipes)
@@ -51,16 +31,7 @@ namespace foodtopia.Database
                 .HasIndex(c => c.Name)
                 .IsUnique();
 
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
-                .IsUnique()
-                .HasFilter("\"Username\" IS NOT NULL"); // this means that multiple null values are allowed, but non-null have to be unique.
-
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.Email)
-                .IsUnique()
-                .HasFilter("\"Email\" IS NOT NULL"); // this means that multiple null values are allowed, but non-null have to be unique.
-
+            // prevents User from liking the same Recipe more than once
             modelBuilder.Entity<HeartedRecipe>()
                 .HasIndex(hr => new { hr.UserId, hr.RecipeId })
                 .IsUnique();
@@ -94,13 +65,6 @@ namespace foodtopia.Database
                 .HasForeignKey(hr => hr.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Cascade delete HeartedRecipes when a Recipe is deleted
-            modelBuilder.Entity<HeartedRecipe>()
-                .HasOne(hr => hr.Recipe)
-                .WithMany(r => r.HeartedByUsers)
-                .HasForeignKey(hr => hr.RecipeId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             // Cascade delete Instructions when a Recipe is deleted
             modelBuilder.Entity<Instruction>()
                 .HasOne(instr => instr.Recipe)
@@ -114,7 +78,29 @@ namespace foodtopia.Database
                 .WithMany(recipe => recipe.Ingredients)
                 .HasForeignKey(ing => ing.RecipeId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+
+            modelBuilder.Entity<IdentityRole<Guid>>().HasData(RoleSeed.GetRoles());
+
+            var deletedUserGuid = Guid.Parse("00000000-0000-0000-0000-000000000001"); // Well-known GUID for "Deleted" user
+
+            modelBuilder.Entity<AppUser>().HasData(AppUserSeed.GetAppUsers());
+
+            var countries = CountrySeed.GetCountries(); // variable to pass into both Country entity and argument for RecipeSeed Entity
+            // Seed data for Country 1st because the Recipe seed is dependent of it
+            modelBuilder.Entity<Country>().HasData(countries);
+
+            // Seed data for Recipes before Instruction and Ingredient seeds since they depend on RecipeId as foreign key
+            modelBuilder.Entity<Recipe>().HasData(RecipeSeed.GetRecipes());
+
+            // Seed Instruction then Ingredients
+            modelBuilder.Entity<Ingredient>().HasData(IngredientSeed.GetIngredients());
+            modelBuilder.Entity<Instruction>().HasData(InstructionSeed.GetInstructions());
+
+            // Seed HeartedRecipes last after User && Recipe Id's have been init
+            modelBuilder.Entity<HeartedRecipe>().HasData(HeartedRecipeSeed.GetAll());
         }
+
         // hacky way to push through warnings that stops executing bug
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

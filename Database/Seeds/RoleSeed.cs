@@ -4,18 +4,19 @@ namespace foodtopia.Database.Seeds
 {
     public static class RoleSeed
     {
-        public static IEnumerable<IdentityRole> GetRoles()
+        public static List<IdentityRole<Guid>> GetRoles()
         {
-            return new List<IdentityRole>{
-                new IdentityRole
+            return new List<IdentityRole<Guid>>
+            {
+                new IdentityRole<Guid>
                 {
-                    Id = RoleSeedUUID.Admin.ToString(),
+                    Id = RoleSeedUUID.Admin,
                     Name = "Admin",
                     NormalizedName = "ADMIN"
                 },
-                new IdentityRole
+                new IdentityRole<Guid>
                 {
-                    Id = RoleSeedUUID.User.ToString(),
+                    Id = RoleSeedUUID.User,
                     Name = "User",
                     NormalizedName = "USER"
                 }

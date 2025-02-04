@@ -14,6 +14,6 @@ namespace foodtopia.Models
         public DateTime ReviewedAt { get; set; } = DateTime.UtcNow;
 
         public required Recipe Recipe { get; set; }
-        public required User User { get; set; }
+        public required AppUser User { get; set; }
     }
 }

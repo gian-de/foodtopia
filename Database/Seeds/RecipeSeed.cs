@@ -4,7 +4,7 @@ namespace foodtopia.Database.Seeds
 {
     public static class RecipeSeed
     {
-        public static IEnumerable<Recipe> GetRecipes(IEnumerable<Country> countries)
+        public static IEnumerable<Recipe> GetRecipes()
         {
 
             return new List<Recipe>{
@@ -12,17 +12,17 @@ namespace foodtopia.Database.Seeds
                 {
                     Id = RecipeSeedUUID.LowCaloriePizza,
                     Name = "Low calorie pizza",
-                    UserId = null,
+                    UserId = AppUserSeedUUID.PeterParker,
                     CountryId = CountrySeedUUID.USA,
                     ImageUrl = "images/recipes/low_calorie_pizza.jpg",
-                    Ingredients = new List<Ingredient>(), // initialize as empty (since Recipe model has as "required") then shortly after seeded
-                    Instructions = new List<Instruction>() // initialize as empty (since Recipe model has as "required") then shortly after seeded
+                    Ingredients = new List<Ingredient>(), // initialize as empty (since Recipe model has as "required") then shortly after seeded List
+                    Instructions = new List<Instruction>() // initialize as empty (since Recipe model has as "required") then shortly after seeded List
                 },
                 new Recipe
                 {
                     Id = RecipeSeedUUID.ClassicCheeseburger,
                     Name = "Classic Cheeseburger",
-                    UserId = null,
+                    UserId = AppUserSeedUUID.PeterParker,
                     CountryId = CountrySeedUUID.USA,
                     ImageUrl = "images/recipes/classic_cheeseburger.jpg",
                     Ingredients = new List<Ingredient>(),
@@ -32,7 +32,7 @@ namespace foodtopia.Database.Seeds
                 {
                     Id = RecipeSeedUUID.TacosAlPastor,
                     Name = "Tacos al Pastor",
-                    UserId = null,
+                    UserId = AppUserSeedUUID.PeterParker,
                     CountryId = CountrySeedUUID.Mexico,
                     ImageUrl = "images/recipes/tacos_al_pastor.jpg",
                     Ingredients = new List<Ingredient>(),
@@ -42,7 +42,7 @@ namespace foodtopia.Database.Seeds
                 {
                     Id = RecipeSeedUUID.ChickenBiryani,
                     Name = "Chicken Biryani",
-                    UserId = null,
+                    UserId = AppUserSeedUUID.PeterParker,
                     CountryId = CountrySeedUUID.India,
                     ImageUrl = "images/recipes/chicken_biryani.jpg",
                     Ingredients = new List<Ingredient>(),
@@ -52,7 +52,7 @@ namespace foodtopia.Database.Seeds
                 {
                     Id = RecipeSeedUUID.PekingDuck,
                     Name = "Peking Duck",
-                    UserId = null,
+                    UserId = AppUserSeedUUID.AdamWarlock,
                     CountryId = CountrySeedUUID.China,
                     ImageUrl = "images/recipes/peking_duck.jpg",
                     Ingredients = new List<Ingredient>(),
@@ -62,7 +62,7 @@ namespace foodtopia.Database.Seeds
                 {
                     Id = RecipeSeedUUID.BeefStroganoff,
                     Name = "Beef Stroganoff",
-                    UserId = null,
+                    UserId = AppUserSeedUUID.AdamWarlock,
                     CountryId = CountrySeedUUID.Russia,
                     ImageUrl = "images/recipes/beef_stroganoff.jpg",
                     Ingredients = new List<Ingredient>(),
@@ -72,7 +72,7 @@ namespace foodtopia.Database.Seeds
                 {
                     Id = RecipeSeedUUID.Feijoada,
                     Name = "Feijoada",
-                    UserId = null,
+                    UserId = AppUserSeedUUID.RocketRaccoon,
                     CountryId = CountrySeedUUID.Brazil,
                     ImageUrl = "images/recipes/feijoada.png",
                     Ingredients = new List<Ingredient>(),
@@ -82,7 +82,7 @@ namespace foodtopia.Database.Seeds
                 {
                     Id = RecipeSeedUUID.Sushi,
                     Name = "Sushi",
-                    UserId = null,
+                    UserId = AppUserSeedUUID.DrStrange,
                     CountryId = CountrySeedUUID.Japan,
                     ImageUrl = "images/recipes/sushi.jpg",
                     Ingredients = new List<Ingredient>(),
@@ -92,7 +92,7 @@ namespace foodtopia.Database.Seeds
                 {
                     Id = RecipeSeedUUID.PadThai,
                     Name = "Pad Thai",
-                    UserId = null,
+                    UserId = AppUserSeedUUID.Ironfist,
                     CountryId = CountrySeedUUID.Thailand,
                     ImageUrl = "images/recipes/pad_thai.jpg",
                     Ingredients = new List<Ingredient>(),
@@ -102,7 +102,7 @@ namespace foodtopia.Database.Seeds
                 {
                     Id = RecipeSeedUUID.Pho,
                     Name = "Pho",
-                    UserId = null,
+                    UserId = AppUserSeedUUID.Ironfist,
                     CountryId = CountrySeedUUID.Vietnam,
                     ImageUrl = "images/recipes/pho.jpg",
                     Ingredients = new List<Ingredient>(),
@@ -112,7 +112,7 @@ namespace foodtopia.Database.Seeds
                 {
                     Id = RecipeSeedUUID.Ceviche,
                     Name = "Ceviche",
-                    UserId = null,
+                    UserId = AppUserSeedUUID.Ironfist,
                     CountryId = CountrySeedUUID.Peru,
                     ImageUrl = "images/recipes/ceviche.jpeg",
                     Ingredients = new List<Ingredient>(),

@@ -25,7 +25,7 @@ namespace foodtopia.Mappings.Recipes
                 User: recipeModel.User != null
                     ? new UserTldrDTO(
                         recipeModel.User.Id,
-                        recipeModel.User.Username,
+                        recipeModel.User.UserName,
                         recipeModel.User.IsDeleted
                         )
                     : null,

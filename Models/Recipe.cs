@@ -16,10 +16,10 @@ namespace foodtopia.Models
         public int DifficultyReviewCount { get; set; }
         public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
         public Guid? UserId { get; set; }
-        public User? User { get; set; }
+        public AppUser? User { get; set; }
         public required Guid CountryId { get; set; }
         public Country? Country { get; set; }
-        public ICollection<HeartedRecipe>? HeartedByUsers { get; set; }
+        public ICollection<HeartedRecipe> HeartedByUsers { get; set; } = new List<HeartedRecipe>();
         public required ICollection<Ingredient> Ingredients { get; set; }
         public required ICollection<Instruction> Instructions { get; set; }
         public ICollection<Rating>? Ratings { get; set; }

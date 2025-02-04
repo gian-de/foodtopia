@@ -21,13 +21,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 10;
+    options.Password.RequiredLength = 8;
 })
 .AddEntityFrameworkStores<AppDbContext>();
 
@@ -58,10 +58,10 @@ builder.Services.AddAuthentication(options =>
 );
 
 builder.Services.AddScoped<ITokenService, TokenService>();
-
 builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<IIngredientService, IngredientService>();
+builder.Services.AddScoped<IHeartedRecipeService, HeartedRecipeService>();
 
 builder.Services.AddControllers();
 
