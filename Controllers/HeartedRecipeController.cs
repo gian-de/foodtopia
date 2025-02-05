@@ -1,3 +1,4 @@
+using foodtopia.DTOs.HeartedRecipe;
 using foodtopia.Extensions;
 using foodtopia.Interfaces;
 using foodtopia.Models;
@@ -38,6 +39,31 @@ namespace foodtopia.Controllers
                 return Ok(heartedRecipes);
             }
             catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddHeartedRecipe([FromBody] HeartedRecipeRequestDTO request)
+        {
+            try
+            {
+                var username = User.GetUsername();
+                var appUser = await _userManager.FindByNameAsync(username);
+
+                if (appUser is null) return Unauthorized("User not found.");
+
+                await _heartedRecipeService.AddHeartedRecipeAsync(appUser, request.RecipeId);
+
+                return Ok("Recipe hearted successfully!");
+            }
+            catch (ArgumentException ex)
             {
                 return BadRequest(new { ex.Message });
             }

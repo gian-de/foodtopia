@@ -32,5 +32,25 @@ namespace foodtopia.Services
 
             return recipes.Select(r => r.ToRecipeSummaryDTO()).ToList();
         }
+
+        public async Task AddHeartedRecipeAsync(AppUser user, Guid recipeId)
+        {
+            var recipe = await _context.Recipes.FindAsync(recipeId);
+            if (recipe is null) throw new ArgumentException("Recipe not found.");
+
+            bool alreadyHearted = await _context.HeartedRecipes
+                                            .AnyAsync(hr => hr.UserId == user.Id && hr.RecipeId == recipeId);
+
+            if (alreadyHearted) throw new ArgumentException("You've hearted this recipe already.");
+
+            var heartedRecipe = new HeartedRecipe
+            {
+                UserId = user.Id,
+                RecipeId = recipeId,
+            };
+
+            await _context.HeartedRecipes.AddAsync(heartedRecipe);
+            await _context.SaveChangesAsync();
+        }
     }
 }
