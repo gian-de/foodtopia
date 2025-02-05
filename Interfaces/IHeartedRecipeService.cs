@@ -7,5 +7,6 @@ namespace foodtopia.Interfaces
     {
         Task<List<RecipeSummaryDTO>> GetUserHeartedRecipeAsync(AppUser user);
         Task AddHeartedRecipeAsync(AppUser user, Guid recipeId);
+        Task<bool> RemoveHeartedRecipeAsync(AppUser user, Guid recipeId);
     }
 }

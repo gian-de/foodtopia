@@ -35,6 +35,8 @@ namespace foodtopia.Controllers
             {
                 var username = User.GetUsername();
                 var appUser = await _userManager.FindByNameAsync(username);
+                if (appUser is null) return NotFound("User not found.");
+
                 var heartedRecipes = await _heartedRecipeService.GetUserHeartedRecipeAsync(appUser);
                 return Ok(heartedRecipes);
             }
@@ -57,11 +59,37 @@ namespace foodtopia.Controllers
                 var username = User.GetUsername();
                 var appUser = await _userManager.FindByNameAsync(username);
 
-                if (appUser is null) return Unauthorized("User not found.");
+                if (appUser is null) return NotFound("User not found.");
 
                 await _heartedRecipeService.AddHeartedRecipeAsync(appUser, request.RecipeId);
 
                 return Ok("Recipe hearted successfully!");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> RemoveHeartedRecipe([FromBody] HeartedRecipeRequestDTO request)
+        {
+            try
+            {
+                var username = User.GetUsername();
+                var appUser = await _userManager.FindByNameAsync(username);
+                if (appUser is null) return NotFound("User not found.");
+
+                var removed = await _heartedRecipeService.RemoveHeartedRecipeAsync(appUser, request.RecipeId);
+
+                if (!removed) return NotFound("Recipe not found inside favorites.");
+
+                return Ok("Recipe un-hearted.");
             }
             catch (ArgumentException ex)
             {

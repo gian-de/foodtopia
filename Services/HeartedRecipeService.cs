@@ -52,5 +52,18 @@ namespace foodtopia.Services
             await _context.HeartedRecipes.AddAsync(heartedRecipe);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> RemoveHeartedRecipeAsync(AppUser user, Guid recipeId)
+        {
+            var heartedRecipe = await _context.HeartedRecipes
+                                    .FirstOrDefaultAsync(hr => hr.UserId == user.Id && hr.RecipeId == recipeId);
+
+            if (heartedRecipe is null) return false;
+
+            _context.HeartedRecipes.Remove(heartedRecipe);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }
