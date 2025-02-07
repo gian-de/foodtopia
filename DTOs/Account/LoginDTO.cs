@@ -4,10 +4,12 @@ namespace foodtopia.DTOs.Account
 {
     public class LoginDTO
     {
+        // Data annotations for error response
         [Required]
-        public string Username { get; set; }
+        // "public required" - to silence non-null warning yellow squiggly 
+        public required string Username { get; set; }
 
         [Required]
-        public string Password { get; set; }
+        public required string Password { get; set; }
     }
 }

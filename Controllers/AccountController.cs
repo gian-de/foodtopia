@@ -15,14 +15,14 @@ namespace foodtopia.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        string baseURL = "http://localhost:5001";
+
         private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IEmailService _emailService;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IJwtTokenService jwtTokenService, IEmailService emailService)
+        public AccountController(UserManager<AppUser> userManager, IJwtTokenService jwtTokenService, IEmailService emailService)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _jwtTokenService = jwtTokenService;
             _emailService = emailService;
         }
@@ -46,7 +46,7 @@ namespace foodtopia.Controllers
                 // Email Confirmation workflow
                 var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
                 var code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailToken));
-                var confirmationLink = $"http://localhost:5001/api/account/confirm-email?email={appUser.Email}&code={code}";
+                var confirmationLink = $"{baseURL}/api/account/confirm-email?email={appUser.Email}&code={code}";
 
                 var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
                 if (!roleResult.Succeeded) return StatusCode(500, new { Message = "Error when trying to add user to role", roleResult.Errors });
@@ -90,12 +90,11 @@ namespace foodtopia.Controllers
             var user = await _userManager.FindByNameAsync(loginDTO.Username);
             if (user is null) return Unauthorized(incorrectLoginCredentialMessage);
 
-
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
-            if (!result.Succeeded) return Unauthorized(incorrectLoginCredentialMessage);
+            var validPassword = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
+            if (!validPassword) return Unauthorized(incorrectLoginCredentialMessage);
 
             var confirmedEmail = await _userManager.IsEmailConfirmedAsync(user);
-            if (!confirmedEmail) return BadRequest("Email is not confirmed.");
+            if (!confirmedEmail) return BadRequest("Please confirm your email address to be able to login.");
 
             return Ok(
                 new NewUserDTO

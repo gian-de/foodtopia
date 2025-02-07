@@ -23,9 +23,9 @@ namespace foodtopia.Services
 
             var message = new MailMessage
             {
-                From = new MailAddress(senderEmail),
-                Subject = "Confirm Your Email - FOODTOPIA",
-                Body = $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>.",
+                From = new MailAddress("noreply@foodtopia.com", "Foodtopia"),
+                Subject = "FOODTOPIA - Confirm Your Email",
+                Body = $"<h1>Please confirm your email by clicking <a href='{confirmationLink}'>here</a></h1>.",
                 IsBodyHtml = true
             };
 
