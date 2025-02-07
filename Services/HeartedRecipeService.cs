@@ -36,7 +36,7 @@ namespace foodtopia.Services
         public async Task AddHeartedRecipeAsync(AppUser user, Guid recipeId)
         {
             var recipe = await _context.Recipes.FindAsync(recipeId);
-            if (recipe is null) throw new ArgumentException("Recipe not found.");
+            if (recipe is null) throw new ArgumentNullException("Recipe not found.");
 
             bool alreadyHearted = await _context.HeartedRecipes
                                             .AnyAsync(hr => hr.UserId == user.Id && hr.RecipeId == recipeId);

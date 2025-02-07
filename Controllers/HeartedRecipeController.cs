@@ -65,7 +65,7 @@ namespace foodtopia.Controllers
 
                 return Ok("Recipe hearted successfully!");
             }
-            catch (ArgumentException ex)
+            catch (ArgumentNullException ex)
             {
                 return BadRequest(new { ex.Message });
             }

@@ -7,11 +7,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace foodtopia.Services
 {
-    public class TokenService : ITokenService
+    public class JwtTokenService : IJwtTokenService
     {
         private readonly IConfiguration _config;
         private readonly SymmetricSecurityKey _key;
-        public TokenService(IConfiguration config)
+        public JwtTokenService(IConfiguration config)
         {
             _config = config;
 

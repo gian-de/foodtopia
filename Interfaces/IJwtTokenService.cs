@@ -2,7 +2,7 @@ using foodtopia.Models;
 
 namespace foodtopia.Interfaces
 {
-    public interface ITokenService
+    public interface IJwtTokenService
     {
         string CreateToken(AppUser user);
     }
