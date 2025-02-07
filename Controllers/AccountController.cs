@@ -18,8 +18,8 @@ namespace foodtopia.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IJwtTokenService _jwtTokenService;
-        private readonly EmailService _emailService;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IJwtTokenService jwtTokenService, EmailService emailService)
+        private readonly IEmailService _emailService;
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IJwtTokenService jwtTokenService, IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -43,24 +43,27 @@ namespace foodtopia.Controllers
                 var createdUser = await _userManager.CreateAsync(appUser, registerDTO.Password);
                 if (!createdUser.Succeeded) return BadRequest(createdUser.Errors);
 
+                // Email Confirmation workflow
                 var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
                 var code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailToken));
-                var confirmationLink = $"http://localhost:5001/confirm-email?email={appUser.Email}&code={code}";
+                var confirmationLink = $"http://localhost:5001/api/account/confirm-email?email={appUser.Email}&code={code}";
 
                 var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
+                if (!roleResult.Succeeded) return StatusCode(500, new { Message = "Error when trying to add user to role", roleResult.Errors });
 
-                return Ok(
-                            new NewUserDTO
-                            {
-                                UserName = appUser.UserName,
-                                Email = appUser.Email,
-                                JwtToken = _jwtTokenService.CreateToken(appUser)
-                            }
-                        );
+                await _emailService.SendEmailConfirmationAsync(appUser.Email, confirmationLink);
+
+                return Ok(new NewUserDTO
+                {
+                    UserName = appUser.UserName,
+                    Email = appUser.Email,
+                    JwtToken = _jwtTokenService.CreateToken(appUser)
+                }
+                    );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex);
+                return StatusCode(500, new { ex.Message });
             }
         }
 
@@ -87,11 +90,12 @@ namespace foodtopia.Controllers
             var user = await _userManager.FindByNameAsync(loginDTO.Username);
             if (user is null) return Unauthorized(incorrectLoginCredentialMessage);
 
-            var confirmedEmail = await _userManager.IsEmailConfirmedAsync(user);
-            if (!confirmedEmail) return BadRequest("Email is not confirmed.");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
             if (!result.Succeeded) return Unauthorized(incorrectLoginCredentialMessage);
+
+            var confirmedEmail = await _userManager.IsEmailConfirmedAsync(user);
+            if (!confirmedEmail) return BadRequest("Email is not confirmed.");
 
             return Ok(
                 new NewUserDTO

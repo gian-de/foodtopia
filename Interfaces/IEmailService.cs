@@ -2,6 +2,6 @@ namespace foodtopia.Interfaces
 {
     public interface IEmailService
     {
-        Task SendEmailConfirmation();
+        Task SendEmailConfirmationAsync(string recipientEmail, string confirmationLink);
     }
 }
