@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text;
 using foodtopia.DTOs;
 using foodtopia.DTOs.Account;
@@ -45,8 +46,9 @@ namespace foodtopia.Controllers
 
                 // Email Confirmation workflow
                 var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
-                var code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailToken));
-                var confirmationLink = $"{baseURL}/api/account/confirm-email?email={appUser.Email}&code={code}";
+                var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailToken));
+                var emailEncoded = WebUtility.UrlEncode(appUser.Email);
+                var confirmationLink = $"{baseURL}/api/account/confirm-email?email={emailEncoded}&token={tokenEncoded}";
 
                 var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
                 if (!roleResult.Succeeded) return StatusCode(500, new { Message = "Error when trying to add user to role", roleResult.Errors });
@@ -68,12 +70,14 @@ namespace foodtopia.Controllers
         }
 
         [HttpGet("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string code)
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            // decode email sent as encoded
+            var decodedEmail = WebUtility.UrlDecode(email);
+            var user = await _userManager.FindByEmailAsync(decodedEmail);
             if (user is null) return NotFound("User not found");
 
-            var emailToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            var emailToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
 
             var result = await _userManager.ConfirmEmailAsync(user, emailToken);
 
@@ -104,6 +108,44 @@ namespace foodtopia.Controllers
                     JwtToken = _jwtTokenService.CreateToken(user)
                 }
             );
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO requestDto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var user = await _userManager.FindByEmailAsync(requestDto.Email);
+            if (user is null) return BadRequest("Invalid payload.");
+
+            var resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            if (string.IsNullOrEmpty(resetPasswordToken)) return BadRequest("Something went wrong when creating the reset token.");
+
+            var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetPasswordToken));
+            var emailEncoded = WebUtility.UrlEncode(user.Email);
+
+            var passwordResetLink = $"{baseURL}/api/account/reset-password?token={tokenEncoded}&email={emailEncoded}";
+
+            await _emailService.SendEmailPasswordResetAsync(user.Email, passwordResetLink);
+
+            return Ok(new { Message = "Email to reset your password has been sent." });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDTO requestDto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            // decode both email and token since they're sent over encoded
+            var decodedEmail = WebUtility.UrlDecode(requestDto.Email);
+            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(requestDto.Token));
+
+            var user = await _userManager.FindByEmailAsync(decodedEmail);
+            if (user is null) return BadRequest("Invalid payload.");
+
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, requestDto.Password);
+            if (!result.Succeeded) return BadRequest("Something went wrong12.");
+
+            return Ok("Password has been reset successfully.");
         }
     }
 }

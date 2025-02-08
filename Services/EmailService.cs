@@ -6,7 +6,7 @@ namespace foodtopia.Services
 {
     public class EmailService : IEmailService
     {
-        public async Task SendEmailConfirmationAsync(string recipientEmail, string confirmationLink)
+        public async Task SendEmailAsync(string recipientEmail, string subject, string htmlBody)
         {
             var senderEmail = Environment.GetEnvironmentVariable("GMAIL_EMAIL");
             var password = Environment.GetEnvironmentVariable("GMAIL_PASSWORD");
@@ -24,13 +24,29 @@ namespace foodtopia.Services
             var message = new MailMessage
             {
                 From = new MailAddress("noreply@foodtopia.com", "Foodtopia"),
-                Subject = "FOODTOPIA - Confirm Your Email",
-                Body = $"<h1>Please confirm your email by clicking <a href='{confirmationLink}'>here</a></h1>.",
+                Subject = subject,
+                Body = htmlBody,
                 IsBodyHtml = true
             };
 
             message.To.Add(recipientEmail);
             await smtpClient.SendMailAsync(message);
+        }
+
+        public Task SendEmailConfirmationAsync(string recipientEmail, string confirmationLink)
+        {
+            string subject = "FOODTOPIA - Confirm Your Email";
+            string htmlBody = $"<h1>Please confirm your email by clicking <a href='{confirmationLink}'>here</a></h1>.";
+
+            return SendEmailAsync(recipientEmail, subject, htmlBody);
+        }
+
+        public Task SendEmailPasswordResetAsync(string recipientEmail, string passwordResetLink)
+        {
+            string subject = "FOODTOPIA - Reset Password";
+            string htmlBody = $"<h1>Reset your password by clicking <a href='{passwordResetLink}'>here</a></h1>.";
+
+            return SendEmailAsync(recipientEmail, subject, htmlBody);
         }
     }
 }
