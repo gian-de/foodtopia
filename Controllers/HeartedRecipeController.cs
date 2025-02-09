@@ -29,7 +29,12 @@ namespace foodtopia.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetUserHeartedRecipes()
+        public async Task<IActionResult> GetUserHeartedRecipes(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "recent",
+            [FromQuery] string sortDirection = "desc"
+        )
         {
             try
             {
@@ -37,8 +42,8 @@ namespace foodtopia.Controllers
                 var appUser = await _userManager.FindByNameAsync(username);
                 if (appUser is null) return NotFound("User not found.");
 
-                var heartedRecipes = await _heartedRecipeService.GetUserHeartedRecipeAsync(appUser);
-                return Ok(heartedRecipes);
+                var heartedRecipesPagedResult = await _heartedRecipeService.GetUserHeartedRecipeAsync(appUser, page, pageSize, sortBy, sortDirection);
+                return Ok(heartedRecipesPagedResult);
             }
             catch (ArgumentNullException ex)
             {

@@ -23,9 +23,9 @@ namespace foodtopia.Services
         {
             if (page < 1 || pageSize < 1) throw new ArgumentException("Page and or Page size must be greater than 0.");
 
-            var isDescending = sortDirection.ToLower() == "desc";
+            bool isDescending = sortDirection.ToLower() == "desc";
 
-            var query = _context.Recipes
+            var recipeQuery = _context.Recipes
                 .Include(r => r.Country)
                 .Include(r => r.User)
                 .Include(r => r.Ingredients)
@@ -33,25 +33,25 @@ namespace foodtopia.Services
                 .Include(r => r.Ratings)
                 .AsQueryable();
 
-            query = sortBy.ToLower() switch
+            recipeQuery = sortBy.ToLower() switch
             {
                 "heartedbyusers" => isDescending
-                    ? query.OrderByDescending(r => r.HeartedByUsers.Count)
-                    : query.OrderBy(r => r.HeartedByUsers.Count),
+                    ? recipeQuery.OrderByDescending(r => r.HeartedByUsers.Count)
+                    : recipeQuery.OrderBy(r => r.HeartedByUsers.Count),
                 "tasteaverage" => isDescending
-                    ? query.OrderByDescending(r => r.Ratings.Average(rt => rt.TasteRating))
-                    : query.OrderBy(r => r.Ratings.Average(rt => rt.TasteRating)),
+                    ? recipeQuery.OrderByDescending(r => r.Ratings.Average(rt => rt.TasteRating))
+                    : recipeQuery.OrderBy(r => r.Ratings.Average(rt => rt.TasteRating)),
                 "difficultyaverage" => isDescending
-                    ? query.OrderByDescending(r => r.Ratings.Average(rt => rt.DifficultyRating))
-                    : query.OrderBy(r => r.Ratings.Average(rt => rt.DifficultyRating)),
+                    ? recipeQuery.OrderByDescending(r => r.Ratings.Average(rt => rt.DifficultyRating))
+                    : recipeQuery.OrderBy(r => r.Ratings.Average(rt => rt.DifficultyRating)),
                 _ => isDescending
-                    ? query.OrderByDescending(r => r.PublishedAt)
-                    : query.OrderBy(r => r.PublishedAt)
+                    ? recipeQuery.OrderByDescending(r => r.PublishedAt)
+                    : recipeQuery.OrderBy(r => r.PublishedAt)
             };
 
 
-            var totalRecipes = await query.CountAsync();
-            var recipesDTOs = await query
+            var totalRecipes = await recipeQuery.CountAsync();
+            var recipesDTOs = await recipeQuery
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(r => r.ToRecipeSummaryDTO())

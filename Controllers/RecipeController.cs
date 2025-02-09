@@ -24,9 +24,9 @@ namespace foodtopia.Controllers
         {
             try
             {
-                var pagedResult = await _recipeService.GetAllRecipesAsync(page, pageSize, sortBy, sortDirection);
+                var recipePagedResult = await _recipeService.GetAllRecipesAsync(page, pageSize, sortBy, sortDirection);
 
-                return Ok(pagedResult);
+                return Ok(recipePagedResult);
             }
             catch (ArgumentException ex)
             {
