@@ -67,10 +67,10 @@ namespace foodtopia.Services
             };
         }
 
-        public async Task<RecipeSummaryDTO> GetRecipeByIdAsync(Guid id)
+        public async Task<RecipeSummaryDTO> GetRecipeByIdAsync(Guid recipeId)
         {
             var recipe = await _context.Recipes
-            .Where(r => r.Id == id)
+            .Where(r => r.Id == recipeId)
             .Include(r => r.Country)
             .Include(r => r.User)
             .Include(r => r.Ingredients)
@@ -78,37 +78,39 @@ namespace foodtopia.Services
             .Include(r => r.Ratings)
             .FirstOrDefaultAsync();
 
-            if (recipe is null) throw new KeyNotFoundException($"Recipe with id {id} was not found.");
+            if (recipe is null) throw new KeyNotFoundException($"Recipe with id {recipeId} was not found.");
 
             return recipe.ToRecipeSummaryDTO();
         }
 
-        public async Task<RecipeSummaryDTO> CreateRecipeAsync(RecipeCreateRequestDTO recipeRequestDTO)
+        public async Task<RecipeSummaryDTO> CreateRecipeAsync(Guid userId, RecipeCreateRequestDTO recipeRequestDTO)
         {
             if (recipeRequestDTO is null) throw new ArgumentNullException(nameof(recipeRequestDTO), "Recipe data is required.");
 
             var country = await _context.Countries.FindAsync(recipeRequestDTO.CountryId);
             if (country is null) throw new ArgumentException($"Country with id {recipeRequestDTO.CountryId} couldn't be found.");
 
-            // TODO User auth check
-
             var recipeModel = recipeRequestDTO.ToRecipeFromCreateDTO();
+            // attach UserId passed from controller to Model
+            recipeModel.UserId = userId;
+
             _context.Recipes.Add(recipeModel);
             await _context.SaveChangesAsync();
 
             return recipeModel.ToRecipeSummaryDTO();
         }
 
-        public async Task<RecipeSummaryDTO> UpdateRecipeAsync(Guid id, RecipeUpdateRequestDTO recipeRequest)
+        public async Task<RecipeSummaryDTO> UpdateRecipeAsync(Guid userId, Guid recipeId, RecipeUpdateRequestDTO recipeRequest)
         {
             if (recipeRequest is null) throw new ArgumentNullException(nameof(recipeRequest), "Recipe data is required.");
 
             var recipeModel = await _context.Recipes
                 .Include(r => r.Instructions)
                 .Include(r => r.Instructions)
-                .FirstOrDefaultAsync(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == recipeId);
 
-            if (recipeModel is null) throw new KeyNotFoundException($"Recipe with Id {id} was not found.");
+            if (recipeModel is null) throw new KeyNotFoundException($"Recipe with Id {recipeId} was not found.");
+            if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to delete this recipe.");
 
             // Check fields provided in recipeRequest, if true -> update 
             if (!string.IsNullOrWhiteSpace(recipeRequest.Name))
@@ -163,19 +165,20 @@ namespace foodtopia.Services
                 .Include(r => r.Ingredients)
                 .Include(r => r.Instructions.OrderBy(ins => ins.Order))
                 .Include(r => r.Ratings)
-                .FirstOrDefaultAsync(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == recipeId);
 
             // map updated Recipe Model back to DTO
             return updatedRecipeModel?.ToRecipeSummaryDTO();
         }
 
-        public async Task<RecipeDeleteDTO> DeleteRecipeAsync(Guid id)
+        public async Task<RecipeDeleteDTO> DeleteRecipeAsync(Guid userId, Guid recipeId)
         {
             var recipeModel = await _context.Recipes
                 .Include(r => r.Country)
-                .FirstOrDefaultAsync(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == recipeId);
 
-            if (recipeModel is null) throw new KeyNotFoundException($"Recipe with ID {id} was not found.");
+            if (recipeModel is null) throw new KeyNotFoundException($"Recipe with ID {recipeId} was not found.");
+            if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to delete this recipe.");
 
             _context.Recipes.Remove(recipeModel);
             await _context.SaveChangesAsync();

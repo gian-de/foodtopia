@@ -1,7 +1,11 @@
+using System.Security.Claims;
 using foodtopia.DTOs.Recipe;
 using foodtopia.Interfaces;
+using foodtopia.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace foodtopia.Controllers
 {
@@ -38,12 +42,12 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetRecipeById([FromRoute] Guid id)
+        [HttpGet("{recipeId:guid}")]
+        public async Task<IActionResult> GetRecipeById([FromRoute] Guid recipeId)
         {
             try
             {
-                var recipeDTO = await _recipeService.GetRecipeByIdAsync(id);
+                var recipeDTO = await _recipeService.GetRecipeByIdAsync(recipeId);
                 return Ok(recipeDTO);
             }
             catch (KeyNotFoundException ex)
@@ -57,12 +61,17 @@ namespace foodtopia.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateRecipe([FromBody] RecipeCreateRequestDTO recipeRequestDTO)
         {
             try
             {
-                var recipeDTO = await _recipeService.CreateRecipeAsync(recipeRequestDTO);
-                return CreatedAtAction(nameof(GetRecipeById), new { id = recipeDTO.Id }, recipeDTO);
+                var userIdStr = User.FindFirstValue("user_id");
+                // parse from type string to Guid (AppUser's id type set inside Model)
+                if (!Guid.TryParse(userIdStr, out Guid userId)) return Unauthorized("Invalid id within JWT");
+
+                var recipeDTO = await _recipeService.CreateRecipeAsync(userId, recipeRequestDTO);
+                return CreatedAtAction(nameof(GetRecipeById), new { recipeId = recipeDTO.Id }, recipeDTO);
             }
             catch (ArgumentNullException ex)
             {
@@ -78,13 +87,21 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateRecipe([FromRoute] Guid id, [FromBody] RecipeUpdateRequestDTO recipeRequest)
+        [HttpPut("{recipeId:guid}")]
+        public async Task<IActionResult> UpdateRecipe([FromRoute] Guid recipeId, [FromBody] RecipeUpdateRequestDTO recipeRequest)
         {
             try
             {
-                var updatedRecipe = await _recipeService.UpdateRecipeAsync(id, recipeRequest);
+                var userIdStr = User.FindFirstValue("user_id");
+                //
+                if (!Guid.TryParse(userIdStr, out Guid userId)) return Unauthorized("Invalid user is within JWT.");
+
+                var updatedRecipe = await _recipeService.UpdateRecipeAsync(userId, recipeId, recipeRequest);
                 return Ok(updatedRecipe);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
             }
             catch (ArgumentNullException ex)
             {
@@ -104,18 +121,26 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteRecipe([FromRoute] Guid id)
+        [HttpDelete("{recipeId:guid}")]
+        public async Task<IActionResult> DeleteRecipe([FromRoute] Guid recipeId)
         {
             try
             {
-                var deletedRecipeDTO = await _recipeService.DeleteRecipeAsync(id);
+                var userIdStr = User.FindFirstValue("user_id");
+                // parse from type string to Guid (AppUser's id type set inside Model)
+                if (!Guid.TryParse(userIdStr, out Guid userId)) return Unauthorized("Invalid id within JWT");
+
+                var deletedRecipeDTO = await _recipeService.DeleteRecipeAsync(userId, recipeId);
 
                 return Ok(new
                 {
                     Message = "Recipe successfully deleted.",
                     DeletedRecipe = deletedRecipeDTO
                 });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
             }
             catch (KeyNotFoundException ex)
             {
