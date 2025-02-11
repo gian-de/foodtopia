@@ -1,11 +1,9 @@
 using System.Security.Claims;
 using foodtopia.DTOs.Recipe;
 using foodtopia.Interfaces;
-using foodtopia.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace foodtopia.Controllers
 {
@@ -62,6 +60,7 @@ namespace foodtopia.Controllers
 
         [HttpPost]
         [Authorize]
+        [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> CreateRecipe([FromBody] RecipeCreateRequestDTO recipeRequestDTO)
         {
             try
@@ -88,6 +87,8 @@ namespace foodtopia.Controllers
         }
 
         [HttpPut("{recipeId:guid}")]
+        [Authorize]
+        [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> UpdateRecipe([FromRoute] Guid recipeId, [FromBody] RecipeUpdateRequestDTO recipeRequest)
         {
             try
@@ -122,6 +123,7 @@ namespace foodtopia.Controllers
         }
 
         [HttpDelete("{recipeId:guid}")]
+        [Authorize]
         public async Task<IActionResult> DeleteRecipe([FromRoute] Guid recipeId)
         {
             try

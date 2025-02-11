@@ -11,7 +11,6 @@ namespace foodtopia.Mappings.Recipes
             {
                 Name = recipeRequestDTO.Name,
                 CountryId = recipeRequestDTO.CountryId,
-                // UserId = recipeRequestDTO.UserId,
                 ImageUrl = recipeRequestDTO.ImageUrl,
                 PublishedAt = recipeRequestDTO.PublishedAt,
                 Ingredients = recipeRequestDTO.Ingredients.Select(ing => new Ingredient

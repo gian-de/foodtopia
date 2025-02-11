@@ -4,11 +4,10 @@ using foodtopia.DTOs;
 using foodtopia.DTOs.Account;
 using foodtopia.Interfaces;
 using foodtopia.Models;
-using foodtopia.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
 
 namespace foodtopia.Controllers
 {
@@ -29,6 +28,7 @@ namespace foodtopia.Controllers
         }
 
         [HttpPost("register")]
+        [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
         {
             try
@@ -70,6 +70,7 @@ namespace foodtopia.Controllers
         }
 
         [HttpGet("confirm-email")]
+        [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
         {
             // decode email sent as encoded
@@ -85,6 +86,7 @@ namespace foodtopia.Controllers
         }
 
         [HttpPost("login")]
+        [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
             var incorrectLoginCredentialMessage = "Username or password incorrect.";
@@ -111,6 +113,7 @@ namespace foodtopia.Controllers
         }
 
         [HttpPost("forgot-password")]
+        [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO requestDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -132,6 +135,7 @@ namespace foodtopia.Controllers
         }
 
         [HttpPost("reset-password")]
+        [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDTO requestDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
