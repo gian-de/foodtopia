@@ -70,6 +70,8 @@ builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<IIngredientService, IngredientService>();
 builder.Services.AddScoped<IHeartedRecipeService, HeartedRecipeService>();
 
+builder.Services.AddHostedService<GuestRecipeCronJobDeleteService>();
+
 builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
@@ -91,7 +93,7 @@ builder.Services.AddRateLimiter(options =>
         return RateLimitPartition.GetFixedWindowLimiter(ipAddress, _ => new FixedWindowRateLimiterOptions
         {
             PermitLimit = 10,
-            Window = TimeSpan.FromSeconds(20),
+            Window = TimeSpan.FromSeconds(15),
             QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
             QueueLimit = 0
         });
@@ -103,8 +105,8 @@ builder.Services.AddRateLimiter(options =>
 {
     options.AddFixedWindowLimiter("fixed-limiter-strict", limiterOptions =>
     {
-        limiterOptions.PermitLimit = 5;
-        limiterOptions.Window = TimeSpan.FromSeconds(45);
+        limiterOptions.PermitLimit = 6;
+        limiterOptions.Window = TimeSpan.FromSeconds(30);
         limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
         limiterOptions.QueueLimit = 0;
     });

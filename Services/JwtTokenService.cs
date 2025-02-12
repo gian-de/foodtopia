@@ -25,6 +25,7 @@ namespace foodtopia.Services
                 new Claim("user_id", user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim("is_guest", user.IsGuest.ToString())
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);

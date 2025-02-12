@@ -112,6 +112,32 @@ namespace foodtopia.Controllers
             );
         }
 
+        [HttpPost("guest-login")]
+        [EnableRateLimiting("fixed-limiter-strict")]
+        public async Task<IActionResult> LoginAsGuest()
+        {
+            var guestUsername = $"Guest-{Guid.NewGuid().ToString().Substring(0, 9)}";
+
+            var guestUser = new AppUser
+            {
+                UserName = guestUsername,
+                Email = $"{guestUsername}@guest.com",
+                IsGuest = true,
+            };
+
+            var result = await _userManager.CreateAsync(guestUser);
+            if (!result.Succeeded) return StatusCode(500, "Couldn't create guest account unfortunately.");
+
+            return Ok(
+                new NewUserDTO
+                {
+                    UserName = guestUsername,
+                    Email = guestUser.Email,
+                    JwtToken = _jwtTokenService.CreateToken(guestUser)
+                }
+            );
+        }
+
         [HttpPost("forgot-password")]
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO requestDto)
