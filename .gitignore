@@ -3,9 +3,10 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
-# dotenv files
+# dotenv files and password.txt
 .env
 appsettings.json
+seed_password.txt
 
 # User-specific files
 *.rsuser

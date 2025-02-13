@@ -32,9 +32,9 @@ namespace foodtopia.Services
                     var recipeCutoff = DateTime.UtcNow.AddMinutes(-15);
 
                     var guestRecipes = await dbContext.Recipes
-                        .Include(r => r.User)
-                        .Where(r => r.User.IsGuest && r.PublishedAt < recipeCutoff)
-                        .ToListAsync(stoppingToken);
+                                        .Include(r => r.User)
+                                        .Where(r => r.User.IsGuest && r.PublishedAt < recipeCutoff)
+                                        .ToListAsync(stoppingToken);
 
                     if (guestRecipes.Any())
                     {
@@ -50,8 +50,8 @@ namespace foodtopia.Services
                         var userCutoff = DateTime.UtcNow.AddHours(-2);
 
                         var guestUsers = await dbContext.Users
-                            .Where(u => u.IsGuest && u.CreatedAt < userCutoff)
-                            .ToListAsync(stoppingToken);
+                                            .Where(u => u.IsGuest && u.CreatedAt < userCutoff)
+                                            .ToListAsync(stoppingToken);
 
                         foreach (var guest in guestUsers)
                         {

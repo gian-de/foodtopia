@@ -26,12 +26,12 @@ namespace foodtopia.Services
             bool isDescending = sortDirection.ToLower() == "desc";
 
             var recipeQuery = _context.Recipes
-                .Include(r => r.Country)
-                .Include(r => r.User)
-                .Include(r => r.Ingredients)
-                .Include(r => r.Instructions.OrderBy(ins => ins.Order))
-                .Include(r => r.Ratings)
-                .AsQueryable();
+                                .Include(r => r.Country)
+                                .Include(r => r.User)
+                                .Include(r => r.Ingredients)
+                                .Include(r => r.Instructions.OrderBy(ins => ins.Order))
+                                .Include(r => r.Ratings)
+                                .AsQueryable();
 
             recipeQuery = sortBy.ToLower() switch
             {
@@ -52,10 +52,10 @@ namespace foodtopia.Services
 
             var totalRecipes = await recipeQuery.CountAsync();
             var recipesDTOs = await recipeQuery
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .Select(r => r.ToRecipeSummaryDTO())
-                .ToListAsync();
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize)
+                                .Select(r => r.ToRecipeSummaryDTO())
+                                .ToListAsync();
 
             return new PagedResult<RecipeSummaryDTO>
             {
@@ -70,13 +70,13 @@ namespace foodtopia.Services
         public async Task<RecipeSummaryDTO> GetRecipeByIdAsync(Guid recipeId)
         {
             var recipe = await _context.Recipes
-            .Where(r => r.Id == recipeId)
-            .Include(r => r.Country)
-            .Include(r => r.User)
-            .Include(r => r.Ingredients)
-            .Include(r => r.Instructions.OrderBy(ins => ins.Order))
-            .Include(r => r.Ratings)
-            .FirstOrDefaultAsync();
+                                .Where(r => r.Id == recipeId)
+                                .Include(r => r.Country)
+                                .Include(r => r.User)
+                                .Include(r => r.Ingredients)
+                                .Include(r => r.Instructions.OrderBy(ins => ins.Order))
+                                .Include(r => r.Ratings)
+                                .FirstOrDefaultAsync();
 
             if (recipe is null) throw new KeyNotFoundException($"Recipe with id {recipeId} was not found.");
 
@@ -105,9 +105,9 @@ namespace foodtopia.Services
             if (recipeRequest is null) throw new ArgumentNullException(nameof(recipeRequest), "Recipe data is required.");
 
             var recipeModel = await _context.Recipes
-                .Include(r => r.Instructions)
-                .Include(r => r.Instructions)
-                .FirstOrDefaultAsync(r => r.Id == recipeId);
+                                .Include(r => r.Instructions)
+                                .Include(r => r.Instructions)
+                                .FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipeModel is null) throw new KeyNotFoundException($"Recipe with Id {recipeId} was not found.");
             if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to delete this recipe.");
@@ -160,12 +160,12 @@ namespace foodtopia.Services
 
             // refetch the updated Recipe
             var updatedRecipeModel = await _context.Recipes
-                .Include(r => r.Country)
-                .Include(r => r.User)
-                .Include(r => r.Ingredients)
-                .Include(r => r.Instructions.OrderBy(ins => ins.Order))
-                .Include(r => r.Ratings)
-                .FirstOrDefaultAsync(r => r.Id == recipeId);
+                                        .Include(r => r.Country)
+                                        .Include(r => r.User)
+                                        .Include(r => r.Ingredients)
+                                        .Include(r => r.Instructions.OrderBy(ins => ins.Order))
+                                        .Include(r => r.Ratings)
+                                        .FirstOrDefaultAsync(r => r.Id == recipeId);
 
             // map updated Recipe Model back to DTO
             return updatedRecipeModel?.ToRecipeSummaryDTO();
@@ -174,8 +174,8 @@ namespace foodtopia.Services
         public async Task<RecipeDeleteDTO> DeleteRecipeAsync(Guid userId, Guid recipeId)
         {
             var recipeModel = await _context.Recipes
-                .Include(r => r.Country)
-                .FirstOrDefaultAsync(r => r.Id == recipeId);
+                                .Include(r => r.Country)
+                                .FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipeModel is null) throw new KeyNotFoundException($"Recipe with ID {recipeId} was not found.");
             if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to delete this recipe.");

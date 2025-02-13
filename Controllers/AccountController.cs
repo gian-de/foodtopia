@@ -1,9 +1,12 @@
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using foodtopia.DTOs;
 using foodtopia.DTOs.Account;
 using foodtopia.Interfaces;
 using foodtopia.Models;
+using foodtopia.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -18,11 +21,13 @@ namespace foodtopia.Controllers
         string baseURL = "http://localhost:5001";
 
         private readonly UserManager<AppUser> _userManager;
+        private readonly AccountService _accountService;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IEmailService _emailService;
-        public AccountController(UserManager<AppUser> userManager, IJwtTokenService jwtTokenService, IEmailService emailService)
+        public AccountController(UserManager<AppUser> userManager, AccountService accountService, IJwtTokenService jwtTokenService, IEmailService emailService)
         {
             _userManager = userManager;
+            _accountService = accountService;
             _jwtTokenService = jwtTokenService;
             _emailService = emailService;
         }
@@ -176,6 +181,28 @@ namespace foodtopia.Controllers
             if (!result.Succeeded) return BadRequest("Something went wrong12.");
 
             return Ok("Password has been reset successfully.");
+        }
+
+        [HttpDelete("delete-account")]
+        [Authorize]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            try
+            {
+                var userIdStr = User.FindFirstValue("user_id");
+                if (!Guid.TryParse(userIdStr, out Guid userId)) return Unauthorized("Invalid user_id inside JWT.");
+
+                await _accountService.DeleteAccountAsync(userId);
+                return Ok(new { Message = "Account deleted successfully." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
         }
     }
 }

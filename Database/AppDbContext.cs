@@ -84,6 +84,22 @@ namespace foodtopia.Database
 
             var deletedUserGuid = Guid.Parse("00000000-0000-0000-0000-000000000001"); // Well-known GUID for "Deleted" user
 
+            var hashedPassword = File.Exists("seed_password.txt")
+                                    ? File.ReadAllText("seed_password.txt").Trim()
+                                    : throw new Exception("Missing \"seed_password.txt\". Go to \"https://bcrypt-generator.com/\" type a password and copy the new hashed password and paste it inside the \"seed_password.txt\" file.");
+
+            var deletedUser = new AppUser
+            {
+                Id = deletedUserGuid,
+                UserName = "deleted-user",
+                NormalizedUserName = "DELETED_USER",
+                Email = "deleted@foodtopia.com",
+                NormalizedEmail = "DELETED@FOODTOPIA.COM",
+                EmailConfirmed = true,
+                PasswordHash = hashedPassword
+            };
+            modelBuilder.Entity<AppUser>().HasData(deletedUser);
+
             modelBuilder.Entity<AppUser>().HasData(AppUserSeed.GetAppUsers());
 
             var countries = CountrySeed.GetCountries(); // variable to pass into both Country entity and argument for RecipeSeed Entity

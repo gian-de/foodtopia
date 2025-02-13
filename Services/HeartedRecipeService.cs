@@ -28,15 +28,15 @@ namespace foodtopia.Services
             bool isDescending = sortDirection.ToLower() == "desc";
 
             var heartedRecipeQuery = _context.HeartedRecipes
-                    .Where(hr => hr.UserId == user.Id)
-                    .Include(hr => hr.Recipe)
-                        .ThenInclude(r => r.HeartedByUsers) // needed to get "HeartedAt" prop for sort functionality
-                    .Include(hr => hr.Recipe.Country)
-                    .Include(hr => hr.Recipe.Ingredients)
-                    .Include(hr => hr.Recipe.Instructions)
-                    .Include(hr => hr.Recipe.Ratings)
-                    .Select(hr => hr.Recipe)
-                    .AsQueryable();
+                                        .Where(hr => hr.UserId == user.Id)
+                                        .Include(hr => hr.Recipe)
+                                            .ThenInclude(r => r.HeartedByUsers) // needed to get "HeartedAt" prop for sort functionality
+                                        .Include(hr => hr.Recipe.Country)
+                                        .Include(hr => hr.Recipe.Ingredients)
+                                        .Include(hr => hr.Recipe.Instructions)
+                                        .Include(hr => hr.Recipe.Ratings)
+                                        .Select(hr => hr.Recipe)
+                                        .AsQueryable();
 
             heartedRecipeQuery = sortBy.ToLower() switch
             {
@@ -56,9 +56,9 @@ namespace foodtopia.Services
 
             var totalCount = await heartedRecipeQuery.CountAsync();
             var heartedRecipePagination = await heartedRecipeQuery
-                                    .Skip((page - 1) * pageSize)
-                                    .Take(pageSize)
-                                    .ToListAsync();
+                                            .Skip((page - 1) * pageSize)
+                                            .Take(pageSize)
+                                            .ToListAsync();
 
             var heartedRecipesDTO = heartedRecipePagination.Select(r => r.ToRecipeSummaryDTO()).ToList();
 
@@ -95,7 +95,7 @@ namespace foodtopia.Services
         public async Task<bool> RemoveHeartedRecipeAsync(AppUser user, Guid recipeId)
         {
             var heartedRecipe = await _context.HeartedRecipes
-                                    .FirstOrDefaultAsync(hr => hr.UserId == user.Id && hr.RecipeId == recipeId);
+                                        .FirstOrDefaultAsync(hr => hr.UserId == user.Id && hr.RecipeId == recipeId);
 
             if (heartedRecipe is null) return false;
 

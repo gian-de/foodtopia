@@ -36,7 +36,7 @@ namespace foodtopia.Services
         public Task SendEmailConfirmationAsync(string recipientEmail, string confirmationLink)
         {
             string subject = "FOODTOPIA - Confirm Your Email";
-            string htmlBody = $"<h1>Please confirm your email by clicking <a href='{confirmationLink}'>here</a></h1>.";
+            string htmlBody = $"<h1>Please confirm your email by clicking <a href='{confirmationLink}'>here.</a></h1>";
 
             return SendEmailAsync(recipientEmail, subject, htmlBody);
         }
@@ -44,7 +44,7 @@ namespace foodtopia.Services
         public Task SendEmailPasswordResetAsync(string recipientEmail, string passwordResetLink)
         {
             string subject = "FOODTOPIA - Reset Password";
-            string htmlBody = $"<h1>Reset your password by clicking <a href='{passwordResetLink}'>here</a></h1>.";
+            string htmlBody = $"<h1>Reset your password by clicking <a href='{passwordResetLink}'>here.</a></h1>";
 
             return SendEmailAsync(recipientEmail, subject, htmlBody);
         }

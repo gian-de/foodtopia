@@ -62,6 +62,7 @@ builder.Services.AddAuthentication(options =>
     }
 );
 
+builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
