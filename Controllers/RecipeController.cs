@@ -58,8 +58,8 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpPost]
         [Authorize]
+        [HttpPost]
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> CreateRecipe([FromBody] RecipeCreateRequestDTO recipeRequestDTO)
         {
@@ -86,8 +86,8 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpPut("{recipeId:guid}")]
         [Authorize]
+        [HttpPut("{recipeId:guid}")]
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> UpdateRecipe([FromRoute] Guid recipeId, [FromBody] RecipeUpdateRequestDTO recipeRequest)
         {
@@ -122,8 +122,8 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpDelete("{recipeId:guid}")]
         [Authorize]
+        [HttpDelete("{recipeId:guid}")]
         public async Task<IActionResult> DeleteRecipe([FromRoute] Guid recipeId)
         {
             try

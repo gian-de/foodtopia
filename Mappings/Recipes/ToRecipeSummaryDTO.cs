@@ -1,7 +1,6 @@
 using foodtopia.DTOs.Country;
 using foodtopia.DTOs.Ingredient;
 using foodtopia.DTOs.Instruction;
-using foodtopia.DTOs.Rating;
 using foodtopia.DTOs.Recipe;
 using foodtopia.DTOs.User;
 using foodtopia.Models;
@@ -16,11 +15,11 @@ namespace foodtopia.Mappings.Recipes
                 Id: recipeModel.Id,
                 Name: recipeModel.Name,
                 ImageUrl: recipeModel.ImageUrl,
-                HeartCount: recipeModel.HeartedByUsers?.Count() ?? 0,
-                TasteAverage: recipeModel.TasteAverage,
-                DifficultyAverage: recipeModel.DifficultyAverage,
-                TasteReviewCount: recipeModel.TasteReviewCount,
-                DifficultyReviewCount: recipeModel.DifficultyReviewCount,
+                HeartCount: recipeModel.HeartedByUsers?.Count ?? 0,
+                TasteAverage: recipeModel.Ratings?.Count > 0 ? Math.Round(recipeModel.Ratings.Average(r => r.TasteRating), 2) : (double?)null,
+                DifficultyAverage: recipeModel.Ratings?.Count > 0 ? Math.Round(recipeModel.Ratings.Average(r => r.DifficultyRating), 2) : (double?)null,
+                TasteReviewCount: recipeModel.Ratings?.Count(r => r.TasteRating > 0),
+                DifficultyReviewCount: recipeModel.Ratings?.Count(r => r.DifficultyRating > 0),
                 PublishedAt: recipeModel.PublishedAt,
                 User: recipeModel.User != null
                     ? new UserTldrDTO(
@@ -37,12 +36,7 @@ namespace foodtopia.Mappings.Recipes
                     Recipes: null
                 ),
                 Ingredients: recipeModel.Ingredients.Select(ing => new IngredientDTO(ing.Id, ing.Name, ing.Quantity, ing.Measurement)).ToList(),
-                Instructions: recipeModel.Instructions.Select(inst => new InstructionDTO(inst.Id, inst.Order, inst.Text)).ToList(),
-                Ratings: recipeModel.Ratings?.Select(r => new RatingDTO(
-                                                        r.Id,
-                                                        r.TasteRating,
-                                                        r.DifficultyRating)).ToList()
-                                                        ?? new List<RatingDTO>()
+                Instructions: recipeModel.Instructions.Select(inst => new InstructionDTO(inst.Id, inst.Order, inst.Text)).ToList()
             );
         }
     }

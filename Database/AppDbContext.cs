@@ -30,6 +30,13 @@ namespace foodtopia.Database
             modelBuilder.Entity<Country>()
                 .HasIndex(c => c.Name)
                 .IsUnique();
+            // Allow Rating to increment .5 instead of whole numbers
+            modelBuilder.Entity<Rating>()
+                .Property(r => r.DifficultyRating)
+                .HasPrecision(2, 1);
+            modelBuilder.Entity<Rating>()
+                .Property(r => r.TasteRating)
+                .HasPrecision(2, 1);
 
             // prevents User from liking the same Recipe more than once
             modelBuilder.Entity<HeartedRecipe>()

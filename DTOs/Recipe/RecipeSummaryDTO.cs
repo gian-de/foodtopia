@@ -12,16 +12,15 @@ namespace foodtopia.DTOs.Recipe
         string Name,
         string ImageUrl,
         int HeartCount,
-        decimal TasteAverage,
-        decimal DifficultyAverage,
-        int TasteReviewCount,
-        int DifficultyReviewCount,
+        double? TasteAverage,
+        double? DifficultyAverage,
+        int? TasteReviewCount,
+        int? DifficultyReviewCount,
         DateTime PublishedAt,
         UserTldrDTO? User,
         Guid CountryId,
         CountryDTO Country,
         ICollection<IngredientDTO> Ingredients,
-        ICollection<InstructionDTO> Instructions,
-        ICollection<RatingDTO>? Ratings
+        ICollection<InstructionDTO> Instructions
     );
 }

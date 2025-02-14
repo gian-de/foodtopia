@@ -70,6 +70,7 @@ builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<IIngredientService, IngredientService>();
 builder.Services.AddScoped<IHeartedRecipeService, HeartedRecipeService>();
+builder.Services.AddScoped<IRatingService, RatingService>();
 
 builder.Services.AddHostedService<GuestRecipeCronJobDeleteService>();
 
