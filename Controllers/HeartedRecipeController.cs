@@ -69,15 +69,19 @@ namespace foodtopia.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddHeartedRecipe([FromBody] HeartedRecipeRequestDTO request)
+        public async Task<IActionResult> AddHeartedRecipe([FromBody] HeartedRecipeRequestDTO requestDTO)
         {
             try
             {
                 var userId = GetUserId();
 
-                await _heartedRecipeService.AddHeartedRecipeAsync(userId, request.RecipeId);
+                await _heartedRecipeService.AddHeartedRecipeAsync(userId, requestDTO.RecipeId);
 
                 return Ok("Recipe hearted successfully!");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
             }
             catch (ArgumentNullException ex)
             {
@@ -90,17 +94,21 @@ namespace foodtopia.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> RemoveHeartedRecipe([FromBody] HeartedRecipeRequestDTO request)
+        public async Task<IActionResult> RemoveHeartedRecipe([FromBody] HeartedRecipeRequestDTO requestDTO)
         {
             try
             {
                 var userId = GetUserId();
 
-                var removed = await _heartedRecipeService.RemoveHeartedRecipeAsync(userId, request.RecipeId);
+                var removed = await _heartedRecipeService.RemoveHeartedRecipeAsync(userId, requestDTO.RecipeId);
 
                 if (!removed) return NotFound("Recipe not found inside favorites.");
 
                 return Ok("Recipe un-hearted.");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
             }
             catch (ArgumentException ex)
             {

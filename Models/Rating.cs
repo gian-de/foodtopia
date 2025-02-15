@@ -13,7 +13,7 @@ namespace foodtopia.Models
         public double DifficultyRating { get; set; }
         public DateTime ReviewedAt { get; set; } = DateTime.UtcNow;
 
-        public required Recipe Recipe { get; set; }
-        public required AppUser User { get; set; }
+        public Recipe? Recipe { get; set; }
+        public AppUser? User { get; set; }
     }
 }

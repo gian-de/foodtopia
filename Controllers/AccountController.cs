@@ -121,7 +121,7 @@ namespace foodtopia.Controllers
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> LoginAsGuest()
         {
-            var guestUsername = $"Guest-{Guid.NewGuid().ToString().Substring(0, 9)}";
+            var guestUsername = $"Guest-{Guid.NewGuid().ToString().Substring(0, 11)}";
 
             var guestUser = new AppUser
             {
@@ -145,11 +145,11 @@ namespace foodtopia.Controllers
 
         [HttpPost("forgot-password")]
         [EnableRateLimiting("fixed-limiter-strict")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO requestDto)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO requestDTO)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var user = await _userManager.FindByEmailAsync(requestDto.Email);
+            var user = await _userManager.FindByEmailAsync(requestDTO.Email);
             if (user is null) return BadRequest("Invalid payload.");
 
             var resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -167,17 +167,17 @@ namespace foodtopia.Controllers
 
         [HttpPost("reset-password")]
         [EnableRateLimiting("fixed-limiter-strict")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDTO requestDto)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDTO requestDTO)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             // decode both email and token since they're sent over encoded
-            var decodedEmail = WebUtility.UrlDecode(requestDto.Email);
-            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(requestDto.Token));
+            var decodedEmail = WebUtility.UrlDecode(requestDTO.Email);
+            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(requestDTO.Token));
 
             var user = await _userManager.FindByEmailAsync(decodedEmail);
             if (user is null) return BadRequest("Invalid payload.");
 
-            var result = await _userManager.ResetPasswordAsync(user, decodedToken, requestDto.Password);
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, requestDTO.Password);
             if (!result.Succeeded) return BadRequest("Something went wrong12.");
 
             return Ok("Password has been reset successfully.");

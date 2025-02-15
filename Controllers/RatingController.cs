@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using foodtopia.DTOs.Rating;
 using foodtopia.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +53,39 @@ namespace foodtopia.Controllers
             {
                 return StatusCode(500, new { ex.Message });
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrUpdateRatings(Guid recipeId, [FromBody] RatingCreateDTO ratingRequestDTO)
+        {
+            try
+            {
+                if (IsGuest()) return Unauthorized("Only verified users can leave ratings.");
+                var userId = GetUserId();
+                await _ratingService.AddOrUpdateRatingsAsync(userId, recipeId, ratingRequestDTO.TasteRating, ratingRequestDTO.DifficultyRating);
+
+                return Ok("Rating saved!");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRatings(Guid recipeId)
+        {
+            if (IsGuest()) return Unauthorized("Only verified users can leave ratings.");
+            var userId = GetUserId();
+
+            var removeRatings = await _ratingService.DeleteRatingsAsync(userId, recipeId);
+            if (!removeRatings) return NotFound("Ratings not found for this given recipe");
+
+            return Ok("Ratings deleted!");
         }
     }
 }
