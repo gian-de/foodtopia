@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using foodtopia.DTOs.HeartedRecipe;
 using foodtopia.Extensions;
 using foodtopia.Interfaces;
@@ -9,26 +10,34 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace foodtopia.Controllers
 {
+    [Authorize]
     [Route("api/hearted-recipes")]
     [ApiController]
     public class HeartedRecipeController : Controller
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly IRecipeService _recipeService;
         private readonly IHeartedRecipeService _heartedRecipeService;
-        public HeartedRecipeController(
-            UserManager<AppUser> userManager,
-            IRecipeService recipeService,
-            IHeartedRecipeService heartedRecipeService
-            )
+        public HeartedRecipeController(IHeartedRecipeService heartedRecipeService)
         {
-            _userManager = userManager;
-            _recipeService = recipeService;
             _heartedRecipeService = heartedRecipeService;
         }
 
+        private bool IsGuest()
+        {
+            var isGuestClaimValue = User.FindFirstValue("is_guest");
+            if (!bool.TryParse(isGuestClaimValue, out bool isGuest)) throw new UnauthorizedAccessException("Only verified users can favorite recipes.");
+
+            return isGuest;
+        }
+
+        private Guid GetUserId()
+        {
+            var usedIdStr = User.FindFirstValue("user_id");
+            if (!Guid.TryParse(usedIdStr, out Guid userId)) throw new UnauthorizedAccessException("Invalid id within JWT.");
+
+            return userId;
+        }
+
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetUserHeartedRecipes(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
@@ -38,12 +47,16 @@ namespace foodtopia.Controllers
         {
             try
             {
-                var username = User.GetUsername();
-                var appUser = await _userManager.FindByNameAsync(username);
-                if (appUser is null) return NotFound("User not found.");
+                if (IsGuest()) return Unauthorized("Only registered users can favorite recipes.");
 
-                var heartedRecipesPagedResult = await _heartedRecipeService.GetUserHeartedRecipeAsync(appUser, page, pageSize, sortBy, sortDirection);
+                var userId = GetUserId();
+
+                var heartedRecipesPagedResult = await _heartedRecipeService.GetUserHeartedRecipeAsync(userId, page, pageSize, sortBy, sortDirection);
                 return Ok(heartedRecipesPagedResult);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
             }
             catch (ArgumentNullException ex)
             {
@@ -56,17 +69,13 @@ namespace foodtopia.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> AddHeartedRecipe([FromBody] HeartedRecipeRequestDTO request)
         {
             try
             {
-                var username = User.GetUsername();
-                var appUser = await _userManager.FindByNameAsync(username);
+                var userId = GetUserId();
 
-                if (appUser is null) return NotFound("User not found.");
-
-                await _heartedRecipeService.AddHeartedRecipeAsync(appUser, request.RecipeId);
+                await _heartedRecipeService.AddHeartedRecipeAsync(userId, request.RecipeId);
 
                 return Ok("Recipe hearted successfully!");
             }
@@ -81,16 +90,13 @@ namespace foodtopia.Controllers
         }
 
         [HttpDelete]
-        [Authorize]
         public async Task<IActionResult> RemoveHeartedRecipe([FromBody] HeartedRecipeRequestDTO request)
         {
             try
             {
-                var username = User.GetUsername();
-                var appUser = await _userManager.FindByNameAsync(username);
-                if (appUser is null) return NotFound("User not found.");
+                var userId = GetUserId();
 
-                var removed = await _heartedRecipeService.RemoveHeartedRecipeAsync(appUser, request.RecipeId);
+                var removed = await _heartedRecipeService.RemoveHeartedRecipeAsync(userId, request.RecipeId);
 
                 if (!removed) return NotFound("Recipe not found inside favorites.");
 

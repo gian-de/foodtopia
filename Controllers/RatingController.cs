@@ -18,11 +18,11 @@ namespace foodtopia.Controllers
 
         private bool IsGuest()
         {
-            var isGuest = User.FindFirstValue("is_guest");
+            var isGuestClaimValue = User.FindFirstValue("is_guest");
 
-            if (!bool.TryParse(isGuest, out bool guest)) throw new UnauthorizedAccessException("Only verified users can leave ratings.");
+            if (!bool.TryParse(isGuestClaimValue, out bool isGuest)) throw new UnauthorizedAccessException("Only verified users can leave ratings.");
 
-            return guest;
+            return isGuest;
         }
         private Guid GetUserId()
         {
@@ -36,11 +36,22 @@ namespace foodtopia.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRatingsAsync(Guid recipeId)
         {
-            if (IsGuest()) return Unauthorized("Only verified users can leave ratings.");
-            var userId = GetUserId();
-            var ratingsResult = await _ratingService.GetRatingsAsync(userId, recipeId);
+            try
+            {
+                if (IsGuest()) return Unauthorized("Only verified users can leave ratings.");
+                var userId = GetUserId();
+                var ratingsResult = await _ratingService.GetRatingsAsync(userId, recipeId);
 
-            return ratingsResult is not null ? Ok(ratingsResult) : NotFound("No ratings found for this recipe.");
+                return ratingsResult is not null ? Ok(ratingsResult) : NotFound("No ratings found for this recipe.");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
         }
     }
 }

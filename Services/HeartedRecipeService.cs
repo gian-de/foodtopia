@@ -16,19 +16,18 @@ namespace foodtopia.Services
             _context = context;
         }
         public async Task<PagedResult<RecipeSummaryDTO>> GetUserHeartedRecipeAsync(
-            AppUser user,
+            Guid userId,
             int page,
             int pageSize,
             string sortBy,
             string sortDirection)
         {
-            if (user is null) throw new ArgumentNullException(nameof(user), "User must be authenticated first!");
             if (page < 1 || pageSize < 1) throw new ArgumentException("Page and or Page size must be greater than 0.");
 
             bool isDescending = sortDirection.ToLower() == "desc";
 
             var heartedRecipeQuery = _context.HeartedRecipes
-                                        .Where(hr => hr.UserId == user.Id)
+                                        .Where(hr => hr.UserId == userId)
                                         .Include(hr => hr.Recipe)
                                             .ThenInclude(r => r.HeartedByUsers) // needed to get "HeartedAt" prop for sort functionality
                                         .Include(hr => hr.Recipe.Country)
@@ -72,19 +71,19 @@ namespace foodtopia.Services
             };
         }
 
-        public async Task AddHeartedRecipeAsync(AppUser user, Guid recipeId)
+        public async Task AddHeartedRecipeAsync(Guid userId, Guid recipeId)
         {
             var recipe = await _context.Recipes.FindAsync(recipeId);
             if (recipe is null) throw new ArgumentNullException("Recipe not found.");
 
             bool alreadyHearted = await _context.HeartedRecipes
-                                            .AnyAsync(hr => hr.UserId == user.Id && hr.RecipeId == recipeId);
+                                            .AnyAsync(hr => hr.UserId == userId && hr.RecipeId == recipeId);
 
             if (alreadyHearted) throw new ArgumentException("You've hearted this recipe already.");
 
             var heartedRecipe = new HeartedRecipe
             {
-                UserId = user.Id,
+                UserId = userId,
                 RecipeId = recipeId,
             };
 
@@ -92,10 +91,10 @@ namespace foodtopia.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> RemoveHeartedRecipeAsync(AppUser user, Guid recipeId)
+        public async Task<bool> RemoveHeartedRecipeAsync(Guid userId, Guid recipeId)
         {
             var heartedRecipe = await _context.HeartedRecipes
-                                        .FirstOrDefaultAsync(hr => hr.UserId == user.Id && hr.RecipeId == recipeId);
+                                        .FirstOrDefaultAsync(hr => hr.UserId == userId && hr.RecipeId == recipeId);
 
             if (heartedRecipe is null) return false;
 

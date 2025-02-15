@@ -17,6 +17,15 @@ namespace foodtopia.Controllers
             _recipeService = recipeService;
         }
 
+        private Guid GetUserId()
+        {
+            var userIdStr = User.FindFirstValue("user_id");
+            // parse from type string to Guid (AppUser's id type set inside Model)
+            if (!Guid.TryParse(userIdStr, out Guid userId)) throw new UnauthorizedAccessException("Invalid id within JWT");
+
+            return userId;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllRecipes(
             [FromQuery] int page = 1,
@@ -65,10 +74,7 @@ namespace foodtopia.Controllers
         {
             try
             {
-                var userIdStr = User.FindFirstValue("user_id");
-                // parse from type string to Guid (AppUser's id type set inside Model)
-                if (!Guid.TryParse(userIdStr, out Guid userId)) return Unauthorized("Invalid id within JWT");
-
+                var userId = GetUserId();
                 var recipeDTO = await _recipeService.CreateRecipeAsync(userId, recipeRequestDTO);
                 return CreatedAtAction(nameof(GetRecipeById), new { recipeId = recipeDTO.Id }, recipeDTO);
             }
@@ -93,10 +99,7 @@ namespace foodtopia.Controllers
         {
             try
             {
-                var userIdStr = User.FindFirstValue("user_id");
-                //
-                if (!Guid.TryParse(userIdStr, out Guid userId)) return Unauthorized("Invalid user is within JWT.");
-
+                var userId = GetUserId();
                 var updatedRecipe = await _recipeService.UpdateRecipeAsync(userId, recipeId, recipeRequest);
                 return Ok(updatedRecipe);
             }
@@ -128,10 +131,7 @@ namespace foodtopia.Controllers
         {
             try
             {
-                var userIdStr = User.FindFirstValue("user_id");
-                // parse from type string to Guid (AppUser's id type set inside Model)
-                if (!Guid.TryParse(userIdStr, out Guid userId)) return Unauthorized("Invalid id within JWT");
-
+                var userId = GetUserId();
                 var deletedRecipeDTO = await _recipeService.DeleteRecipeAsync(userId, recipeId);
 
                 return Ok(new

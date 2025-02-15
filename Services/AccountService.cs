@@ -22,7 +22,7 @@ namespace foodtopia.Services
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null) throw new KeyNotFoundException("User not found.");
 
-            // Grab Recipes created from User, the reassign UserId to DeleteGuid id 
+            // Grab Recipes created from User, then reassign UserId to DeleteGuid id 
             var userRecipes = await _context.Recipes
                                 .Where(r => r.UserId == userId)
                                 .ToListAsync();
