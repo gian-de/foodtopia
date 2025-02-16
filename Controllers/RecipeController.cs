@@ -1,5 +1,5 @@
-using System.Security.Claims;
 using foodtopia.DTOs.Recipe;
+using foodtopia.Helpers;
 using foodtopia.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,15 +15,6 @@ namespace foodtopia.Controllers
         public RecipeController(IRecipeService recipeService)
         {
             _recipeService = recipeService;
-        }
-
-        private Guid GetUserId()
-        {
-            var userIdStr = User.FindFirstValue("user_id");
-            // parse from type string to Guid (AppUser's id type set inside Model)
-            if (!Guid.TryParse(userIdStr, out Guid userId)) throw new UnauthorizedAccessException("Invalid id within JWT");
-
-            return userId;
         }
 
         [HttpGet]
@@ -67,16 +58,50 @@ namespace foodtopia.Controllers
             }
         }
 
+        [HttpGet("my")]
         [Authorize]
+        public async Task<IActionResult> GetMyCreatedRecipes(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "PublishedAt",
+            [FromQuery] string sortDirection = "desc")
+        {
+            try
+            {
+                var userId = User.GetUserIdFromClaims();
+
+                var myRecipesPagedResult = await _recipeService.GetMyCreatedRecipesAsync(userId, page, pageSize, sortBy, sortDirection);
+
+                return Ok(myRecipesPagedResult);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
         [HttpPost]
+        [Authorize]
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> CreateRecipe([FromBody] RecipeCreateRequestDTO recipeRequestDTO)
         {
             try
             {
-                var userId = GetUserId();
+                var userId = User.GetUserIdFromClaims();
                 var recipeDTO = await _recipeService.CreateRecipeAsync(userId, recipeRequestDTO);
                 return CreatedAtAction(nameof(GetRecipeById), new { recipeId = recipeDTO.Id }, recipeDTO);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
             }
             catch (ArgumentNullException ex)
             {
@@ -92,20 +117,20 @@ namespace foodtopia.Controllers
             }
         }
 
-        [Authorize]
         [HttpPut("{recipeId:guid}")]
+        [Authorize]
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> UpdateRecipe([FromRoute] Guid recipeId, [FromBody] RecipeUpdateRequestDTO recipeRequest)
         {
             try
             {
-                var userId = GetUserId();
+                var userId = User.GetUserIdFromClaims();
                 var updatedRecipe = await _recipeService.UpdateRecipeAsync(userId, recipeId, recipeRequest);
                 return Ok(updatedRecipe);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                return Forbid();
+                return Unauthorized(new { ex.Message });
             }
             catch (ArgumentNullException ex)
             {
@@ -125,13 +150,13 @@ namespace foodtopia.Controllers
             }
         }
 
-        [Authorize]
         [HttpDelete("{recipeId:guid}")]
+        [Authorize]
         public async Task<IActionResult> DeleteRecipe([FromRoute] Guid recipeId)
         {
             try
             {
-                var userId = GetUserId();
+                var userId = User.GetUserIdFromClaims();
                 var deletedRecipeDTO = await _recipeService.DeleteRecipeAsync(userId, recipeId);
 
                 return Ok(new
@@ -140,9 +165,9 @@ namespace foodtopia.Controllers
                     DeletedRecipe = deletedRecipeDTO
                 });
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                return Forbid();
+                return Unauthorized(new { ex.Message });
             }
             catch (KeyNotFoundException ex)
             {

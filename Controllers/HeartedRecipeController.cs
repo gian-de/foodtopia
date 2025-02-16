@@ -1,40 +1,21 @@
-using System.Security.Claims;
 using foodtopia.DTOs.HeartedRecipe;
-using foodtopia.Extensions;
+using foodtopia.Helpers;
 using foodtopia.Interfaces;
-using foodtopia.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace foodtopia.Controllers
 {
     [Authorize]
-    [Route("api/hearted-recipes")]
     [ApiController]
+    [Route("api/recipes/hearted-recipes")]
     public class HeartedRecipeController : Controller
     {
         private readonly IHeartedRecipeService _heartedRecipeService;
         public HeartedRecipeController(IHeartedRecipeService heartedRecipeService)
         {
             _heartedRecipeService = heartedRecipeService;
-        }
-
-        private bool IsGuest()
-        {
-            var isGuestClaimValue = User.FindFirstValue("is_guest");
-            if (!bool.TryParse(isGuestClaimValue, out bool isGuest)) throw new UnauthorizedAccessException("Only verified users can favorite recipes.");
-
-            return isGuest;
-        }
-
-        private Guid GetUserId()
-        {
-            var usedIdStr = User.FindFirstValue("user_id");
-            if (!Guid.TryParse(usedIdStr, out Guid userId)) throw new UnauthorizedAccessException("Invalid id within JWT.");
-
-            return userId;
         }
 
         [HttpGet]
@@ -47,9 +28,9 @@ namespace foodtopia.Controllers
         {
             try
             {
-                if (IsGuest()) return Unauthorized("Only registered users can favorite recipes.");
+                if (User.IsGuest()) return Unauthorized("Only registered users can favorite recipes.");
 
-                var userId = GetUserId();
+                var userId = User.GetUserIdFromClaims();
 
                 var heartedRecipesPagedResult = await _heartedRecipeService.GetUserHeartedRecipeAsync(userId, page, pageSize, sortBy, sortDirection);
                 return Ok(heartedRecipesPagedResult);
@@ -73,7 +54,9 @@ namespace foodtopia.Controllers
         {
             try
             {
-                var userId = GetUserId();
+                if (User.IsGuest()) return Unauthorized("Only registered users can favorite recipes.");
+
+                var userId = User.GetUserIdFromClaims();
 
                 await _heartedRecipeService.AddHeartedRecipeAsync(userId, requestDTO.RecipeId);
 
@@ -98,7 +81,9 @@ namespace foodtopia.Controllers
         {
             try
             {
-                var userId = GetUserId();
+                if (User.IsGuest()) return Unauthorized("Only registered users can favorite recipes.");
+
+                var userId = User.GetUserIdFromClaims();
 
                 var removed = await _heartedRecipeService.RemoveHeartedRecipeAsync(userId, requestDTO.RecipeId);
 

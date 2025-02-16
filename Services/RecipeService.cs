@@ -83,6 +83,55 @@ namespace foodtopia.Services
             return recipe.ToRecipeSummaryDTO();
         }
 
+        public async Task<PagedResult<RecipeSummaryDTO>> GetMyCreatedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        {
+            if (page < 1 || pageSize < 1) throw new ArgumentException("Page and or Page size must be greater than 0.");
+
+            bool isDescending = sortDirection.ToLower() == "desc";
+
+            var recipeQuery = _context.Recipes
+                                .Where(r => r.UserId == userId)
+                                .Include(r => r.Country)
+                                .Include(r => r.User)
+                                .Include(r => r.Ingredients)
+                                .Include(r => r.Instructions.OrderBy(ins => ins.Order))
+                                .Include(r => r.Ratings)
+                                .AsQueryable();
+
+            recipeQuery = sortBy.ToLower() switch
+            {
+                "heartedbyusers" => isDescending
+                    ? recipeQuery.OrderByDescending(r => r.HeartedByUsers.Count)
+                    : recipeQuery.OrderBy(r => r.HeartedByUsers.Count),
+                "tasteaverage" => isDescending
+                    ? recipeQuery.OrderByDescending(r => r.Ratings.Average(rt => rt.TasteRating))
+                    : recipeQuery.OrderBy(r => r.Ratings.Average(rt => rt.TasteRating)),
+                "difficultyaverage" => isDescending
+                    ? recipeQuery.OrderByDescending(r => r.Ratings.Average(rt => rt.DifficultyRating))
+                    : recipeQuery.OrderBy(r => r.Ratings.Average(rt => rt.DifficultyRating)),
+                _ => isDescending
+                    ? recipeQuery.OrderByDescending(r => r.PublishedAt)
+                    : recipeQuery.OrderBy(r => r.PublishedAt)
+            };
+
+
+            var totalRecipes = await recipeQuery.CountAsync();
+            var recipesDTOs = await recipeQuery
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize)
+                                .Select(r => r.ToRecipeSummaryDTO())
+                                .ToListAsync();
+
+            return new PagedResult<RecipeSummaryDTO>
+            {
+                TotalCount = totalRecipes,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalRecipes / (double)pageSize),
+                Results = recipesDTOs
+            };
+        }
+
         public async Task<RecipeSummaryDTO> CreateRecipeAsync(Guid userId, RecipeCreateRequestDTO recipeRequestDTO)
         {
             if (recipeRequestDTO is null) throw new ArgumentNullException(nameof(recipeRequestDTO), "Recipe data is required.");
@@ -189,5 +238,6 @@ namespace foodtopia.Services
                 recipeModel.Country!.Name
             );
         }
+
     }
 }

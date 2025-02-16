@@ -16,8 +16,15 @@ namespace foodtopia.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var countries = await _countryService.GetAllCountriesAsync();
-            return Ok(countries);
+            try
+            {
+                var countries = await _countryService.GetAllCountriesAsync();
+                return Ok(countries);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
         }
 
         [HttpGet("{slug}")]

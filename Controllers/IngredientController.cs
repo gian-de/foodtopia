@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace foodtopia.Controllers
 {
-    [Route("api/")]
+    [Route("api/recipes")]
     [ApiController]
     public class IngredientController : ControllerBase
     {
