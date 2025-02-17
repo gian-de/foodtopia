@@ -5,7 +5,7 @@ namespace foodtopia.Interfaces
 {
     public interface IRecipeService
     {
-        Task<PagedResult<RecipeSummaryDTO>> GetAllRecipesAsync(int page, int pageSize, string sortBy, string sortDirection);
+        Task<PagedResult<RecipeSummaryDTO>> GetAllRecipesAsync(int page, int pageSize, string sortBy, string sortDirection, string username);
         Task<RecipeSummaryDTO> GetRecipeByIdAsync(Guid recipeId);
         Task<PagedResult<RecipeSummaryDTO>> GetMyCreatedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection);
         Task<RecipeSummaryDTO> CreateRecipeAsync(Guid userId, RecipeCreateRequestDTO recipeRequestDTO);

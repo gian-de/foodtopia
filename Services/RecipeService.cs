@@ -19,19 +19,31 @@ namespace foodtopia.Services
             int page,
             int pageSize,
             string sortBy,
-            string sortDirection)
+            string sortDirection,
+            string? username = null)
         {
             if (page < 1 || pageSize < 1) throw new ArgumentException("Page and or Page size must be greater than 0.");
 
             bool isDescending = sortDirection.ToLower() == "desc";
 
-            var recipeQuery = _context.Recipes
+            if (!string.IsNullOrEmpty(username))
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
+                if (user is null) throw new KeyNotFoundException($"User with the username: '{username}' not found.");
+            }
+
+            IQueryable<Recipe> recipeQuery = _context.Recipes
                                 .Include(r => r.Country)
                                 .Include(r => r.User)
                                 .Include(r => r.Ingredients)
                                 .Include(r => r.Instructions.OrderBy(ins => ins.Order))
                                 .Include(r => r.Ratings)
                                 .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(username))
+            {
+                recipeQuery = recipeQuery.Where(r => r.User.UserName.ToLower() == username.ToLower());
+            }
 
             recipeQuery = sortBy.ToLower() switch
             {

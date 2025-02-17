@@ -99,7 +99,7 @@ namespace foodtopia.Database
             {
                 Id = deletedUserGuid,
                 UserName = "deleted-user",
-                NormalizedUserName = "DELETED_USER",
+                NormalizedUserName = "DELETED-USER",
                 Email = "deleted@foodtopia.com",
                 NormalizedEmail = "DELETED@FOODTOPIA.COM",
                 EmailConfirmed = true,

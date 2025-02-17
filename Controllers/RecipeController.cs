@@ -22,13 +22,18 @@ namespace foodtopia.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
             [FromQuery] string sortBy = "PublishedAt",
-            [FromQuery] string sortDirection = "desc")
+            [FromQuery] string sortDirection = "desc",
+            [FromQuery] string? username = null)
         {
             try
             {
-                var recipePagedResult = await _recipeService.GetAllRecipesAsync(page, pageSize, sortBy, sortDirection);
+                var recipePagedResult = await _recipeService.GetAllRecipesAsync(page, pageSize, sortBy, sortDirection, username);
 
                 return Ok(recipePagedResult);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
             }
             catch (ArgumentException ex)
             {
