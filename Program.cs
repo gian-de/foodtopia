@@ -71,6 +71,7 @@ builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<IIngredientService, IngredientService>();
 builder.Services.AddScoped<IHeartedRecipeService, HeartedRecipeService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
+builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
 
 builder.Services.AddHostedService<GuestRecipeCronJobDeleteService>();
 

@@ -10,7 +10,7 @@ namespace foodtopia.Controllers
     [Authorize]
     [ApiController]
     [Route("api/recipes/hearted-recipes")]
-    public class HeartedRecipeController : Controller
+    public class HeartedRecipeController : ControllerBase
     {
         private readonly IHeartedRecipeService _heartedRecipeService;
         public HeartedRecipeController(IHeartedRecipeService heartedRecipeService)
