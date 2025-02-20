@@ -30,6 +30,7 @@ namespace foodtopia.Services
                     ? c.Recipes.Select(r => new RecipeTldrDTO
                     (
                         r.Id,
+                        r.User!.UserName!,
                         r.Name,
                         r.CountryId,
                         r.ImageUrl,
@@ -57,6 +58,7 @@ namespace foodtopia.Services
                 c.Recipes.Select(r => new RecipeTldrDTO
                 (
                     r.Id,
+                    r.User!.UserName!,
                     r.Name,
                     r.CountryId,
                     r.ImageUrl,

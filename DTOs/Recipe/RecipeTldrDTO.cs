@@ -1,10 +1,9 @@
-using foodtopia.Models;
-
 namespace foodtopia.DTOs.Recipe
 {
     public record RecipeTldrDTO
     (
         Guid Id,
+        string UserName,
         string Name,
         Guid CountryId,
         string ImageUrl,

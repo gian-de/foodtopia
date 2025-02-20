@@ -35,5 +35,29 @@ namespace foodtopia.Controllers
                 return StatusCode(500, new { ex.Message });
             }
         }
+
+        [HttpGet("users")]
+        public async Task<IActionResult> GetTop100Users([FromQuery] int page = 1)
+        {
+            try
+            {
+                int pageSize = 50;
+
+                var top100UsersResult = await _leaderboardService.GetTop100UsersAsync(page, pageSize);
+                return Ok(top100UsersResult);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
     }
 }
