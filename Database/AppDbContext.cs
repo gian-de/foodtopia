@@ -17,6 +17,8 @@ namespace foodtopia.Database
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Country> Countries { get; set; }
+        public DbSet<Playlist> Playlists { get; set; }
+        public DbSet<Playlist> PlaylistRecipes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +32,7 @@ namespace foodtopia.Database
             modelBuilder.Entity<Country>()
                 .HasIndex(c => c.Name)
                 .IsUnique();
+
             // Allow Rating to increment .5 instead of whole numbers
             modelBuilder.Entity<Rating>()
                 .Property(r => r.DifficultyRating)
@@ -38,10 +41,16 @@ namespace foodtopia.Database
                 .Property(r => r.TasteRating)
                 .HasPrecision(2, 1);
 
-            // prevents User from liking the same Recipe more than once
+            // prevents duplicate entries
             modelBuilder.Entity<HeartedRecipe>()
                 .HasIndex(hr => new { hr.UserId, hr.RecipeId })
                 .IsUnique();
+            // Cascade delete HeartedRecipes when a User is deleted
+            modelBuilder.Entity<HeartedRecipe>()
+                .HasOne(hr => hr.User)
+                .WithMany(u => u.HeartedRecipes)
+                .HasForeignKey(hr => hr.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Prevent cascade delete of Recipe when User is deleted
             modelBuilder.Entity<Recipe>()
@@ -65,13 +74,6 @@ namespace foodtopia.Database
                 .HasForeignKey(r => r.RecipeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Cascade delete HeartedRecipes when a User is deleted
-            modelBuilder.Entity<HeartedRecipe>()
-                .HasOne(hr => hr.User)
-                .WithMany(u => u.HeartedRecipes)
-                .HasForeignKey(hr => hr.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             // Cascade delete Instructions when a Recipe is deleted
             modelBuilder.Entity<Instruction>()
                 .HasOne(instr => instr.Recipe)
@@ -85,6 +87,30 @@ namespace foodtopia.Database
                 .WithMany(recipe => recipe.Ingredients)
                 .HasForeignKey(ing => ing.RecipeId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Playlist>()
+                    .HasOne(p => p.User)
+                    .WithMany(u => u.Playlists)
+                    .HasForeignKey(p => p.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Playlist>()
+                .HasIndex(p => p.FullSlug).IsUnique();
+
+            modelBuilder.Entity<PlaylistRecipe>(entity =>
+            {
+                entity.HasKey(pr => new { pr.PlaylistId, pr.RecipeId });
+
+                entity.HasOne(pr => pr.Playlist)
+                        .WithMany(p => p.PlaylistRecipes)
+                        .HasForeignKey(pr => pr.PlaylistId)
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(pr => pr.Recipe)
+                        .WithMany(r => r.PlaylistRecipes)
+                        .HasForeignKey(pr => pr.RecipeId)
+                        .OnDelete(DeleteBehavior.Cascade);
+            });
 
 
             modelBuilder.Entity<IdentityRole<Guid>>().HasData(RoleSeed.GetRoles());

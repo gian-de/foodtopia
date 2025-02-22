@@ -17,6 +17,7 @@ namespace foodtopia.Database.Seeds
                     NormalizedUserName="SPIDER-MAN",
                     Email = "spiderman@email.com",
                     NormalizedEmail = "SPIDERMAN@EMAIL.COM",
+                    EmailConfirmed = true,
                     PasswordHash = passwordHasher.HashPassword(null, "Spiderman1!")
                 },
                 new AppUser
@@ -26,6 +27,7 @@ namespace foodtopia.Database.Seeds
                     NormalizedUserName = "WARLOCK",
                     Email = "adamwarlock@email.com",
                     NormalizedEmail = "ADAMWARLOCK@EMAIL.COM",
+                    EmailConfirmed = true,
                     PasswordHash = passwordHasher.HashPassword(null, "AdamWarlock1!")
                 },
                 new AppUser
@@ -35,6 +37,7 @@ namespace foodtopia.Database.Seeds
                     NormalizedUserName = "ROCKET",
                     Email = "rocketraccoon@email.com",
                     NormalizedEmail = "ROCKETRACCOON@EMAIL.COM",
+                    EmailConfirmed = true,
                     PasswordHash = passwordHasher.HashPassword(null, "RocketRaccoon!")
                 },
                 new AppUser
@@ -44,6 +47,7 @@ namespace foodtopia.Database.Seeds
                     NormalizedUserName = "DRSTRANGE",
                     Email = "drstrange@email.com",
                     NormalizedEmail = "DRSTRANGE@EMAIL.COM",
+                    EmailConfirmed = true,
                     PasswordHash = passwordHasher.HashPassword(null,"DrStrange1!")
                 },
                 new AppUser
@@ -53,6 +57,7 @@ namespace foodtopia.Database.Seeds
                     NormalizedUserName = "IRONFIST",
                     Email = "ironfist@email.com",
                     NormalizedEmail = "IRONFIST@EMAIL.COM",
+                    EmailConfirmed = true,
                     PasswordHash = passwordHasher.HashPassword(null,"IronFist1!")
                 }
             };

@@ -23,5 +23,6 @@ namespace foodtopia.Models
         public required ICollection<Ingredient> Ingredients { get; set; }
         public required ICollection<Instruction> Instructions { get; set; }
         public ICollection<Rating>? Ratings { get; set; }
+        public ICollection<PlaylistRecipe> PlaylistRecipes { get; set; } = new List<PlaylistRecipe>();
     }
 }
