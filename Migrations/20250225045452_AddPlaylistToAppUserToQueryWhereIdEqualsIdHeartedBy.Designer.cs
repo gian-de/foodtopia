@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using foodtopia.Database;
@@ -11,9 +12,11 @@ using foodtopia.Database;
 namespace foodtopia.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250225045452_AddPlaylistToAppUserToQueryWhereIdEqualsIdHeartedBy")]
+    partial class AddPlaylistToAppUserToQueryWhereIdEqualsIdHeartedBy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,8 +244,8 @@ namespace foodtopia.Migrations
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000001"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cba5c363-f3f9-4a3c-a3df-6b83c2329b07",
-                            CreatedAt = new DateTime(2025, 2, 25, 5, 0, 53, 603, DateTimeKind.Utc).AddTicks(1120),
+                            ConcurrencyStamp = "97fd936d-63db-4cc0-8f0a-5a3209d6113f",
+                            CreatedAt = new DateTime(2025, 2, 25, 4, 54, 52, 216, DateTimeKind.Utc).AddTicks(2740),
                             Email = "deleted@foodtopia.com",
                             EmailConfirmed = true,
                             IsGuest = false,
@@ -258,15 +261,15 @@ namespace foodtopia.Migrations
                         {
                             Id = new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "460bbb2a-8ad1-41ac-89ea-73d70f733b45",
-                            CreatedAt = new DateTime(2025, 2, 25, 5, 0, 53, 604, DateTimeKind.Utc).AddTicks(7470),
+                            ConcurrencyStamp = "18335eb9-fe6d-477e-827a-030498663d00",
+                            CreatedAt = new DateTime(2025, 2, 25, 4, 54, 52, 217, DateTimeKind.Utc).AddTicks(9290),
                             Email = "spiderman@email.com",
                             EmailConfirmed = true,
                             IsGuest = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "SPIDERMAN@EMAIL.COM",
                             NormalizedUserName = "SPIDER-MAN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMllqPuy8Km102Kx6EfV6iJiV62CYb4rDe7N4i6Gvo1z6R6kgoN94WWNgCHehr0HoQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFk0GUUh6lq330R2dwkeKRLIUZOju1uzwLwp2CmW5KQUnqPKiFE9gkk8Eju4OSh5zQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "Spider-man"
@@ -275,15 +278,15 @@ namespace foodtopia.Migrations
                         {
                             Id = new Guid("91d587d6-a100-415b-859a-a2631dbfd12d"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cf023b33-dd57-4523-b782-762d57bda273",
-                            CreatedAt = new DateTime(2025, 2, 25, 5, 0, 53, 644, DateTimeKind.Utc).AddTicks(2700),
+                            ConcurrencyStamp = "9b14d04b-7671-460b-bef3-bd9b4cb1fcf3",
+                            CreatedAt = new DateTime(2025, 2, 25, 4, 54, 52, 258, DateTimeKind.Utc).AddTicks(3420),
                             Email = "adamwarlock@email.com",
                             EmailConfirmed = true,
                             IsGuest = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADAMWARLOCK@EMAIL.COM",
                             NormalizedUserName = "WARLOCK",
-                            PasswordHash = "AQAAAAIAAYagAAAAELvBsokqMe4Tp3GfmpU2m2YrOJo7d4NZ6X5iMWtxjU4PJuTdQDjbDECsi57eAFYx3w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIB4sycST2FgC5r0QhtMyUbAoUQ1CDzAi3D85HzHk27VREQx0RY7o4kiD/Vouo21iQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "Warlock"
@@ -292,15 +295,15 @@ namespace foodtopia.Migrations
                         {
                             Id = new Guid("7ade051b-43be-4938-8942-507046ab759a"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0c93f8e4-3fca-4915-b1fa-bbcfc4c7fd58",
-                            CreatedAt = new DateTime(2025, 2, 25, 5, 0, 53, 682, DateTimeKind.Utc).AddTicks(500),
+                            ConcurrencyStamp = "ecbd9543-0a41-4f23-8660-e1600d850379",
+                            CreatedAt = new DateTime(2025, 2, 25, 4, 54, 52, 297, DateTimeKind.Utc).AddTicks(1660),
                             Email = "rocketraccoon@email.com",
                             EmailConfirmed = true,
                             IsGuest = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ROCKETRACCOON@EMAIL.COM",
                             NormalizedUserName = "ROCKET",
-                            PasswordHash = "AQAAAAIAAYagAAAAEP2uCF+kPTeEjVe2A6sc/UqEgtA4YCD0j1pv13zOsvMVGp8tauwrVpLFPjeYDoYubA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG/LU0oMRSUKFyfM1gPcA75dVWjAwsp+7fONUp+kh+CzRdtRONp4GLB48qKTbXj1Uw==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "Rocket"
@@ -309,15 +312,15 @@ namespace foodtopia.Migrations
                         {
                             Id = new Guid("afe80b95-1e55-4894-9507-81790f3d3424"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3a32489e-80bc-4e79-a49b-986eb6ece765",
-                            CreatedAt = new DateTime(2025, 2, 25, 5, 0, 53, 719, DateTimeKind.Utc).AddTicks(2200),
+                            ConcurrencyStamp = "7dc3add3-8fd7-4bd4-ac0a-df13ee37fb57",
+                            CreatedAt = new DateTime(2025, 2, 25, 4, 54, 52, 335, DateTimeKind.Utc).AddTicks(5620),
                             Email = "drstrange@email.com",
                             EmailConfirmed = true,
                             IsGuest = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "DRSTRANGE@EMAIL.COM",
                             NormalizedUserName = "DRSTRANGE",
-                            PasswordHash = "AQAAAAIAAYagAAAAECpAG6Vx3ichGmkcNyXgKwC5FhcX3FmQRPtM67jo1W8UK9Dc5AGAV9u6h24rQnq5nw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEALMkiCy8jZaonisTwSvWUbtvoXbdMvho31PGpD1SaWoM5c+z77aeOoT4Q5T05eM1Q==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "DrStrange"
@@ -326,15 +329,15 @@ namespace foodtopia.Migrations
                         {
                             Id = new Guid("4f533a33-a555-4490-92e1-6046a789efb4"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "924b7513-03a7-4790-8f11-98e19afeae2e",
-                            CreatedAt = new DateTime(2025, 2, 25, 5, 0, 53, 756, DateTimeKind.Utc).AddTicks(8850),
+                            ConcurrencyStamp = "d864af46-3bff-4189-b09b-8665624af2f5",
+                            CreatedAt = new DateTime(2025, 2, 25, 4, 54, 52, 416, DateTimeKind.Utc).AddTicks(2560),
                             Email = "ironfist@email.com",
                             EmailConfirmed = true,
                             IsGuest = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "IRONFIST@EMAIL.COM",
                             NormalizedUserName = "IRONFIST",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGauLjhG6/JGfeYiJuM6xBsA/8kFGQti5S1Fb2N4KCsdXyRyXcWgatlb9ohZdj6l+g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGuq4yOXw3niecWVSWZIVPdKigVUbM/Z5rMVYH0dZKqYHNJd33gQFOHIDEAyCCN+Vw==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "IronFist"
@@ -916,7 +919,7 @@ namespace foodtopia.Migrations
                     b.HasIndex("UserId", "PlaylistId")
                         .IsUnique();
 
-                    b.ToTable("HeartedPlaylists");
+                    b.ToTable("HeartedPlaylist");
                 });
 
             modelBuilder.Entity("foodtopia.Models.HeartedRecipe", b =>
@@ -947,77 +950,77 @@ namespace foodtopia.Migrations
                         new
                         {
                             Id = new Guid("8c051925-1bdc-4643-b5bf-d682fa1f4c27"),
-                            HeartedAt = new DateTime(2025, 2, 25, 5, 0, 53, 803, DateTimeKind.Utc).AddTicks(5120),
+                            HeartedAt = new DateTime(2025, 2, 25, 4, 54, 52, 475, DateTimeKind.Utc).AddTicks(220),
                             RecipeId = new Guid("8d600c3e-1849-4afb-86f8-446d4be2edb9"),
                             UserId = new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17")
                         },
                         new
                         {
                             Id = new Guid("e5ab974d-adca-46af-9173-c67a1dd0e8d5"),
-                            HeartedAt = new DateTime(2025, 2, 25, 5, 0, 53, 803, DateTimeKind.Utc).AddTicks(5480),
+                            HeartedAt = new DateTime(2025, 2, 25, 4, 54, 52, 475, DateTimeKind.Utc).AddTicks(2200),
                             RecipeId = new Guid("9ae1f555-9bc4-498f-817d-e8c76f2095b0"),
                             UserId = new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17")
                         },
                         new
                         {
                             Id = new Guid("27e6491c-0ca0-44e7-99e1-4badd4df766e"),
-                            HeartedAt = new DateTime(2025, 2, 25, 5, 0, 53, 803, DateTimeKind.Utc).AddTicks(5490),
+                            HeartedAt = new DateTime(2025, 2, 25, 4, 54, 52, 475, DateTimeKind.Utc).AddTicks(2220),
                             RecipeId = new Guid("01f65cb2-826b-4ee2-88f9-fa7e95ebfd95"),
                             UserId = new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17")
                         },
                         new
                         {
                             Id = new Guid("4bd052d1-088b-463c-8281-b386bbbc056f"),
-                            HeartedAt = new DateTime(2025, 2, 25, 5, 0, 53, 803, DateTimeKind.Utc).AddTicks(5490),
+                            HeartedAt = new DateTime(2025, 2, 25, 4, 54, 52, 475, DateTimeKind.Utc).AddTicks(2220),
                             RecipeId = new Guid("8013d36f-1c68-4223-b4e4-49f91d9e17b5"),
                             UserId = new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17")
                         },
                         new
                         {
                             Id = new Guid("e16d74fa-df41-4877-b3be-fc980fbe40df"),
-                            HeartedAt = new DateTime(2025, 2, 25, 5, 0, 53, 803, DateTimeKind.Utc).AddTicks(5490),
+                            HeartedAt = new DateTime(2025, 2, 25, 4, 54, 52, 475, DateTimeKind.Utc).AddTicks(2220),
                             RecipeId = new Guid("7b4b3461-f83c-4809-a840-d81a874587ab"),
                             UserId = new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17")
                         },
                         new
                         {
                             Id = new Guid("5f14d4ea-69fd-4b99-8aca-d06659f1eed5"),
-                            HeartedAt = new DateTime(2025, 2, 25, 5, 0, 53, 803, DateTimeKind.Utc).AddTicks(5490),
+                            HeartedAt = new DateTime(2025, 2, 25, 4, 54, 52, 475, DateTimeKind.Utc).AddTicks(2240),
                             RecipeId = new Guid("2f5f5e32-253d-4132-a2f6-494d48fb15cd"),
                             UserId = new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17")
                         },
                         new
                         {
                             Id = new Guid("5b97e40b-5155-41e5-923f-b9214cf840f8"),
-                            HeartedAt = new DateTime(2025, 2, 25, 5, 0, 53, 803, DateTimeKind.Utc).AddTicks(5490),
+                            HeartedAt = new DateTime(2025, 2, 25, 4, 54, 52, 475, DateTimeKind.Utc).AddTicks(2240),
                             RecipeId = new Guid("2f5f5e32-253d-4132-a2f6-494d48fb15cd"),
                             UserId = new Guid("91d587d6-a100-415b-859a-a2631dbfd12d")
                         },
                         new
                         {
                             Id = new Guid("4baa4456-d138-4181-a556-0c34ac9d399d"),
-                            HeartedAt = new DateTime(2025, 2, 25, 5, 0, 53, 803, DateTimeKind.Utc).AddTicks(5490),
+                            HeartedAt = new DateTime(2025, 2, 25, 4, 54, 52, 475, DateTimeKind.Utc).AddTicks(2260),
                             RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
                             UserId = new Guid("91d587d6-a100-415b-859a-a2631dbfd12d")
                         },
                         new
                         {
                             Id = new Guid("b5ae64ba-a904-4dee-8759-dc0722144058"),
-                            HeartedAt = new DateTime(2025, 2, 25, 5, 0, 53, 803, DateTimeKind.Utc).AddTicks(5490),
+                            HeartedAt = new DateTime(2025, 2, 25, 4, 54, 52, 475, DateTimeKind.Utc).AddTicks(2260),
                             RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
                             UserId = new Guid("7ade051b-43be-4938-8942-507046ab759a")
                         },
                         new
                         {
                             Id = new Guid("61939421-e5cf-4700-82f1-8d103387170f"),
-                            HeartedAt = new DateTime(2025, 2, 25, 5, 0, 53, 803, DateTimeKind.Utc).AddTicks(5520),
+                            HeartedAt = new DateTime(2025, 2, 25, 4, 54, 52, 475, DateTimeKind.Utc).AddTicks(2260),
                             RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
                             UserId = new Guid("afe80b95-1e55-4894-9507-81790f3d3424")
                         },
                         new
                         {
                             Id = new Guid("d069c969-1acd-4f5c-a942-77a2b05499f5"),
-                            HeartedAt = new DateTime(2025, 2, 25, 5, 0, 53, 803, DateTimeKind.Utc).AddTicks(5520),
+                            HeartedAt = new DateTime(2025, 2, 25, 4, 54, 52, 475, DateTimeKind.Utc).AddTicks(2260),
                             RecipeId = new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"),
                             UserId = new Guid("4f533a33-a555-4490-92e1-6046a789efb4")
                         });
@@ -2629,7 +2632,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/low_calorie_pizza.jpg",
                             Name = "Low calorie pizza",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(1190),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(1510),
                             TasteAverage = 0m,
                             TasteReviewCount = 0,
                             UserId = new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17")
@@ -2642,7 +2645,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/classic_cheeseburger.jpg",
                             Name = "Classic Cheeseburger",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3350),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(4990),
                             TasteAverage = 0m,
                             TasteReviewCount = 0,
                             UserId = new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17")
@@ -2655,7 +2658,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/tacos_al_pastor.jpg",
                             Name = "Tacos al Pastor",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3360),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5000),
                             TasteAverage = 0m,
                             TasteReviewCount = 0,
                             UserId = new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17")
@@ -2668,7 +2671,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/chicken_biryani.jpg",
                             Name = "Chicken Biryani",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3360),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5000),
                             TasteAverage = 0m,
                             TasteReviewCount = 0,
                             UserId = new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17")
@@ -2681,7 +2684,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/peking_duck.jpg",
                             Name = "Peking Duck",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3360),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5000),
                             TasteAverage = 0m,
                             TasteReviewCount = 0,
                             UserId = new Guid("91d587d6-a100-415b-859a-a2631dbfd12d")
@@ -2694,7 +2697,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/beef_stroganoff.jpg",
                             Name = "Beef Stroganoff",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3360),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5010),
                             TasteAverage = 0m,
                             TasteReviewCount = 0,
                             UserId = new Guid("91d587d6-a100-415b-859a-a2631dbfd12d")
@@ -2707,7 +2710,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/feijoada.png",
                             Name = "Feijoada",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3370),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5010),
                             TasteAverage = 0m,
                             TasteReviewCount = 0,
                             UserId = new Guid("7ade051b-43be-4938-8942-507046ab759a")
@@ -2720,7 +2723,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/sushi.jpg",
                             Name = "Sushi",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3370),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5020),
                             TasteAverage = 0m,
                             TasteReviewCount = 0,
                             UserId = new Guid("afe80b95-1e55-4894-9507-81790f3d3424")
@@ -2733,7 +2736,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/pad_thai.jpg",
                             Name = "Pad Thai",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3370),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5090),
                             TasteAverage = 0m,
                             TasteReviewCount = 0,
                             UserId = new Guid("4f533a33-a555-4490-92e1-6046a789efb4")
@@ -2746,7 +2749,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/pho.jpg",
                             Name = "Pho",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3370),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5090),
                             TasteAverage = 0m,
                             TasteReviewCount = 0,
                             UserId = new Guid("4f533a33-a555-4490-92e1-6046a789efb4")
@@ -2759,7 +2762,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/ceviche.jpeg",
                             Name = "Ceviche",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3380),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5100),
                             TasteAverage = 0m,
                             TasteReviewCount = 0,
                             UserId = new Guid("4f533a33-a555-4490-92e1-6046a789efb4")
@@ -2772,7 +2775,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/kebab.jpg",
                             Name = "Kebab",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3380),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5100),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2784,7 +2787,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/butter_chicken.jpg",
                             Name = "Butter Chicken",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3380),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5100),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2796,7 +2799,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/bobotie.jpg",
                             Name = "Bobotie",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3380),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5100),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2808,7 +2811,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/kimchi.jpg",
                             Name = "Kimchi",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3380),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5100),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2820,7 +2823,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/pierogi.jpg",
                             Name = "Pierogi",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3390),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5110),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2832,7 +2835,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/fish_and_chips.jpg",
                             Name = "Fish and Chips",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3390),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5110),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2844,7 +2847,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/moussaka.jpg",
                             Name = "Moussaka",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3390),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5110),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2856,7 +2859,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/lasagna.jpg",
                             Name = "Lasagna",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3390),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5120),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2868,7 +2871,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/croissant.jpg",
                             Name = "Croissant",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3400),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5120),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         },
@@ -2880,7 +2883,7 @@ namespace foodtopia.Migrations
                             DifficultyReviewCount = 0,
                             ImageUrl = "images/recipes/shawarma.jpg",
                             Name = "Shawarma",
-                            PublishedAt = new DateTime(2025, 2, 25, 5, 0, 53, 798, DateTimeKind.Utc).AddTicks(3400),
+                            PublishedAt = new DateTime(2025, 2, 25, 4, 54, 52, 464, DateTimeKind.Utc).AddTicks(5120),
                             TasteAverage = 0m,
                             TasteReviewCount = 0
                         });

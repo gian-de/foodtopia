@@ -19,6 +19,7 @@ namespace foodtopia.Database
         public DbSet<Country> Countries { get; set; }
         public DbSet<Playlist> Playlists { get; set; }
         public DbSet<Playlist> PlaylistRecipes { get; set; }
+        public DbSet<HeartedPlaylist> HeartedPlaylists { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -111,6 +112,23 @@ namespace foodtopia.Database
                         .HasForeignKey(pr => pr.RecipeId)
                         .OnDelete(DeleteBehavior.Cascade);
             });
+
+            // prevents duplicate entries
+            modelBuilder.Entity<HeartedPlaylist>()
+                .HasIndex(hp => new { hp.UserId, hp.PlaylistId })
+                .IsUnique();
+            // Cascade delete HeartedPlaylist when a User is deleted
+            modelBuilder.Entity<HeartedPlaylist>()
+                .HasOne(hp => hp.User)
+                .WithMany(u => u.HeartedPlaylists)
+                .HasForeignKey(hp => hp.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            // Cascade delete Playlists when a User is deleted
+            modelBuilder.Entity<Playlist>()
+                .HasOne(p => p.User)
+                .WithMany(u => u.Playlists)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<IdentityRole<Guid>>().HasData(RoleSeed.GetRoles());

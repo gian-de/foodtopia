@@ -10,5 +10,6 @@ namespace foodtopia.Models
         public ICollection<HeartedRecipe> HeartedRecipes { get; set; } = new List<HeartedRecipe>();
         public ICollection<Rating> Ratings { get; set; } = new List<Rating>();
         public ICollection<Playlist> Playlists { get; set; } = new List<Playlist>();
+        public ICollection<HeartedPlaylist> HeartedPlaylists { get; set; } = new List<HeartedPlaylist>();
     }
 }
