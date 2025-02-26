@@ -47,7 +47,7 @@ namespace foodtopia.Services
         {
             var country = await _context.Countries
             .Include(c => c.Recipes!)
-            .ThenInclude(r => r.HeartedByUsers) // Include Recipes's other foreign key relationship
+                .ThenInclude(r => r.HeartedByUsers) // Include Recipes's other foreign key relationship
             .Where(c => c.Slug == slug)
             .Select(c => new CountryDTO
             (

@@ -139,7 +139,7 @@ namespace foodtopia.Services
                 TotalCount = totalRecipes,
                 CurrentPage = page,
                 PageSize = pageSize,
-                TotalPages = (int)Math.Ceiling(totalRecipes / (double)pageSize),
+                TotalPages = (int)Math.Ceiling((double)totalRecipes / pageSize),
                 Results = recipesDTOs
             };
         }

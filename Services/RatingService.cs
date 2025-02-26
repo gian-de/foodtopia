@@ -20,7 +20,6 @@ namespace foodtopia.Services
                                     .Where(r => r.RecipeId == recipeId && r.UserId == userId)
                                     .Select(r => new RatingDTO(r.TasteRating, r.DifficultyRating))
                                     .FirstOrDefaultAsync();
-
         }
 
         public async Task AddOrUpdateRatingsAsync(Guid userId, Guid recipeId, double tasteRating, double difficultyRating)
