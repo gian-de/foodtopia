@@ -23,6 +23,7 @@ namespace foodtopia.Services
 
             var playlistQuery = _context.Playlists
                                     .Where(p => p.UserId == userId)
+                                    .Include(p => p.User)
                                     .Include(p => p.HeartedByUsers) // Include to .Count how many users for orderBy functionality
                                     .Include(p => p.PlaylistRecipes)
                                         .ThenInclude(pr => pr.Recipe) // Include Recipe details
