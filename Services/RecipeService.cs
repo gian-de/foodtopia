@@ -167,7 +167,7 @@ namespace foodtopia.Services
 
             var recipeModel = await _context.Recipes
                                 .Include(r => r.Instructions)
-                                .Include(r => r.Instructions)
+                                .Include(r => r.Ingredients)
                                 .FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipeModel is null) throw new KeyNotFoundException($"Recipe with Id {recipeId} was not found.");

@@ -22,10 +22,7 @@ namespace foodtopia.Mappings.Recipes
                 DifficultyReviewCount: recipeModel.Ratings?.Count(r => r.DifficultyRating > 0),
                 PublishedAt: recipeModel.PublishedAt,
                 User: recipeModel.User != null
-                    ? new UserTldrDTO(
-                        recipeModel.User.Id,
-                        recipeModel.User.UserName
-                        )
+                    ? new UserTldrDTO(recipeModel.User.UserName)
                     : null,
                 CountryId: recipeModel.CountryId,
                 Country: new CountryDTO(

@@ -33,6 +33,13 @@ namespace foodtopia.Services
                         r.User!.UserName!,
                         r.Name,
                         r.CountryId,
+                        new CountryDTO(
+                            r.Country.Id,
+                            r.Country.Name,
+                            r.Country.Slug,
+                            r.Country.ImagePath,
+                            null
+                        ),
                         r.ImageUrl,
                         r.TasteAverage,
                         r.DifficultyAverage,
@@ -55,17 +62,26 @@ namespace foodtopia.Services
                 c.Name,
                 c.Slug,
                 c.ImagePath,
-                c.Recipes.Select(r => new RecipeTldrDTO
+                c.Recipes != null
+                ? c.Recipes.Select(r => new RecipeTldrDTO
                 (
                     r.Id,
                     r.User!.UserName!,
                     r.Name,
                     r.CountryId,
+                    new CountryDTO(
+                            r.Country.Id,
+                            r.Country.Name,
+                            r.Country.Slug,
+                            r.Country.ImagePath,
+                            null
+                        ),
                     r.ImageUrl,
                     r.TasteAverage,
                     r.DifficultyAverage,
                     r.HeartedByUsers != null ? r.HeartedByUsers.Count : 0
                 )).ToList()
+                : new List<RecipeTldrDTO>()
             ))
             .FirstOrDefaultAsync();
 

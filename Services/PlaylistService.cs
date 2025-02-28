@@ -15,6 +15,79 @@ namespace foodtopia.Services
             _context = context;
         }
 
+        public async Task<PagedResult<PlaylistSummaryDTO>> GetAllPlaylistsAsync(int page, int pageSize, string sortBy, string sortDirection)
+        {
+            if (page < 1 || pageSize < 1) throw new ArgumentException("Page and or Page size must be greater than 0.");
+
+            bool isDescending = sortDirection.ToLower() == "desc";
+
+            var playlistQuery = _context.Playlists
+                                    .Include(p => p.HeartedByUsers)
+                                    .Include(p => p.PlaylistRecipes)
+                                        .ThenInclude(pr => pr.Recipe)
+                                            .ThenInclude(r => r.HeartedByUsers) // to have the .Count or hearts for each Recipe
+                                    .Include(p => p.PlaylistRecipes)
+                                        .ThenInclude(pr => pr.Recipe)
+                                            .ThenInclude(r => r.User) // to show Username in RecipeTldrDTO
+                                    .Include(p => p.PlaylistRecipes)
+                                        .ThenInclude(pr => pr.Recipe)
+                                            .ThenInclude(r => r.Ratings)
+                                    .Include(p => p.PlaylistRecipes)
+                                        .ThenInclude(pr => pr.Recipe)
+                                            .ThenInclude(r => r.Country)
+                                    .AsQueryable();
+
+            playlistQuery = sortBy.ToLower() switch
+            {
+                "createdat" => isDescending
+                    ? playlistQuery.OrderByDescending(p => p.CreatedAt)
+                    : playlistQuery.OrderBy(p => p.CreatedAt),
+                "heartedbycount" => isDescending
+                    ? playlistQuery.OrderByDescending(p => p.HeartedByUsers.Count)
+                    : playlistQuery.OrderBy(p => p.HeartedByUsers.Count),
+                _ => playlistQuery.OrderByDescending(p => p.HeartedByUsers.Count)
+            };
+
+            int totalPlaylists = await playlistQuery.CountAsync();
+            var playlistDTOs = await playlistQuery
+                                        .Skip((page - 1) * pageSize)
+                                        .Take(pageSize)
+                                        .Select(p => p.ToPlaylistSummaryDTO())
+                                        .ToListAsync();
+
+            return new PagedResult<PlaylistSummaryDTO>
+            {
+                TotalCount = totalPlaylists,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling((double)totalPlaylists / pageSize),
+                Results = playlistDTOs
+            };
+        }
+
+        public async Task<PlaylistSummaryDTO> GetPlaylistByIdAsync(Guid playlistId)
+        {
+            var playlistQuery = await _context.Playlists
+                                    .Where(p => p.Id == playlistId)
+                                    .Include(p => p.User)
+                                    .Include(p => p.HeartedByUsers)
+                                    .Include(p => p.PlaylistRecipes)
+                                        .ThenInclude(pr => pr.Recipe)
+                                            .ThenInclude(r => r.HeartedByUsers)
+                                    .Include(p => p.PlaylistRecipes)
+                                        .ThenInclude(pr => pr.Recipe)
+                                            .ThenInclude(r => r.User)
+                                    .Include(p => p.PlaylistRecipes)
+                                        .ThenInclude(pr => pr.Recipe)
+                                            .ThenInclude(r => r.Ratings)
+                                    .Include(p => p.PlaylistRecipes)
+                                        .ThenInclude(pr => pr.Recipe)
+                                            .ThenInclude(r => r.Country)
+                                    .FirstOrDefaultAsync();
+
+            if (playlistQuery is null) throw new KeyNotFoundException($"Playlist with id {playlistId} was not found.");
+            return playlistQuery.ToPlaylistSummaryDTO();
+        }
+
         public async Task<PagedResult<PlaylistSummaryDTO>> GetMyCreatedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
         {
             if (page < 1 || pageSize < 1) throw new ArgumentException("Page and or Page size must be greater than 0.");
@@ -34,6 +107,9 @@ namespace foodtopia.Services
                                     .Include(p => p.PlaylistRecipes)
                                         .ThenInclude(pr => pr.Recipe)
                                             .ThenInclude(r => r.Ratings)
+                                    .Include(p => p.PlaylistRecipes)
+                                        .ThenInclude(pr => pr.Recipe)
+                                            .ThenInclude(r => r.Country)
                                     .AsQueryable();
 
             playlistQuery = sortBy.ToLower() switch
@@ -62,5 +138,6 @@ namespace foodtopia.Services
                 Results = playlistDTOs
             };
         }
+
     }
 }
