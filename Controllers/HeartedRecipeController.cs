@@ -76,8 +76,8 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> RemoveHeartedRecipe([FromBody] HeartedRecipeRequestDTO requestDTO)
+        [HttpDelete("{recipeId:guid}")]
+        public async Task<IActionResult> RemoveHeartedRecipe([FromRoute] Guid recipeId)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace foodtopia.Controllers
 
                 var userId = User.GetUserIdFromClaims();
 
-                var removed = await _heartedRecipeService.RemoveHeartedRecipeAsync(userId, requestDTO.RecipeId);
+                var removed = await _heartedRecipeService.RemoveHeartedRecipeAsync(userId, recipeId);
 
                 if (!removed) return NotFound("Recipe not found inside favorites.");
 
