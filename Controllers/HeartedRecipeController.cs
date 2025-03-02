@@ -39,6 +39,10 @@ namespace foodtopia.Controllers
             {
                 return Unauthorized(new { ex.Message });
             }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
             catch (ArgumentNullException ex)
             {
                 return BadRequest(new { ex.Message });
@@ -65,6 +69,10 @@ namespace foodtopia.Controllers
             catch (UnauthorizedAccessException ex)
             {
                 return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
             }
             catch (ArgumentNullException ex)
             {
@@ -94,6 +102,10 @@ namespace foodtopia.Controllers
             catch (UnauthorizedAccessException ex)
             {
                 return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
             }
             catch (ArgumentException ex)
             {

@@ -99,6 +99,9 @@ namespace foodtopia.Services
         {
             if (page < 1 || pageSize < 1) throw new ArgumentException("Page and or Page size must be greater than 0.");
 
+            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+
             bool isDescending = sortDirection.ToLower() == "desc";
 
             var recipeQuery = _context.Recipes
@@ -146,6 +149,9 @@ namespace foodtopia.Services
 
         public async Task<RecipeSummaryDTO> CreateRecipeAsync(Guid userId, RecipeCreateRequestDTO recipeRequestDTO)
         {
+            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+
             if (recipeRequestDTO is null) throw new ArgumentNullException(nameof(recipeRequestDTO), "Recipe data is required.");
 
             var country = await _context.Countries.FindAsync(recipeRequestDTO.CountryId);
@@ -163,6 +169,9 @@ namespace foodtopia.Services
 
         public async Task<RecipeSummaryDTO> UpdateRecipeAsync(Guid userId, Guid recipeId, RecipeUpdateRequestDTO recipeRequest)
         {
+            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+
             if (recipeRequest is null) throw new ArgumentNullException(nameof(recipeRequest), "Recipe data is required.");
 
             var recipeModel = await _context.Recipes
@@ -234,6 +243,9 @@ namespace foodtopia.Services
 
         public async Task<RecipeDeleteDTO> DeleteRecipeAsync(Guid userId, Guid recipeId)
         {
+            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+
             var recipeModel = await _context.Recipes
                                 .Include(r => r.Country)
                                 .FirstOrDefaultAsync(r => r.Id == recipeId);

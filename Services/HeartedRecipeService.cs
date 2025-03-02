@@ -24,6 +24,9 @@ namespace foodtopia.Services
         {
             if (page < 1 || pageSize < 1) throw new ArgumentException("Page and or Page size must be greater than 0.");
 
+            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+
             bool isDescending = sortDirection.ToLower() == "desc";
 
             var heartedRecipeQuery = _context.HeartedRecipes
@@ -73,6 +76,9 @@ namespace foodtopia.Services
 
         public async Task AddHeartedRecipeAsync(Guid userId, Guid recipeId)
         {
+            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+
             var recipe = await _context.Recipes.FindAsync(recipeId);
             if (recipe is null) throw new ArgumentNullException("Recipe not found.");
 
@@ -93,6 +99,9 @@ namespace foodtopia.Services
 
         public async Task<bool> RemoveHeartedRecipeAsync(Guid userId, Guid recipeId)
         {
+            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+
             var heartedRecipe = await _context.HeartedRecipes
                                         .FirstOrDefaultAsync(hr => hr.UserId == userId && hr.RecipeId == recipeId);
 

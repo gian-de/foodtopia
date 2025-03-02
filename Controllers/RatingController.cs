@@ -8,7 +8,7 @@ namespace foodtopia.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/recipes/{recipeId:guid}/ratings")]
+    [Route("api/recipes")]
     public class RatingController : ControllerBase
     {
         private readonly IRatingService _ratingService;
@@ -17,16 +17,45 @@ namespace foodtopia.Controllers
             _ratingService = ratingService;
         }
 
-        [HttpGet]
+        [HttpGet("ratings/my")]
+        public async Task<IActionResult> GetAllMyRatings(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "reviewedat",
+            [FromQuery] string sortDirection = "desc"
+        )
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Only verified users can leave ratings.");
+                var userId = User.GetUserIdFromClaims();
+                var myRatingsPagedResult = await _ratingService.GetAllMyRatingsAsync(userId, page, pageSize, sortBy, sortDirection);
+                return Ok(myRatingsPagedResult);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [HttpGet("{recipeId:guid}/ratings")]
         public async Task<IActionResult> GetRatingsAsync(Guid recipeId)
         {
             try
             {
                 if (User.IsGuest()) return Unauthorized("Only verified users can leave ratings.");
                 var userId = User.GetUserIdFromClaims();
-                var ratingsResult = await _ratingService.GetRatingsAsync(userId, recipeId);
+                var ratingDTO = await _ratingService.GetRatingsAsync(userId, recipeId);
 
-                return ratingsResult is not null ? Ok(ratingsResult) : NotFound("No ratings found for this recipe.");
+                return ratingDTO is not null ? Ok(ratingDTO) : NotFound("No ratings found for this recipe.");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -38,7 +67,7 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("{recipeId:guid}/ratings")]
         public async Task<IActionResult> AddOrUpdateRatings(Guid recipeId, [FromBody] RatingCreateDTO ratingRequestDTO)
         {
             try
@@ -47,7 +76,7 @@ namespace foodtopia.Controllers
                 var userId = User.GetUserIdFromClaims();
                 await _ratingService.AddOrUpdateRatingsAsync(userId, recipeId, ratingRequestDTO.TasteRating, ratingRequestDTO.DifficultyRating);
 
-                return Ok("Rating saved!");
+                return Ok("Ratings saved!");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -59,7 +88,7 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{recipeId:guid}/ratings")]
         public async Task<IActionResult> DeleteRatings(Guid recipeId)
         {
             if (User.IsGuest()) return Unauthorized("Only verified users can leave ratings.");
