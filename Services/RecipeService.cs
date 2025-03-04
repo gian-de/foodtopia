@@ -147,17 +147,17 @@ namespace foodtopia.Services
             };
         }
 
-        public async Task<RecipeSummaryDTO> CreateRecipeAsync(Guid userId, RecipeCreateRequestDTO recipeRequestDTO)
+        public async Task<RecipeSummaryDTO> CreateRecipeAsync(Guid userId, RecipeCreateRequestDTO recipeCreateDTO)
         {
             var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
 
-            if (recipeRequestDTO is null) throw new ArgumentNullException(nameof(recipeRequestDTO), "Recipe data is required.");
+            if (recipeCreateDTO is null) throw new ArgumentNullException(nameof(recipeCreateDTO), "Recipe data is required.");
 
-            var country = await _context.Countries.FindAsync(recipeRequestDTO.CountryId);
-            if (country is null) throw new ArgumentException($"Country with id {recipeRequestDTO.CountryId} couldn't be found.");
+            var country = await _context.Countries.FindAsync(recipeCreateDTO.CountryId);
+            if (country is null) throw new ArgumentException($"Country with id {recipeCreateDTO.CountryId} couldn't be found.");
 
-            var recipeModel = recipeRequestDTO.ToRecipeFromCreateDTO();
+            var recipeModel = recipeCreateDTO.ToRecipeFromCreateDTO();
             // attach UserId passed from controller to Model
             recipeModel.UserId = userId;
 
@@ -167,12 +167,12 @@ namespace foodtopia.Services
             return recipeModel.ToRecipeSummaryDTO();
         }
 
-        public async Task<RecipeSummaryDTO> UpdateRecipeAsync(Guid userId, Guid recipeId, RecipeUpdateRequestDTO recipeRequest)
+        public async Task<RecipeSummaryDTO> UpdateRecipeAsync(Guid userId, Guid recipeId, RecipeUpdateRequestDTO recipeUpdateDTO)
         {
             var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
 
-            if (recipeRequest is null) throw new ArgumentNullException(nameof(recipeRequest), "Recipe data is required.");
+            if (recipeUpdateDTO is null) throw new ArgumentNullException(nameof(recipeUpdateDTO), "Recipe data is required.");
 
             var recipeModel = await _context.Recipes
                                 .Include(r => r.Instructions)
@@ -183,31 +183,31 @@ namespace foodtopia.Services
             if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to delete this recipe.");
 
             // Check fields provided in recipeRequest, if true -> update 
-            if (!string.IsNullOrWhiteSpace(recipeRequest.Name))
+            if (!string.IsNullOrWhiteSpace(recipeUpdateDTO.Name))
             {
-                recipeModel.Name = recipeRequest.Name;
+                recipeModel.Name = recipeUpdateDTO.Name;
             }
 
-            if (recipeRequest.CountryId.HasValue && recipeRequest.CountryId.Value != recipeModel.CountryId)
+            if (recipeUpdateDTO.CountryId.HasValue && recipeUpdateDTO.CountryId.Value != recipeModel.CountryId)
             {
                 // check if CountryId exists
-                var countryExists = await _context.Countries.AnyAsync(c => c.Id == recipeRequest.CountryId.Value);
+                var countryExists = await _context.Countries.AnyAsync(c => c.Id == recipeUpdateDTO.CountryId.Value);
 
-                if (!countryExists) throw new ArgumentException($"Country Id provided does not exist: {recipeRequest.CountryId.Value}");
+                if (!countryExists) throw new ArgumentException($"Country Id provided does not exist: {recipeUpdateDTO.CountryId.Value}");
 
-                recipeModel.CountryId = recipeRequest.CountryId.Value;
+                recipeModel.CountryId = recipeUpdateDTO.CountryId.Value;
             }
 
-            if (!string.IsNullOrWhiteSpace(recipeRequest.ImageUrl))
+            if (!string.IsNullOrWhiteSpace(recipeUpdateDTO.ImageUrl))
             {
-                recipeModel.ImageUrl = recipeRequest.ImageUrl;
+                recipeModel.ImageUrl = recipeUpdateDTO.ImageUrl;
             }
 
-            if (recipeRequest.Ingredients != null && recipeRequest.Ingredients.Any())
+            if (recipeUpdateDTO.Ingredients != null && recipeUpdateDTO.Ingredients.Any())
             {
                 _context.Ingredients.RemoveRange(recipeModel.Ingredients);
                 // map requestDTO to recipeModel -> insert to db
-                recipeModel.Ingredients = recipeRequest.Ingredients.Select(ing => new Ingredient
+                recipeModel.Ingredients = recipeUpdateDTO.Ingredients.Select(ing => new Ingredient
                 {
                     Name = ing.Name,
                     Quantity = ing.Quantity,
@@ -215,11 +215,11 @@ namespace foodtopia.Services
                 }).ToList();
             }
 
-            if (recipeRequest.Instructions != null && recipeRequest.Instructions.Count() > 0)
+            if (recipeUpdateDTO.Instructions != null && recipeUpdateDTO.Instructions.Count() > 0)
             {
                 _context.Instructions.RemoveRange(recipeModel.Instructions);
                 // map requestDTO to recipeModel -> insert to db
-                recipeModel.Instructions = recipeRequest.Instructions.Select(ins => new Instruction
+                recipeModel.Instructions = recipeUpdateDTO.Instructions.Select(ins => new Instruction
                 {
                     Order = ins.Order,
                     Text = ins.Text
