@@ -99,8 +99,8 @@ namespace foodtopia.Services
         {
             if (page < 1 || pageSize < 1) throw new ArgumentException("Page and or Page size must be greater than 0.");
 
-            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
 
             bool isDescending = sortDirection.ToLower() == "desc";
 
@@ -149,8 +149,8 @@ namespace foodtopia.Services
 
         public async Task<RecipeSummaryDTO> CreateRecipeAsync(Guid userId, RecipeCreateRequestDTO recipeCreateDTO)
         {
-            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
 
             if (recipeCreateDTO is null) throw new ArgumentNullException(nameof(recipeCreateDTO), "Recipe data is required.");
 
@@ -169,8 +169,8 @@ namespace foodtopia.Services
 
         public async Task<RecipeSummaryDTO> UpdateRecipeAsync(Guid userId, Guid recipeId, RecipeUpdateRequestDTO recipeUpdateDTO)
         {
-            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
 
             if (recipeUpdateDTO is null) throw new ArgumentNullException(nameof(recipeUpdateDTO), "Recipe data is required.");
 
@@ -243,8 +243,8 @@ namespace foodtopia.Services
 
         public async Task<RecipeDeleteDTO> DeleteRecipeAsync(Guid userId, Guid recipeId)
         {
-            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
 
             var recipeModel = await _context.Recipes
                                 .Include(r => r.Country)

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.RateLimiting;
 
 namespace foodtopia.Controllers
 {
-    [Route("api/playlist")]
+    [Route("api/playlists")]
     public class PlaylistController : ControllerBase
     {
         private readonly IPlaylistService _playlistService;
@@ -120,6 +120,72 @@ namespace foodtopia.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [HttpPut("{playlistId:guid}")]
+        [Authorize]
+        [EnableRateLimiting("fixed-limiter-strict")]
+        public async Task<IActionResult> UpdatePlaylist([FromRoute] Guid playlistId, [FromBody] PlaylistUpdateRequestDTO playlistUpdateDTO)
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Only registered users can update a playlist.");
+                var userId = User.GetUserIdFromClaims();
+
+                var updatedPlaylist = await _playlistService.UpdatePlaylistAsync(userId, playlistId, playlistUpdateDTO);
+
+                return Ok(updatedPlaylist);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [HttpDelete("{playlistId:guid}")]
+        [Authorize]
+        public async Task<IActionResult> DeletePlaylist([FromRoute] Guid playlistId)
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Only registered users can delete a playlist.");
+                var userId = User.GetUserIdFromClaims();
+                var playlistDeleteDTO = await _playlistService.DeletePlaylistAsync(userId, playlistId);
+
+                return Ok(new
+                {
+                    Message = "Recipe successfully deleted.",
+                    DeletedRecipe = playlistDeleteDTO
+                });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }
