@@ -1,7 +1,9 @@
+using foodtopia.DTOs.Playlist;
 using foodtopia.Helpers;
 using foodtopia.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace foodtopia.Controllers
 {
@@ -79,6 +81,41 @@ namespace foodtopia.Controllers
             catch (ArgumentException ex)
             {
                 return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [EnableRateLimiting("fixed-limiter-strict")]
+        public async Task<IActionResult> CreatePlaylist([FromBody] PlaylistCreateRequestDTO playlistCreateDTO)
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Only registered users can create a playlist");
+                var userId = User.GetUserIdFromClaims();
+                var createdPlaylist = await _playlistService.CreatePlaylistAsync(userId, playlistCreateDTO);
+
+                return CreatedAtAction(nameof(GetPlaylistById), new { playListId = createdPlaylist.Id }, createdPlaylist);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { ex.Message });
             }
             catch (Exception ex)
             {

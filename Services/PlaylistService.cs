@@ -139,5 +139,28 @@ namespace foodtopia.Services
             };
         }
 
+        public async Task<PlaylistSummaryDTO> CreatePlaylistAsync(Guid userId, PlaylistCreateRequestDTO playlistCreateDTO)
+        {
+            var userCheck = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (userCheck is null) throw new KeyNotFoundException("User that was passed to query was not found.");
+
+            if (playlistCreateDTO is null) throw new ArgumentNullException(nameof(playlistCreateDTO), "Playlist data is required.");
+            if (string.IsNullOrWhiteSpace(playlistCreateDTO.Name)) throw new ArgumentException("Playlist name is required and cannot be empty.");
+            if (string.IsNullOrWhiteSpace(playlistCreateDTO.SlugText)) throw new ArgumentException("Slug text is required and cannot be empty.");
+            if (!playlistCreateDTO.SlugNumber.HasValue) throw new ArgumentException("Slug number is required.");
+
+            string fullSlug = $"{playlistCreateDTO.SlugText.Replace(" ", "_").ToLower()}-{playlistCreateDTO.SlugNumber}";
+            bool fullSlugExists = await _context.Playlists.AnyAsync(p => p.FullSlug == fullSlug);
+            if (fullSlugExists) throw new ArgumentException("A playlist with this slug already exists.");
+
+            var playlistModel = playlistCreateDTO.ToPlaylistModelFromDTO();
+            playlistModel.UserId = userId;
+            playlistModel.FullSlug = fullSlug;
+
+            _context.Playlists.Add(playlistModel);
+            await _context.SaveChangesAsync();
+
+            return playlistModel.ToPlaylistSummaryDTO();
+        }
     }
 }

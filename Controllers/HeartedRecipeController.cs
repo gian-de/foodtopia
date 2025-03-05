@@ -29,10 +29,9 @@ namespace foodtopia.Controllers
             try
             {
                 if (User.IsGuest()) return Unauthorized("Only registered users can favorite recipes.");
-
                 var userId = User.GetUserIdFromClaims();
-
                 var heartedRecipesPagedResult = await _heartedRecipeService.GetUserHeartedRecipeAsync(userId, page, pageSize, sortBy, sortDirection);
+                
                 return Ok(heartedRecipesPagedResult);
             }
             catch (UnauthorizedAccessException ex)
@@ -59,9 +58,7 @@ namespace foodtopia.Controllers
             try
             {
                 if (User.IsGuest()) return Unauthorized("Only registered users can favorite recipes.");
-
                 var userId = User.GetUserIdFromClaims();
-
                 await _heartedRecipeService.AddHeartedRecipeAsync(userId, requestDTO.RecipeId);
 
                 return Ok("Recipe hearted successfully!");
@@ -90,9 +87,7 @@ namespace foodtopia.Controllers
             try
             {
                 if (User.IsGuest()) return Unauthorized("Only registered users can favorite recipes.");
-
                 var userId = User.GetUserIdFromClaims();
-
                 var removed = await _heartedRecipeService.RemoveHeartedRecipeAsync(userId, recipeId);
 
                 if (!removed) return NotFound("Recipe not found inside favorites.");

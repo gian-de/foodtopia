@@ -5,10 +5,11 @@ namespace foodtopia.Mappings.Recipes
 {
     public static class RecipeCreate
     {
-        public static Recipe ToRecipeFromCreateDTO(this RecipeCreateRequestDTO recipeRequestDTO)
+        public static Recipe ToRecipeModelFromDTO(this RecipeCreateRequestDTO recipeRequestDTO)
         {
             return new Recipe
             {
+                // UserId is set in the service method
                 Name = recipeRequestDTO.Name,
                 CountryId = recipeRequestDTO.CountryId,
                 ImageUrl = recipeRequestDTO.ImageUrl,

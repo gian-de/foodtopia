@@ -157,7 +157,7 @@ namespace foodtopia.Services
             var country = await _context.Countries.FindAsync(recipeCreateDTO.CountryId);
             if (country is null) throw new ArgumentException($"Country with id {recipeCreateDTO.CountryId} couldn't be found.");
 
-            var recipeModel = recipeCreateDTO.ToRecipeFromCreateDTO();
+            var recipeModel = recipeCreateDTO.ToRecipeModelFromDTO();
             // attach UserId passed from controller to Model
             recipeModel.UserId = userId;
 
@@ -180,7 +180,7 @@ namespace foodtopia.Services
                                 .FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipeModel is null) throw new KeyNotFoundException($"Recipe with Id {recipeId} was not found.");
-            if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to delete this recipe.");
+            if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to update this recipe.");
 
             // Check fields provided in recipeRequest, if true -> update 
             if (!string.IsNullOrWhiteSpace(recipeUpdateDTO.Name))

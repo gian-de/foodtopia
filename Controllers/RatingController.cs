@@ -30,6 +30,7 @@ namespace foodtopia.Controllers
                 if (User.IsGuest()) return Unauthorized("Only verified users can leave ratings.");
                 var userId = User.GetUserIdFromClaims();
                 var myRatingsPagedResult = await _ratingService.GetAllMyRatingsAsync(userId, page, pageSize, sortBy, sortDirection);
+                
                 return Ok(myRatingsPagedResult);
             }
             catch (UnauthorizedAccessException ex)

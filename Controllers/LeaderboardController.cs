@@ -44,6 +44,7 @@ namespace foodtopia.Controllers
                 int pageSize = 50;
 
                 var top100UsersResult = await _leaderboardService.GetTop100UsersAsync(page, pageSize);
+                
                 return Ok(top100UsersResult);
             }
             catch (KeyNotFoundException ex)

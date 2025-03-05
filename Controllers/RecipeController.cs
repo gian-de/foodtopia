@@ -100,12 +100,13 @@ namespace foodtopia.Controllers
         [HttpPost]
         [Authorize]
         [EnableRateLimiting("fixed-limiter-strict")]
-        public async Task<IActionResult> CreateRecipe([FromBody] RecipeCreateRequestDTO recipeRequestDTO)
+        public async Task<IActionResult> CreateRecipe([FromBody] RecipeCreateRequestDTO recipeCreateDTO)
         {
             try
             {
                 var userId = User.GetUserIdFromClaims();
-                var recipeDTO = await _recipeService.CreateRecipeAsync(userId, recipeRequestDTO);
+                var recipeDTO = await _recipeService.CreateRecipeAsync(userId, recipeCreateDTO);
+
                 return CreatedAtAction(nameof(GetRecipeById), new { recipeId = recipeDTO.Id }, recipeDTO);
             }
             catch (UnauthorizedAccessException ex)
@@ -133,12 +134,13 @@ namespace foodtopia.Controllers
         [HttpPut("{recipeId:guid}")]
         [Authorize]
         [EnableRateLimiting("fixed-limiter-strict")]
-        public async Task<IActionResult> UpdateRecipe([FromRoute] Guid recipeId, [FromBody] RecipeUpdateRequestDTO recipeRequest)
+        public async Task<IActionResult> UpdateRecipe([FromRoute] Guid recipeId, [FromBody] RecipeUpdateRequestDTO recipeUpdateDTO)
         {
             try
             {
                 var userId = User.GetUserIdFromClaims();
-                var updatedRecipe = await _recipeService.UpdateRecipeAsync(userId, recipeId, recipeRequest);
+                var updatedRecipe = await _recipeService.UpdateRecipeAsync(userId, recipeId, recipeUpdateDTO);
+                
                 return Ok(updatedRecipe);
             }
             catch (UnauthorizedAccessException ex)

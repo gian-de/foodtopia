@@ -13,7 +13,6 @@ namespace foodtopia.Controllers
             _ingredientService = ingredientService;
         }
 
-
         [HttpGet("search-by-ingredients")]
         public async Task<IActionResult> SearchByIngredients(
             [FromQuery] string[] ingredients,
