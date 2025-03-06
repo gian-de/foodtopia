@@ -16,6 +16,7 @@ namespace foodtopia.Mappings.Playlists
                 Name: playlistModel.Name,
                 FullSlug: playlistModel.FullSlug,
                 CreatedAt: playlistModel.CreatedAt,
+                VisibilityStatus: playlistModel.VisibilityStatus,
                 HeartedByCount: playlistModel.HeartedByUsers.Count,
                 User: new UserTldrDTO(Username: playlistModel.User.UserName), // can never be null since auth check, only verified users can create a playlist
                 Recipes: playlistModel.PlaylistRecipes.Select(pr =>

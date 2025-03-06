@@ -39,12 +39,12 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpGet("{playlistId:guid}")]
-        public async Task<IActionResult> GetPlaylistById([FromRoute] Guid playlistId)
+        [HttpGet("{fullSlug}")]
+        public async Task<IActionResult> GetPlaylistByFullSlug([FromRoute] string fullSlug)
         {
             try
             {
-                var playlistDTO = await _playlistService.GetPlaylistByIdAsync(playlistId);
+                var playlistDTO = await _playlistService.GetPlaylistByFullSlugAsync(fullSlug);
                 return Ok(playlistDTO);
             }
             catch (KeyNotFoundException ex)
@@ -99,7 +99,7 @@ namespace foodtopia.Controllers
                 var userId = User.GetUserIdFromClaims();
                 var createdPlaylist = await _playlistService.CreatePlaylistAsync(userId, playlistCreateDTO);
 
-                return CreatedAtAction(nameof(GetPlaylistById), new { playListId = createdPlaylist.Id }, createdPlaylist);
+                return CreatedAtAction(nameof(GetPlaylistByFullSlug), new { playListId = createdPlaylist.Id }, createdPlaylist);
             }
             catch (UnauthorizedAccessException ex)
             {

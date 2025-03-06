@@ -9,6 +9,7 @@ namespace foodtopia.DTOs.Playlist
         string Name,
         string FullSlug,
         DateTime CreatedAt,
+        string VisibilityStatus,
         int HeartedByCount,
         UserTldrDTO User,
         List<RecipeTldrDTO>? Recipes

@@ -7,7 +7,7 @@ namespace foodtopia.Interfaces
     public interface IPlaylistService
     {
         Task<PagedResult<PlaylistSummaryDTO>> GetAllPlaylistsAsync(int page, int pageSize, string sortBy, string sortDirection);
-        Task<PlaylistSummaryDTO> GetPlaylistByIdAsync(Guid playlistId);
+        Task<PlaylistSummaryDTO> GetPlaylistByFullSlugAsync(string fullSlug);
         Task<PagedResult<PlaylistSummaryDTO>> GetMyCreatedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection);
         Task<PlaylistSummaryDTO> CreatePlaylistAsync(Guid userId, PlaylistCreateRequestDTO playlistCreateDTO);
         Task<PlaylistSummaryDTO> UpdatePlaylistAsync(Guid userId, Guid playlistId, PlaylistUpdateRequestDTO playlistUpdateDTO);

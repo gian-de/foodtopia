@@ -23,6 +23,8 @@ namespace foodtopia.Services
             bool isDescending = sortDirection.ToLower() == "desc";
 
             var playlistQuery = _context.Playlists
+                                    .Where(p => p.VisibilityStatus == "public")
+                                    .Include(p => p.User)
                                     .Include(p => p.HeartedByUsers)
                                     .Include(p => p.PlaylistRecipes)
                                         .ThenInclude(pr => pr.Recipe)
@@ -65,10 +67,10 @@ namespace foodtopia.Services
             };
         }
 
-        public async Task<PlaylistSummaryDTO> GetPlaylistByIdAsync(Guid playlistId)
+        public async Task<PlaylistSummaryDTO> GetPlaylistByFullSlugAsync(string fullSlug)
         {
             var playlistQuery = await _context.Playlists
-                                    .Where(p => p.Id == playlistId)
+                                    .Where(p => p.FullSlug == fullSlug)
                                     .Include(p => p.User)
                                     .Include(p => p.HeartedByUsers)
                                     .Include(p => p.PlaylistRecipes)
@@ -85,7 +87,7 @@ namespace foodtopia.Services
                                             .ThenInclude(r => r.Country)
                                     .FirstOrDefaultAsync();
 
-            if (playlistQuery is null) throw new KeyNotFoundException($"Playlist with id {playlistId} was not found.");
+            if (playlistQuery is null) throw new KeyNotFoundException($"Playlist with full slug {fullSlug} was not found.");
             return playlistQuery.ToPlaylistSummaryDTO();
         }
 
