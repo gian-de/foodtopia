@@ -3,7 +3,8 @@ using foodtopia.DTOs.Playlist;
 using foodtopia.Helpers;
 using foodtopia.Interfaces;
 using foodtopia.Mappings.Playlists;
-using Microsoft.AspNetCore.Http.HttpResults;
+using foodtopia.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace foodtopia.Services
@@ -252,6 +253,44 @@ namespace foodtopia.Services
                 playlistQuery.Name,
                 recipeCount
             );
+        }
+
+        public async Task AddRecipeToPlaylistAsync(Guid userId, Guid playlistId, Guid recipeId)
+        {
+            var playlistQuery = await _context.Playlists
+                                        .Include(p => p.PlaylistRecipes)
+                                        .FirstOrDefaultAsync(p => p.UserId == userId && p.Id == playlistId);
+
+            if (playlistQuery is null) throw new KeyNotFoundException("Playlist not found or not owner by the user.");
+
+            bool recipeExists = await _context.Recipes.AnyAsync(r => r.Id == recipeId);
+            if (!recipeExists) throw new KeyNotFoundException("The recipe you want to add does not exist.");
+
+            bool recipeInPlaylistExists = playlistQuery.PlaylistRecipes.Any(pr => pr.PlaylistId == playlistId && pr.RecipeId == recipeId);
+            if (recipeInPlaylistExists) throw new ArgumentException("Recipe has already been added to the playlist.");
+
+            var newPlaylistRecipe = new PlaylistRecipe
+            {
+                PlaylistId = playlistId,
+                RecipeId = recipeId
+            };
+
+            await _context.PlaylistRecipes.AddAsync(newPlaylistRecipe);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> RemoveRecipeFromPlaylistAsync(Guid userId, Guid playlistId, Guid recipeId)
+        {
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
+            var playlistRecipeExists = await _context.PlaylistRecipes
+                                            .FirstOrDefaultAsync(pr => pr.PlaylistId == playlistId && pr.RecipeId == recipeId);
+            if (playlistRecipeExists is null) return false;
+
+            _context.PlaylistRecipes.Remove(playlistRecipeExists);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

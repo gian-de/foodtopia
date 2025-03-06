@@ -18,7 +18,7 @@ namespace foodtopia.Database
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<Playlist> Playlists { get; set; }
-        public DbSet<Playlist> PlaylistRecipes { get; set; }
+        public DbSet<PlaylistRecipe> PlaylistRecipes { get; set; }
         public DbSet<HeartedPlaylist> HeartedPlaylists { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

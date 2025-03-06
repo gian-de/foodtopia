@@ -188,5 +188,82 @@ namespace foodtopia.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("{playlistId:guid}")]
+        [Authorize]
+        [EnableRateLimiting("fixed-limiter-strict")]
+        public async Task<IActionResult> AddRecipeToPlaylist([FromRoute] Guid playlistId, [FromBody] PlaylistAddRecipeDTO addRecipeDTO)
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Only registered users can utilize playlist features.");
+
+                var userId = User.GetUserIdFromClaims();
+
+                if (addRecipeDTO.recipeId == Guid.Empty) return BadRequest("Recipe id needs to be passed in.");
+
+                await _playlistService.AddRecipeToPlaylistAsync(userId, playlistId, addRecipeDTO.recipeId);
+
+                return Ok("Recipe added to playlist!");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [HttpDelete("{playlistId:guid}/{recipeId:guid}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteRecipeFromPlaylist([FromRoute] Guid playlistId, [FromRoute] Guid recipeId)
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Playlist feature only available to registered users.");
+
+                var userId = User.GetUserIdFromClaims();
+
+                var removeRecipeFromPlaylist = await _playlistService.RemoveRecipeFromPlaylistAsync(userId, playlistId, recipeId);
+
+                if (!removeRecipeFromPlaylist) return NotFound("Recipe wasn't found in playlist.");
+
+                return Ok("Recipe removed from playlist");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
     }
 }

@@ -12,5 +12,7 @@ namespace foodtopia.Interfaces
         Task<PlaylistSummaryDTO> CreatePlaylistAsync(Guid userId, PlaylistCreateRequestDTO playlistCreateDTO);
         Task<PlaylistSummaryDTO> UpdatePlaylistAsync(Guid userId, Guid playlistId, PlaylistUpdateRequestDTO playlistUpdateDTO);
         Task<PlaylistDeleteDTO> DeletePlaylistAsync(Guid userId, Guid playlistId);
+        Task AddRecipeToPlaylistAsync(Guid userId, Guid playlistId, Guid recipeId);
+        Task<bool> RemoveRecipeFromPlaylistAsync(Guid userId, Guid playlistId, Guid recipeId);
     }
 }
