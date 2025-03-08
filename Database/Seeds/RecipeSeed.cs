@@ -16,7 +16,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.USA,
                     ImageUrl = "images/recipes/low_calorie_pizza.jpg",
                     Ingredients = new List<Ingredient>(), // initialize as empty (since Recipe model has as "required") then shortly after seeded List
-                    Instructions = new List<Instruction>() // initialize as empty (since Recipe model has as "required") then shortly after seeded List
+                    Instructions = new List<Instruction>(), // initialize as empty (since Recipe model has as "required") then shortly after seeded List
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -26,7 +27,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.USA,
                     ImageUrl = "images/recipes/classic_cheeseburger.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -36,7 +38,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Mexico,
                     ImageUrl = "images/recipes/tacos_al_pastor.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -46,7 +49,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.India,
                     ImageUrl = "images/recipes/chicken_biryani.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -56,7 +60,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.China,
                     ImageUrl = "images/recipes/peking_duck.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -66,7 +71,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Russia,
                     ImageUrl = "images/recipes/beef_stroganoff.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -86,7 +92,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Japan,
                     ImageUrl = "images/recipes/sushi.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -96,7 +103,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Thailand,
                     ImageUrl = "images/recipes/pad_thai.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -106,7 +114,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Vietnam,
                     ImageUrl = "images/recipes/pho.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -116,7 +125,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Peru,
                     ImageUrl = "images/recipes/ceviche.jpeg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -126,7 +136,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Turkey,
                     ImageUrl = "images/recipes/kebab.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -136,7 +147,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Pakistan,
                     ImageUrl = "images/recipes/butter_chicken.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -146,7 +158,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.SouthAfrica,
                     ImageUrl = "images/recipes/bobotie.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -156,7 +169,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.SouthKorea,
                     ImageUrl = "images/recipes/kimchi.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -166,7 +180,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Poland,
                     ImageUrl = "images/recipes/pierogi.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -176,7 +191,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.UK,
                     ImageUrl = "images/recipes/fish_and_chips.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -186,7 +202,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Greece,
                     ImageUrl = "images/recipes/moussaka.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -196,7 +213,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Italy,
                     ImageUrl = "images/recipes/lasagna.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -206,7 +224,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.France,
                     ImageUrl = "images/recipes/croissant.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 },
                 new Recipe
                 {
@@ -216,7 +235,8 @@ namespace foodtopia.Database.Seeds
                     CountryId = CountrySeedUUID.Egypt,
                     ImageUrl = "images/recipes/shawarma.jpg",
                     Ingredients = new List<Ingredient>(),
-                    Instructions = new List<Instruction>()
+                    Instructions = new List<Instruction>(),
+                    VisibilityStatus = "public"
                 }
             };
         }

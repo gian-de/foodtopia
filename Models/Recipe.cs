@@ -15,6 +15,7 @@ namespace foodtopia.Models
         public int TasteReviewCount { get; set; }
         public int DifficultyReviewCount { get; set; }
         public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
+        public string VisibilityStatus { get; set; } = "private";
         public Guid? UserId { get; set; }
         public AppUser? User { get; set; }
         public required Guid CountryId { get; set; }
@@ -24,5 +25,6 @@ namespace foodtopia.Models
         public required ICollection<Instruction> Instructions { get; set; }
         public ICollection<Rating>? Ratings { get; set; }
         public ICollection<PlaylistRecipe> PlaylistRecipes { get; set; } = new List<PlaylistRecipe>();
+        public ICollection<VisibilityReview> VisibilityReviews { get; set; } = new List<VisibilityReview>();
     }
 }

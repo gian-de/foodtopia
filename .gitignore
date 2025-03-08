@@ -6,7 +6,8 @@
 # dotenv files and password.txt
 .env
 appsettings.json
-seed_password.txt
+seed_deleteduser_password.txt
+seed_senioradmin_password.txt
 
 # User-specific files
 *.rsuser

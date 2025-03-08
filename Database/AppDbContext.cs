@@ -20,6 +20,7 @@ namespace foodtopia.Database
         public DbSet<Playlist> Playlists { get; set; }
         public DbSet<PlaylistRecipe> PlaylistRecipes { get; set; }
         public DbSet<HeartedPlaylist> HeartedPlaylists { get; set; }
+        public DbSet<VisibilityReview> VisibilityReviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -135,9 +136,9 @@ namespace foodtopia.Database
 
             var deletedUserGuid = Guid.Parse("00000000-0000-0000-0000-000000000001"); // Well-known GUID for "Deleted" user
 
-            var hashedPassword = File.Exists("seed_password.txt")
-                                    ? File.ReadAllText("seed_password.txt").Trim()
-                                    : throw new Exception("Missing \"seed_password.txt\". Go to \"https://bcrypt-generator.com/\" type a password and copy the new hashed password and paste it inside the \"seed_password.txt\" file.");
+            var deletedUserHashedPassword = File.Exists("seed_deleteduser_password.txt")
+                                            ? File.ReadAllText("seed_deleteduser_password.txt").Trim()
+                                            : throw new Exception("Missing \"seed_deleteduser_password.txt\". Go to \"https://bcrypt-generator.com\" type a password and copy the new hashed password and paste just the hashed password inside a new created '.txt' file called \"seed_deleteduser_password.txt\". The file should be at the root of the project aka next to 'Program.cs'");
 
             var deletedUser = new AppUser
             {
@@ -147,11 +148,36 @@ namespace foodtopia.Database
                 Email = "deleted@foodtopia.com",
                 NormalizedEmail = "DELETED@FOODTOPIA.COM",
                 EmailConfirmed = true,
-                PasswordHash = hashedPassword
+                PasswordHash = deletedUserHashedPassword
             };
-            modelBuilder.Entity<AppUser>().HasData(deletedUser);
+
+            var ownerUserGuid = Guid.Parse("f0d0acba-6cad-4081-a14b-9973f4444962");
+
+            var ownerUserHashedPassword = File.Exists("seed_senioradmin_password.txt")
+                                            ? File.ReadAllText("seed_senioradmin_password.txt").Trim()
+                                            : throw new Exception("Missing \"seed_senioradmin_password.txt\". Go to \"https://bcrypt-generator.com\" type a password and copy the new hashed password and paste just the hashed password inside a new created '.txt' file called \"seed_senioradmin_password.txt\". The file should be at the root of the project aka next to 'Program.cs'");
+
+            var ownerUser = new AppUser
+            {
+                Id = ownerUserGuid,
+                UserName = "Owner",
+                NormalizedUserName = "OWNER",
+                Email = "owner@foodtopia.com",
+                NormalizedEmail = "OWNER@FOODTOPIA.COM",
+                EmailConfirmed = true,
+                PasswordHash = ownerUserHashedPassword
+            };
+            modelBuilder.Entity<AppUser>().HasData(deletedUser, ownerUser);
 
             modelBuilder.Entity<AppUser>().HasData(AppUserSeed.GetAppUsers());
+            // after RoleSeed and UserSeed then add IdentityUserRole seed
+            modelBuilder.Entity<IdentityUserRole<Guid>>().HasData(
+                new IdentityUserRole<Guid>
+                {
+                    UserId = ownerUserGuid,
+                    RoleId = RoleSeedUUID.SeniorAdmin
+                }
+            );
 
             var countries = CountrySeed.GetCountries(); // variable to pass into both Country entity and argument for RecipeSeed Entity
             // Seed data for Country 1st because the Recipe seed is dependent of it
