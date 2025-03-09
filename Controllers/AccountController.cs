@@ -64,7 +64,7 @@ namespace foodtopia.Controllers
                 {
                     UserName = appUser.UserName,
                     Email = appUser.Email,
-                    JwtToken = _jwtTokenService.CreateToken(appUser)
+                    JwtToken = await _jwtTokenService.CreateTokenAsync(appUser)
                 }
                     );
             }
@@ -112,7 +112,7 @@ namespace foodtopia.Controllers
                 {
                     UserName = user.UserName,
                     Email = user.Email,
-                    JwtToken = _jwtTokenService.CreateToken(user)
+                    JwtToken = await _jwtTokenService.CreateTokenAsync(user)
                 }
             );
         }
@@ -138,7 +138,7 @@ namespace foodtopia.Controllers
                 {
                     UserName = guestUsername,
                     Email = guestUser.Email,
-                    JwtToken = _jwtTokenService.CreateToken(guestUser)
+                    JwtToken = await _jwtTokenService.CreateTokenAsync(guestUser)
                 }
             );
         }

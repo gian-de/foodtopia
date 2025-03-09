@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using foodtopia.Interfaces;
 using foodtopia.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace foodtopia.Services
@@ -10,23 +11,32 @@ namespace foodtopia.Services
     public class JwtTokenService : IJwtTokenService
     {
         private readonly IConfiguration _config;
+        private readonly UserManager<AppUser> _userManager;
         private readonly SymmetricSecurityKey _key;
-        public JwtTokenService(IConfiguration config)
+        public JwtTokenService(IConfiguration config, UserManager<AppUser> userManager)
         {
             _config = config;
+            _userManager = userManager;
 
             var signingKey = Environment.GetEnvironmentVariable("JWT_SIGNING_KEY");
 
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
         }
-        public string CreateToken(AppUser user)
+        public async Task<string> CreateTokenAsync(AppUser user)
         {
+            var roles = await _userManager.GetRolesAsync(user);
+
             var claims = new List<Claim>{
                 new Claim("user_id", user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("is_guest", user.IsGuest.ToString())
+                new Claim("is_guest", user.IsGuest.ToString()),
             };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 
