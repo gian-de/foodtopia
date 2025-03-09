@@ -33,9 +33,16 @@ namespace foodtopia.Services
                 new Claim("is_guest", user.IsGuest.ToString()),
             };
 
-            foreach (var role in roles)
+            if (!roles.Any())
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim(ClaimTypes.Role, "User"));
+            }
+            else
+            {
+                foreach (var role in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
             }
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
