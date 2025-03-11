@@ -2,8 +2,10 @@ using System.Text;
 using System.Threading.RateLimiting;
 using foodtopia.Database;
 using foodtopia.Interfaces;
+using foodtopia.Interfaces.Admin;
 using foodtopia.Models;
 using foodtopia.Services;
+using foodtopia.Services.Admin;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
@@ -61,6 +63,9 @@ builder.Services.AddAuthentication(options =>
         };
     }
 );
+
+builder.Services.AddScoped<ISeniorAdminService, SeniorAdminService>();
+builder.Services.AddScoped<IModeratorService, ModeratorService>();
 
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();

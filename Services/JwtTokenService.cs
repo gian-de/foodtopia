@@ -24,6 +24,7 @@ namespace foodtopia.Services
         }
         public async Task<string> CreateTokenAsync(AppUser user)
         {
+            // userManager check RETURNS EMPTY LIST (=/= null type) of roles if user doesn't exists (ex. not created yet) OR User's role has been removed and is now an empty list (ex. Admin demoted of perms)
             var roles = await _userManager.GetRolesAsync(user);
 
             var claims = new List<Claim>{
@@ -32,7 +33,7 @@ namespace foodtopia.Services
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim("is_guest", user.IsGuest.ToString()),
             };
-
+            // attach claim prop "Role" to "User" by default when generating JWT if User's role not found
             if (!roles.Any())
             {
                 claims.Add(new Claim(ClaimTypes.Role, "User"));
