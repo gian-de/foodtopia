@@ -20,8 +20,53 @@ namespace foodtopia.Controllers
         [HttpPost("senior-admin/add-admin")]
         public async Task<IActionResult> AddAdminRole([FromBody] AddAdminRoleDTO dto)
         {
-            var result = await _seniorAdminService.AddAdminRoleAsync(dto.userId);
-            return Ok(result);
+            try
+            {
+                var result = await _seniorAdminService.AddAdminRoleAsync(dto.userId);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "Senior Admin")]
+        [HttpDelete("senior-admin/remove-admin/{userId:guid}")]
+        public async Task<IActionResult> RemoveAdminRole([FromRoute] Guid userId)
+        {
+            try
+            {
+                var resultSuccess = await _seniorAdminService.RemoveAdminRoleAsync(userId);
+
+                if (!resultSuccess) return BadRequest("User wasn't able to be unmodded.");
+
+                return Ok(new { Message = "User has been remove as Admin successfully." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
         }
     }
 }

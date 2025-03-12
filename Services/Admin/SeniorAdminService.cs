@@ -18,6 +18,9 @@ namespace foodtopia.Services.Admin
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null) throw new KeyNotFoundException("User info passed in wasn't found.");
 
+            bool isAdminAlready = await _userManager.IsInRoleAsync(user, "Admin");
+            if (isAdminAlready) throw new ArgumentException("This user is already an admin.");
+
             if (string.IsNullOrEmpty(user.SecurityStamp))
             {
                 user.SecurityStamp = Guid.NewGuid().ToString();
@@ -39,6 +42,9 @@ namespace foodtopia.Services.Admin
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null) throw new KeyNotFoundException("User info passed in wasn't found.");
+
+            var roles = await _userManager.GetRolesAsync(user);
+            if (!roles.Contains("Admin")) throw new KeyNotFoundException("User is not an Admin.");
 
             var result = await _userManager.RemoveFromRoleAsync(user, "Admin");
             if (!result.Succeeded) return false;
