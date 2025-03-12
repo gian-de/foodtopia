@@ -12,6 +12,27 @@ namespace foodtopia.Services.Admin
         {
             _userManager = userManager;
         }
+        public async Task<List<UserInfoDTO>> GetAllAdminsAsync()
+        {
+            var admins = await _userManager.GetUsersInRoleAsync("Admin");
+            var seniorAdmins = await _userManager.GetUsersInRoleAsync("Senior Admin");
+
+            var allUsers = admins.Concat(seniorAdmins).ToList();
+
+            var allAdmins = new List<UserInfoDTO>();
+
+            foreach (var user in allUsers)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                allAdmins.Add(new UserInfoDTO(
+                    Username: user.UserName!,
+                    Email: user.Email!,
+                    Role: roles.FirstOrDefault()!
+                ));
+            }
+
+            return allAdmins;
+        }
 
         public async Task<UserInfoDTO> AddAdminRoleAsync(Guid userId)
         {
@@ -37,6 +58,7 @@ namespace foodtopia.Services.Admin
                 Role: "Admin"
             );
         }
+
 
         public async Task<bool> RemoveAdminRoleAsync(Guid userId)
         {

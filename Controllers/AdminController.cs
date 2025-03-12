@@ -16,8 +16,24 @@ namespace foodtopia.Controllers
             _seniorAdminService = seniorAdminService;
             _moderatorService = moderatorService;
         }
+        // ONLY 'Senior Admin' endpoints START - Normal Admin endpoints further below 
         [Authorize(Roles = "Senior Admin")]
-        [HttpPost("senior-admin/add-admin")]
+        [HttpGet("senior-admin/admins")]
+        public async Task<IActionResult> GetAllAdmins()
+        {
+            try
+            {
+                var admins = await _seniorAdminService.GetAllAdminsAsync();
+                return Ok(admins);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "Senior Admin")]
+        [HttpPost("senior-admin/admins")]
         public async Task<IActionResult> AddAdminRole([FromBody] AddAdminRoleDTO dto)
         {
             try
@@ -44,7 +60,7 @@ namespace foodtopia.Controllers
         }
 
         [Authorize(Roles = "Senior Admin")]
-        [HttpDelete("senior-admin/remove-admin/{userId:guid}")]
+        [HttpDelete("senior-admin/admins/{userId:guid}")]
         public async Task<IActionResult> RemoveAdminRole([FromRoute] Guid userId)
         {
             try
@@ -68,5 +84,6 @@ namespace foodtopia.Controllers
                 return StatusCode(500, new { ex.Message });
             }
         }
+        // ONLY Senior Admins endpoints END
     }
 }
