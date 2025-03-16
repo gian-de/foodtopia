@@ -1,5 +1,6 @@
 using foodtopia.Database;
 using foodtopia.DTOs.Recipe;
+using foodtopia.DTOs.Recipe.Submission;
 using foodtopia.Helpers;
 using foodtopia.Interfaces;
 using foodtopia.Mappings.Recipes;
@@ -263,5 +264,32 @@ namespace foodtopia.Services
             );
         }
 
+        public async Task<RecipeSubmissionResponseDTO> SubmitRecipeSubmissionAsync(Guid userId, Guid recipeId)
+        {
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
+            var recipeModel = await _context.Recipes
+                                        .Include(r => r.VisibilityReviews)
+                                        .FirstOrDefaultAsync(r => r.UserId == userId && r.Id == recipeId);
+
+            if (recipeModel is null) throw new KeyNotFoundException("Recipe not found.");
+
+            recipeModel.VisibilityStatus = "pending";
+
+            // Even though these props are set as default value inside the Model "VisibilityReview",  creating a new record allows to have a submission history since the Recipe only stores a reference (collection) 
+            var newVisibilityReview = new VisibilityReview
+            {
+                Id = Guid.NewGuid(),
+                VisibilityStatus = "pending",
+                SubmittedAt = DateTime.UtcNow,
+                RecipeId = recipeModel.Id
+            };
+
+            _context.VisibilityReviews.Add(newVisibilityReview);
+            await _context.SaveChangesAsync();
+
+            return new RecipeSubmissionResponseDTO(recipeId, "Your recipe has been submitted for review.");
+        }
     }
 }

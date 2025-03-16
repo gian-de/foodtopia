@@ -140,7 +140,7 @@ namespace foodtopia.Controllers
             {
                 var userId = User.GetUserIdFromClaims();
                 var updatedRecipe = await _recipeService.UpdateRecipeAsync(userId, recipeId, recipeUpdateDTO);
-                
+
                 return Ok(updatedRecipe);
             }
             catch (UnauthorizedAccessException ex)
@@ -179,6 +179,34 @@ namespace foodtopia.Controllers
                     Message = "Recipe successfully deleted.",
                     DeletedRecipe = deletedRecipeDTO
                 });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // SUBMIT FOR REVIEW START
+        [Authorize]
+        [HttpPost("{recipeId:guid}/submissions")]
+        public async Task<IActionResult> CreateRecipeSubmission([FromRoute] Guid recipeId)
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Only verified users can submit recipes to global.");
+                var userId = User.GetUserIdFromClaims();
+
+                var submissionResult = await _recipeService.SubmitRecipeSubmissionAsync(userId, recipeId);
+
+                return Ok(submissionResult);
             }
             catch (UnauthorizedAccessException ex)
             {

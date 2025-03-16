@@ -1,4 +1,5 @@
 using foodtopia.DTOs.Recipe;
+using foodtopia.DTOs.Recipe.Submission;
 using foodtopia.Helpers;
 
 namespace foodtopia.Interfaces
@@ -11,5 +12,7 @@ namespace foodtopia.Interfaces
         Task<RecipeSummaryDTO> CreateRecipeAsync(Guid userId, RecipeCreateRequestDTO recipeCreateDTO);
         Task<RecipeSummaryDTO> UpdateRecipeAsync(Guid userId, Guid recipeId, RecipeUpdateRequestDTO recipeUpdateDTO);
         Task<RecipeDeleteDTO> DeleteRecipeAsync(Guid userId, Guid recipeId);
+
+        Task<RecipeSubmissionResponseDTO> SubmitRecipeSubmissionAsync(Guid userId, Guid recipeId);
     };
 }
