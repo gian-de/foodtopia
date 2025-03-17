@@ -14,5 +14,6 @@ namespace foodtopia.Interfaces
         Task<RecipeDeleteDTO> DeleteRecipeAsync(Guid userId, Guid recipeId);
 
         Task<RecipeSubmissionResponseDTO> SubmitRecipeSubmissionAsync(Guid userId, Guid recipeId);
+        Task<RecipeSubmissionResponseDTO> UnSubmitRecipeSubmissionAsync(Guid userId, Guid recipeId);
     };
 }

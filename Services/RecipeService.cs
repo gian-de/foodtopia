@@ -277,7 +277,7 @@ namespace foodtopia.Services
 
             recipeModel.VisibilityStatus = "pending";
 
-            // Even though these props are set as default value inside the Model "VisibilityReview",  creating a new record allows to have a submission history since the Recipe only stores a reference (collection) 
+            // Even though these props are set as default value inside the Model "VisibilityReview", creating a new record allows to have a submission history since the Recipe only stores a reference (collection) 
             var newVisibilityReview = new VisibilityReview
             {
                 Id = Guid.NewGuid(),
@@ -290,6 +290,27 @@ namespace foodtopia.Services
             await _context.SaveChangesAsync();
 
             return new RecipeSubmissionResponseDTO(recipeId, "Your recipe has been submitted for review.");
+        }
+
+        public async Task<RecipeSubmissionResponseDTO> UnSubmitRecipeSubmissionAsync(Guid userId, Guid recipeId)
+        {
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
+            var recipeModel = await _context.Recipes
+                                        .Include(r => r.VisibilityReviews)
+                                        .FirstOrDefaultAsync(r => r.UserId == userId && r.Id == recipeId);
+
+            if (recipeModel is null) throw new KeyNotFoundException("Recipe not found or you are not authorized.");
+
+            var pendingReview = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
+            if (pendingReview is null) throw new KeyNotFoundException("This recipe does not have a pending submission to cancel.");
+
+            _context.VisibilityReviews.Remove(pendingReview);
+            recipeModel.VisibilityStatus = "private";
+            await _context.SaveChangesAsync();
+
+            return new RecipeSubmissionResponseDTO(recipeModel.Id, "Pending submission has been cancelled.");
         }
     }
 }
