@@ -1,4 +1,5 @@
 using foodtopia.DTOs.Admin;
+using foodtopia.Helpers;
 using foodtopia.Interfaces.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -85,5 +86,32 @@ namespace foodtopia.Controllers
             }
         }
         // ONLY Senior Admins endpoints END
+
+        // ALL Admins endpoints START
+        [Authorize(Roles = "Senior Admin, Admin")]
+        [HttpGet("moderator/recipes/pending")]
+        public async Task<IActionResult> GetAllRecipePendingSubmissions(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? username = null)
+        {
+            try
+            {
+                var pendingRecipesResult = await _moderatorService.GetAllRecipePendingSubmissionsAsync(page, pageSize, username);
+                return Ok(pendingRecipesResult);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
     }
 }

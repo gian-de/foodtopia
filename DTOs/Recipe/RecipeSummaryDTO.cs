@@ -1,7 +1,6 @@
 using foodtopia.DTOs.Country;
 using foodtopia.DTOs.Ingredient;
 using foodtopia.DTOs.Instruction;
-using foodtopia.DTOs.Rating;
 using foodtopia.DTOs.User;
 
 namespace foodtopia.DTOs.Recipe
