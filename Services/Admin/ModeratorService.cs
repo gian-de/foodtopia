@@ -1,8 +1,11 @@
 using foodtopia.Database;
+using foodtopia.DTOs.Admin.Moderator;
 using foodtopia.DTOs.Recipe;
 using foodtopia.Helpers;
 using foodtopia.Interfaces.Admin;
 using foodtopia.Mappings.Recipes;
+using foodtopia.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace foodtopia.Services.Admin
@@ -10,9 +13,11 @@ namespace foodtopia.Services.Admin
     public class ModeratorService : IModeratorService
     {
         private readonly AppDbContext _context;
-        public ModeratorService(AppDbContext context)
+        private readonly UserManager<AppUser> _userManager;
+        public ModeratorService(AppDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         public async Task<PagedResult<RecipeSummaryDTO>> GetAllRecipePendingSubmissionsAsync(int page, int pageSize, string username)
         {
@@ -56,6 +61,47 @@ namespace foodtopia.Services.Admin
                 TotalPages = (int)Math.Ceiling((double)totalPendingRecipes / pageSize),
                 Results = pendingRecipesDTOs
             };
+        }
+
+        public async Task<ModeratorSubmissionResponseDTO> RecipeSubmissionReviewAsync(Guid adminId, Guid recipeId, ModeratorSubmissionReviewDTO reviewDTO)
+        {
+            var newVisibilityStatus = reviewDTO.VisibilityStatus.ToLower();
+            if (newVisibilityStatus != "approved" && newVisibilityStatus != "denied") throw new ArgumentException("Visibility status must be either 'approved' or 'denied'.");
+
+            // verify Admin exists and create new var adminUser to pass into .GetRolesAsync() <- since that method requires an 'AppUser' as an argument and you can pass the 'Guid adminId'.
+            var adminUser = await _userManager.FindByIdAsync(adminId.ToString());
+            if (adminUser is null) throw new UnauthorizedAccessException("Admin passed in was not found.");
+
+            var adminRoles = await _userManager.GetRolesAsync(adminUser);
+            if (!adminRoles.Contains("Senior Admin") && !adminRoles.Contains("Admin"))
+                throw new UnauthorizedAccessException("User is not authorized to review submissions.");
+
+            // load recipe to then pass into/update VisibilityReviews foreign table helps data integrity that whats being updated in the VisibilityReviews table is linked to an active Recipe
+            var recipeModel = await _context.Recipes
+                                .Include(r => r.VisibilityReviews)
+                                .FirstOrDefaultAsync(r => r.Id == recipeId);
+
+            if (recipeModel is null) throw new KeyNotFoundException("Recipe passed in was not found.");
+
+            var pendingSubmission = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
+            if (pendingSubmission is null) throw new ArgumentNullException("Recipe has no 'pending' submissions.");
+
+            if (newVisibilityStatus == "denied")
+            {
+                if (string.IsNullOrWhiteSpace(reviewDTO.ReviewFeedback)) throw new ArgumentException("Review feedback is required when denying a submission.");
+                pendingSubmission.VisibilityStatus = "denied";
+                pendingSubmission.ReviewFeedback = reviewDTO.ReviewFeedback;
+            }
+
+            pendingSubmission.VisibilityStatus = "approved";
+            pendingSubmission.ReviewFeedback = null;
+            pendingSubmission.ReviewedAt = DateTime.UtcNow;
+            pendingSubmission.ReviewedById = adminId;
+
+            recipeModel.VisibilityStatus = reviewDTO.VisibilityStatus;
+            await _context.SaveChangesAsync();
+
+            return new ModeratorSubmissionResponseDTO(recipeId, "Your review has been posted successfully.");
         }
     }
 }

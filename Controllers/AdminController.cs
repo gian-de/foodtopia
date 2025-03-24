@@ -1,4 +1,5 @@
 using foodtopia.DTOs.Admin;
+using foodtopia.DTOs.Admin.Moderator;
 using foodtopia.Helpers;
 using foodtopia.Interfaces.Admin;
 using Microsoft.AspNetCore.Authorization;
@@ -107,6 +108,34 @@ namespace foodtopia.Controllers
             catch (KeyNotFoundException ex)
             {
                 return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "Senior Admin, Admin")]
+        [HttpPost("moderator/recipes/{recipeId:guid}/submission")]
+        public async Task<IActionResult> ReviewRecipeSubmission([FromRoute] Guid recipeId, [FromBody] ModeratorSubmissionReviewDTO reviewDTO)
+        {
+            try
+            {
+                var adminId = User.GetUserIdFromClaims(); // Extension method to extract user id from claims.
+                var response = await _moderatorService.RecipeSubmissionReviewAsync(adminId, recipeId, reviewDTO);
+                return Ok(response);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
             }
             catch (Exception ex)
             {
