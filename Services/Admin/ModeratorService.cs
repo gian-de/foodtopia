@@ -80,7 +80,6 @@ namespace foodtopia.Services.Admin
             var recipeModel = await _context.Recipes
                                 .Include(r => r.VisibilityReviews)
                                 .FirstOrDefaultAsync(r => r.Id == recipeId);
-
             if (recipeModel is null) throw new KeyNotFoundException("Recipe passed in was not found.");
 
             var pendingSubmission = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
@@ -91,14 +90,18 @@ namespace foodtopia.Services.Admin
                 if (string.IsNullOrWhiteSpace(reviewDTO.ReviewFeedback)) throw new ArgumentException("Review feedback is required when denying a submission.");
                 pendingSubmission.VisibilityStatus = "denied";
                 pendingSubmission.ReviewFeedback = reviewDTO.ReviewFeedback;
+                recipeModel.VisibilityStatus = "private";
+            }
+            else if (newVisibilityStatus == "approved")
+            {
+                pendingSubmission.VisibilityStatus = "approved";
+                pendingSubmission.ReviewFeedback = null;
+                recipeModel.VisibilityStatus = "public";
             }
 
-            pendingSubmission.VisibilityStatus = "approved";
-            pendingSubmission.ReviewFeedback = null;
             pendingSubmission.ReviewedAt = DateTime.UtcNow;
             pendingSubmission.ReviewedById = adminId;
 
-            recipeModel.VisibilityStatus = reviewDTO.VisibilityStatus;
             await _context.SaveChangesAsync();
 
             return new ModeratorSubmissionResponseDTO(recipeId, "Your review has been posted successfully.");

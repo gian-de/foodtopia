@@ -99,6 +99,7 @@ namespace foodtopia.Controllers
             try
             {
                 var pendingRecipesResult = await _moderatorService.GetAllRecipePendingSubmissionsAsync(page, pageSize, username);
+
                 return Ok(pendingRecipesResult);
             }
             catch (ArgumentOutOfRangeException ex)
@@ -121,13 +122,15 @@ namespace foodtopia.Controllers
         {
             try
             {
-                var adminId = User.GetUserIdFromClaims(); // Extension method to extract user id from claims.
-                var response = await _moderatorService.RecipeSubmissionReviewAsync(adminId, recipeId, reviewDTO);
-                return Ok(response);
+                var adminId = User.GetUserIdFromClaims();
+
+                var reviewResponse = await _moderatorService.RecipeSubmissionReviewAsync(adminId, recipeId, reviewDTO);
+
+                return Ok(reviewResponse);
             }
-            catch (KeyNotFoundException ex)
+            catch (ArgumentNullException ex)
             {
-                return NotFound(new { ex.Message });
+                return BadRequest(new { ex.Message });
             }
             catch (ArgumentException ex)
             {
@@ -136,6 +139,10 @@ namespace foodtopia.Controllers
             catch (UnauthorizedAccessException ex)
             {
                 return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
             }
             catch (Exception ex)
             {
