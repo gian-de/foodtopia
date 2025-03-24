@@ -272,8 +272,10 @@ namespace foodtopia.Services
             var recipeModel = await _context.Recipes
                                         .Include(r => r.VisibilityReviews)
                                         .FirstOrDefaultAsync(r => r.UserId == userId && r.Id == recipeId);
-
             if (recipeModel is null) throw new KeyNotFoundException("Recipe not found.");
+
+            var pendingSubmission = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
+            if (pendingSubmission is not null) throw new ArgumentException("This recipe already has a pending submission. Unsubmit previous submission in order to submit again.");
 
             recipeModel.VisibilityStatus = "pending";
 
