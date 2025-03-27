@@ -195,6 +195,40 @@ namespace foodtopia.Controllers
         }
 
         // SUBMISSION FOR REVIEW START
+
+        [Authorize]
+        [HttpGet("submissions/pending")]
+        public async Task<IActionResult> GetMyPendingRecipes(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "SubmittedAt",
+            [FromQuery] string sortDirection = "asc")
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Create and verify an account to access this feature.");
+
+                var userId = User.GetUserIdFromClaims();
+
+                var pendingRecipesResult = await _recipeService.GetMyPendingRecipesAsync(userId, page, pageSize, sortBy, sortDirection);
+
+                return Ok(pendingRecipesResult);
+
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [Authorize]
         [HttpPost("{recipeId:guid}/submissions")]
         public async Task<IActionResult> CreateRecipeSubmission([FromRoute] Guid recipeId)

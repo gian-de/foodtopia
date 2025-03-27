@@ -1,29 +1,31 @@
 using foodtopia.DTOs.Country;
 using foodtopia.DTOs.Ingredient;
 using foodtopia.DTOs.Instruction;
-using foodtopia.DTOs.Recipe;
-using foodtopia.DTOs.User;
+using foodtopia.DTOs.Recipe.Submission;
 using foodtopia.Models;
 
 namespace foodtopia.Mappings.Recipes
 {
-    public static class RecipeExtension
+    public static class RecipeSubmissionExtension
     {
-        public static RecipeSummaryDTO ToRecipeSummaryDTO(this Recipe recipeModel)
+        public static RecipeSubmissionHistoryDTO ToRecipeSubmissionHistoryDTO(this Recipe recipeModel)
         {
-            return new RecipeSummaryDTO(
-                Id: recipeModel.Id,
+            var visibilityReview = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
+
+            return new RecipeSubmissionHistoryDTO(
+                RecipeId: recipeModel.Id,
                 Name: recipeModel.Name,
                 ImageUrl: recipeModel.ImageUrl,
+                VisibilityStatus: recipeModel.VisibilityStatus,
                 HeartCount: recipeModel.HeartedByUsers?.Count ?? 0,
                 TasteAverage: recipeModel.Ratings?.Count > 0 ? Math.Round(recipeModel.Ratings.Average(r => r.TasteRating), 2) : null,
                 DifficultyAverage: recipeModel.Ratings?.Count > 0 ? Math.Round(recipeModel.Ratings.Average(r => r.DifficultyRating), 2) : null,
                 TasteReviewCount: recipeModel.Ratings?.Count(r => r.TasteRating > 0),
                 DifficultyReviewCount: recipeModel.Ratings?.Count(r => r.DifficultyRating > 0),
                 PublishedAt: recipeModel.PublishedAt,
-                User: recipeModel.User != null
-                    ? new UserTldrDTO(recipeModel.User.UserName)
-                    : null,
+                SubmittedAt: visibilityReview?.SubmittedAt,
+                ReviewedAt: visibilityReview?.ReviewedAt,
+                ReviewedBy: visibilityReview?.ReviewedBy?.UserName,
                 CountryId: recipeModel.CountryId,
                 Country: new CountryDTO(
                     Id: recipeModel.Country!.Id,

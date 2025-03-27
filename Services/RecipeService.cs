@@ -264,6 +264,58 @@ namespace foodtopia.Services
             );
         }
 
+        public async Task<PagedResult<RecipeSubmissionHistoryDTO>> GetMyPendingRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        {
+            if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1.");
+
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
+            bool isDescending = sortDirection.ToLower() == "desc";
+
+            var pendingRecipesQuery = _context.Recipes
+                                .Where(r => r.UserId == userId && r.VisibilityReviews.Any(vr => vr.VisibilityStatus == "pending"))
+                                .Include(r => r.VisibilityReviews)
+                                .Include(r => r.Country)
+                                .Include(r => r.Ingredients)
+                                .Include(r => r.Instructions.OrderBy(ins => ins.Order))
+                                .Include(r => r.Ratings)
+                                .AsQueryable();
+
+            pendingRecipesQuery = sortBy.ToLower() switch
+            {
+                "submittedat" => isDescending
+                                    ? pendingRecipesQuery.OrderByDescending(
+                                        pr => pr.VisibilityReviews
+                                            .Where(vr => vr.VisibilityStatus == "pending")
+                                            .Max(vr => vr.SubmittedAt))
+                                    : pendingRecipesQuery.OrderBy(
+                                        pr => pr.VisibilityReviews
+                                            .Where(vr => vr.VisibilityStatus == "pending")
+                                            .Min(vr => vr.SubmittedAt)),
+                _ => pendingRecipesQuery.OrderByDescending(
+                        pr => pr.VisibilityReviews
+                                .Where(vr => vr.VisibilityStatus == "pending")
+                                .Max(vr => vr.SubmittedAt))
+            };
+
+            var totalPendingRecipes = await pendingRecipesQuery.CountAsync();
+            var pendingRecipesDTOs = await pendingRecipesQuery
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .Select(pr => pr.ToRecipeSubmissionHistoryDTO())
+                                    .ToListAsync();
+
+            return new PagedResult<RecipeSubmissionHistoryDTO>
+            {
+                TotalCount = totalPendingRecipes,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalPendingRecipes / (double)pageSize),
+                Results = pendingRecipesDTOs
+            };
+        }
+
         public async Task<RecipeSubmissionResponseDTO> SubmitRecipeSubmissionAsync(Guid userId, Guid recipeId)
         {
             bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
