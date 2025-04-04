@@ -8,9 +8,13 @@ namespace foodtopia.Mappings.Recipes
 {
     public static class RecipeSubmissionExtension
     {
-        public static RecipeSubmissionHistoryDTO ToRecipeSubmissionHistoryDTO(this Recipe recipeModel)
+        public static RecipeSubmissionHistoryDTO ToRecipeSubmissionHistoryDTO(this Recipe recipeModel, string visibilityStatusArgument)
         {
-            var visibilityReview = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
+            // var visibilityReview = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus.ToLower() == visibilityStatusArgument.ToLower());
+            var visibilityReview = recipeModel.VisibilityReviews
+                                    .Where(vr => vr.VisibilityStatus.ToLower() == visibilityStatusArgument.ToLower())
+                                    .OrderByDescending(vr => vr.SubmittedAt)
+                                    .FirstOrDefault();
 
             return new RecipeSubmissionHistoryDTO(
                 RecipeId: recipeModel.Id,

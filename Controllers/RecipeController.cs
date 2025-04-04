@@ -198,7 +198,7 @@ namespace foodtopia.Controllers
 
         [Authorize]
         [HttpGet("submissions/pending")]
-        public async Task<IActionResult> GetMyPendingRecipes(
+        public async Task<IActionResult> GetMyPendingRecipesSubmission(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
             [FromQuery] string sortBy = "SubmittedAt",
@@ -214,6 +214,70 @@ namespace foodtopia.Controllers
 
                 return Ok(pendingRecipesResult);
 
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("submissions/approved")]
+        public async Task<IActionResult> GetMyApprovedRecipesSubmission(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "SubmittedAt",
+            [FromQuery] string sortDirection = "asc")
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Create and verify an account to access this feature.");
+
+                var userId = User.GetUserIdFromClaims();
+
+                var approvedRecipesResult = await _recipeService.GetMyApprovedRecipesAsync(userId, page, pageSize, sortBy, sortDirection);
+
+                return Ok(approvedRecipesResult);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("submissions/denied")]
+        public async Task<IActionResult> GetMyDeniedRecipesSubmission(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "SubmittedAt",
+            [FromQuery] string sortDirection = "asc")
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Create and verify an account to access this feature.");
+
+                var userId = User.GetUserIdFromClaims();
+
+                var deniedRecipesResult = await _recipeService.GetMyDeniedRecipesAsync(userId, page, pageSize, sortBy, sortDirection);
+
+                return Ok(deniedRecipesResult);
             }
             catch (UnauthorizedAccessException ex)
             {
