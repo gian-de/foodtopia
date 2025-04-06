@@ -328,6 +328,7 @@ namespace foodtopia.Services
             var approvedRecipesQuery = _context.Recipes
                                 .Where(r => r.UserId == userId && r.VisibilityReviews.Any(vr => vr.VisibilityStatus == "approved"))
                                 .Include(r => r.VisibilityReviews)
+                                    .ThenInclude(vr => vr.ReviewedBy)
                                 .Include(r => r.Country)
                                 .Include(r => r.Ingredients)
                                 .Include(r => r.Instructions.OrderBy(ins => ins.Order))
@@ -383,6 +384,7 @@ namespace foodtopia.Services
                                                 && r.VisibilityStatus.ToLower() != "approved"
                                                 && r.VisibilityStatus.ToLower() != "pending")
                                         .Include(r => r.VisibilityReviews)
+                                            .ThenInclude(vr => vr.ReviewedBy)
                                         .Include(r => r.Country)
                                         .Include(r => r.Ingredients)
                                         .Include(r => r.Instructions.OrderBy(ins => ins.Order))
