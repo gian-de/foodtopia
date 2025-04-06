@@ -94,7 +94,7 @@ namespace foodtopia.Services.Admin
                 if (string.IsNullOrWhiteSpace(reviewDTO.ReviewFeedback)) throw new ArgumentException("Review feedback is required when denying a submission.");
                 pendingSubmission.VisibilityStatus = "denied";
                 pendingSubmission.ReviewFeedback = reviewDTO.ReviewFeedback;
-                recipeModel.VisibilityStatus = "private";
+                recipeModel.VisibilityStatus = "denied";
             }
             else if (newVisibilityStatus == "approved")
             {

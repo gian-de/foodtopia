@@ -303,7 +303,7 @@ namespace foodtopia.Services
             var pendingRecipesDTOs = await pendingRecipesQuery
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
-                                    .Select(pr => pr.ToRecipeSubmissionHistoryDTO("pending"))
+                                    .Select(r => r.ToRecipeSubmissionHistoryDTO("pending"))
                                     .ToListAsync();
 
             return new PagedResult<RecipeSubmissionHistoryDTO>
@@ -353,10 +353,10 @@ namespace foodtopia.Services
             };
 
             var totalApprovedRecipes = await approvedRecipesQuery.CountAsync();
-            var pendingRecipesDTOs = await approvedRecipesQuery
+            var approvedRecipesDTOs = await approvedRecipesQuery
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
-                                    .Select(pr => pr.ToRecipeSubmissionHistoryDTO("approved"))
+                                    .Select(r => r.ToRecipeSubmissionHistoryDTO("approved"))
                                     .ToListAsync();
 
             return new PagedResult<RecipeSubmissionHistoryDTO>
@@ -365,7 +365,7 @@ namespace foodtopia.Services
                 CurrentPage = page,
                 PageSize = pageSize,
                 TotalPages = (int)Math.Ceiling(totalApprovedRecipes / (double)pageSize),
-                Results = pendingRecipesDTOs
+                Results = approvedRecipesDTOs
             };
         }
 
@@ -379,10 +379,7 @@ namespace foodtopia.Services
             bool isDescending = sortDirection.ToLower() == "desc";
 
             var deniedRecipesQuery = _context.Recipes
-                                        .Where(r => r.UserId == userId
-                                                && r.VisibilityReviews.Any(vr => vr.VisibilityStatus.ToLower() == "denied")
-                                                && r.VisibilityStatus.ToLower() != "approved"
-                                                && r.VisibilityStatus.ToLower() != "pending")
+                                        .Where(r => r.UserId == userId && r.VisibilityStatus.ToLower() == "denied")
                                         .Include(r => r.VisibilityReviews)
                                             .ThenInclude(vr => vr.ReviewedBy)
                                         .Include(r => r.Country)
@@ -394,22 +391,22 @@ namespace foodtopia.Services
             deniedRecipesQuery = sortBy.ToLower() switch
             {
                 "submittedat" => isDescending
-                                    ? deniedRecipesQuery.OrderByDescending(r =>
-                                        r.VisibilityReviews.Where(vr => vr.VisibilityStatus.ToLower() == "denied")
-                                            .Max(vr => vr.SubmittedAt))
-                                    : deniedRecipesQuery.OrderBy(r =>
-                                        r.VisibilityReviews.Where(vr => vr.VisibilityStatus.ToLower() == "denied")
-                                            .Min(vr => vr.SubmittedAt)),
-                _ => deniedRecipesQuery.OrderByDescending(r =>
-                        r.VisibilityReviews.Where(vr => vr.VisibilityStatus.ToLower() == "denied")
-                            .Max(vr => vr.SubmittedAt))
+                                    ? deniedRecipesQuery.OrderByDescending(r => r.VisibilityReviews
+                                        .Where(vr => vr.VisibilityStatus.ToLower() == "denied")
+                                        .Max(vr => vr.SubmittedAt))
+                                    : deniedRecipesQuery.OrderBy(r => r.VisibilityReviews
+                                        .Where(vr => vr.VisibilityStatus.ToLower() == "denied")
+                                        .Min(vr => vr.SubmittedAt)),
+                _ => deniedRecipesQuery.OrderByDescending(r => r.VisibilityReviews
+                        .Where(vr => vr.VisibilityStatus.ToLower() == "denied")
+                        .Max(vr => vr.SubmittedAt))
             };
 
             var totalDeniedRecipes = await deniedRecipesQuery.CountAsync();
             var deniedRecipesDTOs = await deniedRecipesQuery
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
-                                    .Select(pr => pr.ToRecipeSubmissionHistoryDTO("denied"))
+                                    .Select(r => r.ToRecipeSubmissionHistoryDTO("denied"))
                                     .ToListAsync();
 
             return new PagedResult<RecipeSubmissionHistoryDTO>
