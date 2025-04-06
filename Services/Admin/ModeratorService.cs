@@ -83,7 +83,11 @@ namespace foodtopia.Services.Admin
             if (recipeModel is null) throw new KeyNotFoundException("Recipe passed in was not found.");
 
             var pendingSubmission = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
-            if (pendingSubmission is null) throw new ArgumentNullException("Recipe has no 'pending' submissions.");
+            if (pendingSubmission is null)
+            {
+                if (recipeModel.VisibilityReviews.Any(vr => vr.VisibilityStatus.ToLower() == "denied")) throw new ArgumentException("Unable to edit a 'denied' recipe to 'approved'. User must resubmit their submission for review again.");
+                throw new ArgumentNullException("Recipe has no 'pending' submissions.");
+            }
 
             if (newVisibilityStatus == "denied")
             {
