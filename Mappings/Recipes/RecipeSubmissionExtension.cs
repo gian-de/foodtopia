@@ -8,7 +8,7 @@ namespace foodtopia.Mappings.Recipes
 {
     public static class RecipeSubmissionExtension
     {
-        public static RecipeSubmissionHistoryDTO ToRecipeSubmissionHistoryDTO(this Recipe recipeModel, string visibilityStatusArgument)
+        public static RecipeSubmissionDetailsDTO ToRecipeSubmissionDetailsDTO(this Recipe recipeModel, string visibilityStatusArgument)
         {
             // var visibilityReview = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus.ToLower() == visibilityStatusArgument.ToLower());
             var visibilityReview = recipeModel.VisibilityReviews
@@ -16,7 +16,7 @@ namespace foodtopia.Mappings.Recipes
                                     .OrderByDescending(vr => vr.SubmittedAt)
                                     .FirstOrDefault();
 
-            return new RecipeSubmissionHistoryDTO(
+            return new RecipeSubmissionDetailsDTO(
                 RecipeId: recipeModel.Id,
                 Name: recipeModel.Name,
                 ImageUrl: recipeModel.ImageUrl,
@@ -29,7 +29,7 @@ namespace foodtopia.Mappings.Recipes
                 PublishedAt: recipeModel.PublishedAt,
                 SubmittedAt: visibilityReview?.SubmittedAt,
                 ReviewedAt: visibilityReview?.ReviewedAt,
-                ReviewedBy: visibilityReview?.ReviewedBy?.UserName,
+                ReviewedByUsername: visibilityReview?.ReviewedBy?.UserName,
                 CountryId: recipeModel.CountryId,
                 Country: new CountryDTO(
                     Id: recipeModel.Country!.Id,

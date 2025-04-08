@@ -264,7 +264,7 @@ namespace foodtopia.Services
             );
         }
 
-        public async Task<PagedResult<RecipeSubmissionHistoryDTO>> GetMyPendingRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        public async Task<PagedResult<RecipeSubmissionDetailsDTO>> GetMyPendingRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
         {
             if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1.");
 
@@ -303,10 +303,10 @@ namespace foodtopia.Services
             var pendingRecipesDTOs = await pendingRecipesQuery
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
-                                    .Select(r => r.ToRecipeSubmissionHistoryDTO("pending"))
+                                    .Select(r => r.ToRecipeSubmissionDetailsDTO("pending"))
                                     .ToListAsync();
 
-            return new PagedResult<RecipeSubmissionHistoryDTO>
+            return new PagedResult<RecipeSubmissionDetailsDTO>
             {
                 TotalCount = totalPendingRecipes,
                 CurrentPage = page,
@@ -316,7 +316,7 @@ namespace foodtopia.Services
             };
         }
 
-        public async Task<PagedResult<RecipeSubmissionHistoryDTO>> GetMyApprovedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        public async Task<PagedResult<RecipeSubmissionDetailsDTO>> GetMyApprovedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
         {
             if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1.");
 
@@ -356,10 +356,10 @@ namespace foodtopia.Services
             var approvedRecipesDTOs = await approvedRecipesQuery
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
-                                    .Select(r => r.ToRecipeSubmissionHistoryDTO("approved"))
+                                    .Select(r => r.ToRecipeSubmissionDetailsDTO("approved"))
                                     .ToListAsync();
 
-            return new PagedResult<RecipeSubmissionHistoryDTO>
+            return new PagedResult<RecipeSubmissionDetailsDTO>
             {
                 TotalCount = totalApprovedRecipes,
                 CurrentPage = page,
@@ -369,7 +369,7 @@ namespace foodtopia.Services
             };
         }
 
-        public async Task<PagedResult<RecipeSubmissionHistoryDTO>> GetMyDeniedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        public async Task<PagedResult<RecipeSubmissionDetailsDTO>> GetMyDeniedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
         {
             if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1.");
 
@@ -406,16 +406,59 @@ namespace foodtopia.Services
             var deniedRecipesDTOs = await deniedRecipesQuery
                                     .Skip((page - 1) * pageSize)
                                     .Take(pageSize)
-                                    .Select(r => r.ToRecipeSubmissionHistoryDTO("denied"))
+                                    .Select(r => r.ToRecipeSubmissionDetailsDTO("denied"))
                                     .ToListAsync();
 
-            return new PagedResult<RecipeSubmissionHistoryDTO>
+            return new PagedResult<RecipeSubmissionDetailsDTO>
             {
                 TotalCount = totalDeniedRecipes,
                 CurrentPage = page,
                 PageSize = pageSize,
                 TotalPages = (int)Math.Ceiling(totalDeniedRecipes / (double)pageSize),
                 Results = deniedRecipesDTOs
+            };
+        }
+
+        public async Task<PagedResult<RecipeSubmissionHistoryDTO>> GetRecipeSubmissionHistoryAsync(Guid userId, Guid recipeId, int page, int pageSize)
+        {
+            if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1.");
+
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
+            var recipeModel = await _context.Recipes
+                                        .Include(r => r.VisibilityReviews)
+                                            .ThenInclude(vr => vr.ReviewedBy)
+                                        .FirstOrDefaultAsync(r => r.UserId == userId && r.Id == recipeId);
+            if (recipeModel is null) throw new UnauthorizedAccessException("Recipe not found.");
+            if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to view this recipe's submission history.");
+
+            var recipeSubmissionHistoryOrdered = recipeModel.VisibilityReviews
+                                            .OrderByDescending(vr => vr.SubmittedAt)
+                                            .ToList();
+
+            int totalSubmissions = recipeSubmissionHistoryOrdered.Count;
+
+            var recipeSubmissionDTOs = recipeSubmissionHistoryOrdered
+                                        .Skip((page - 1) * pageSize)
+                                        .Take(pageSize)
+                                        .Select(vr => new RecipeSubmissionHistoryDTO(
+                                            ReviewId: vr.Id,
+                                            VisibilityStatus: vr.VisibilityStatus,
+                                            VisibilityFeedback: vr.ReviewFeedback,
+                                            SubmittedAt: vr.SubmittedAt,
+                                            ReviewedAt: vr.ReviewedAt,
+                                            ReviewedByUsername: vr.ReviewedBy?.UserName
+                                        ))
+                                        .ToList();
+
+            return new PagedResult<RecipeSubmissionHistoryDTO>
+            {
+                TotalCount = totalSubmissions,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalSubmissions / (double)pageSize),
+                Results = recipeSubmissionDTOs
             };
         }
 
@@ -428,6 +471,7 @@ namespace foodtopia.Services
                                         .Include(r => r.VisibilityReviews)
                                         .FirstOrDefaultAsync(r => r.UserId == userId && r.Id == recipeId);
             if (recipeModel is null) throw new KeyNotFoundException("Recipe not found.");
+            if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to submit this recipe for submission.");
 
             var pendingSubmission = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
             if (pendingSubmission is not null) throw new ArgumentException("This recipe already has a pending submission. Unsubmit previous submission in order to submit again.");
@@ -458,7 +502,8 @@ namespace foodtopia.Services
                                         .Include(r => r.VisibilityReviews)
                                         .FirstOrDefaultAsync(r => r.UserId == userId && r.Id == recipeId);
 
-            if (recipeModel is null) throw new KeyNotFoundException("Recipe not found or you are not authorized.");
+            if (recipeModel is null) throw new KeyNotFoundException("Recipe not found.");
+            if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to unsubmit this recipe from submission.");
 
             var pendingReview = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
             if (pendingReview is null) throw new KeyNotFoundException("This recipe does not have a pending submission to cancel.");

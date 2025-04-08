@@ -13,9 +13,10 @@ namespace foodtopia.Interfaces
         Task<RecipeSummaryDTO> UpdateRecipeAsync(Guid userId, Guid recipeId, RecipeUpdateRequestDTO recipeUpdateDTO);
         Task<RecipeDeleteDTO> DeleteRecipeAsync(Guid userId, Guid recipeId);
 
-        Task<PagedResult<RecipeSubmissionHistoryDTO>> GetMyPendingRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection);
-        Task<PagedResult<RecipeSubmissionHistoryDTO>> GetMyApprovedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection);
-        Task<PagedResult<RecipeSubmissionHistoryDTO>> GetMyDeniedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection);
+        Task<PagedResult<RecipeSubmissionDetailsDTO>> GetMyPendingRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection);
+        Task<PagedResult<RecipeSubmissionDetailsDTO>> GetMyApprovedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection);
+        Task<PagedResult<RecipeSubmissionDetailsDTO>> GetMyDeniedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection);
+        Task<PagedResult<RecipeSubmissionHistoryDTO>> GetRecipeSubmissionHistoryAsync(Guid userId, Guid recipeId, int page, int pageSize);
         Task<RecipeSubmissionResponseDTO> SubmitRecipeSubmissionAsync(Guid userId, Guid recipeId);
         Task<RecipeSubmissionResponseDTO> UnSubmitRecipeSubmissionAsync(Guid userId, Guid recipeId);
     };

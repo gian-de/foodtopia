@@ -294,6 +294,40 @@ namespace foodtopia.Controllers
         }
 
         [Authorize]
+        [HttpGet("{recipeId:guid}/submissions")]
+        public async Task<IActionResult> GetRecipeSubmissionHistory(
+            [FromRoute] Guid recipeId,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Only verified users can submit recipes to global.");
+                var userId = User.GetUserIdFromClaims();
+
+                var recipeSubmissionHistoryResult = await _recipeService.GetRecipeSubmissionHistoryAsync(userId, recipeId, page, pageSize);
+
+                return Ok(recipeSubmissionHistoryResult);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize]
         [HttpPost("{recipeId:guid}/submissions")]
         public async Task<IActionResult> CreateRecipeSubmission([FromRoute] Guid recipeId)
         {
