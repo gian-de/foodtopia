@@ -20,6 +20,7 @@ namespace foodtopia.Mappings.Recipes
                 DifficultyAverage: recipeModel.Ratings?.Count > 0 ? Math.Round(recipeModel.Ratings.Average(r => r.DifficultyRating), 2) : null,
                 TasteReviewCount: recipeModel.Ratings?.Count(r => r.TasteRating > 0),
                 DifficultyReviewCount: recipeModel.Ratings?.Count(r => r.DifficultyRating > 0),
+                VisibilityStatus: recipeModel.VisibilityStatus,
                 PublishedAt: recipeModel.PublishedAt,
                 User: recipeModel.User != null
                     ? new UserTldrDTO(recipeModel.User.UserName)

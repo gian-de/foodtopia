@@ -15,6 +15,7 @@ namespace foodtopia.DTOs.Recipe
         double? DifficultyAverage,
         int? TasteReviewCount,
         int? DifficultyReviewCount,
+        string VisibilityStatus,
         DateTime PublishedAt,
         UserTldrDTO? User,
         Guid CountryId,

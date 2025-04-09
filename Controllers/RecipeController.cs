@@ -302,7 +302,7 @@ namespace foodtopia.Controllers
         {
             try
             {
-                if (User.IsGuest()) return Unauthorized("Only verified users can submit recipes to global.");
+                if (User.IsGuest()) return Unauthorized("Create and verify an account to access this feature.");
                 var userId = User.GetUserIdFromClaims();
 
                 var recipeSubmissionHistoryResult = await _recipeService.GetRecipeSubmissionHistoryAsync(userId, recipeId, page, pageSize);
