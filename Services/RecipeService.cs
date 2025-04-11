@@ -96,7 +96,7 @@ namespace foodtopia.Services
             return recipe.ToRecipeSummaryDTO();
         }
 
-        public async Task<PagedResult<RecipeSummaryDTO>> GetMyCreatedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        public async Task<PagedResult<RecipeSummaryDTO>> GetMyCreatedRecipesAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection, string? visibility = null)
         {
             if (page < 1 || pageSize < 1) throw new ArgumentException("Page and or Page size must be greater than 0.");
 
@@ -114,6 +114,12 @@ namespace foodtopia.Services
                                 .Include(r => r.Ratings)
                                 .AsQueryable();
 
+            if (!string.IsNullOrEmpty(visibility))
+            {
+                // "pending", "unlisted", "public", "denied" are the only 4 acceptable params
+                recipeQuery = recipeQuery.Where(r => r.VisibilityStatus.ToLower() == visibility.ToLower());
+            }
+
             recipeQuery = sortBy.ToLower() switch
             {
                 "heartedbyusers" => isDescending
@@ -125,9 +131,14 @@ namespace foodtopia.Services
                 "difficultyaverage" => isDescending
                     ? recipeQuery.OrderByDescending(r => r.Ratings.Average(rt => rt.DifficultyRating))
                     : recipeQuery.OrderBy(r => r.Ratings.Average(rt => rt.DifficultyRating)),
+                "submittedat" => isDescending
+                    // ".ThenBy() is needed in the case of 2 recipes submitted near the same time, the .Then(r.Id) ensures their ordered in a "stable" manner 
+                    ? recipeQuery.OrderByDescending(r => r.PublishedAt).ThenByDescending(r => r.Id)
+                    : recipeQuery.OrderBy(r => r.PublishedAt).ThenBy(r => r.Id),
                 _ => isDescending
-                    ? recipeQuery.OrderByDescending(r => r.PublishedAt)
-                    : recipeQuery.OrderBy(r => r.PublishedAt)
+                    // ".ThenBy() is needed in the case of 2 recipes submitted near the same time, the .Then(r.Id) ensures their ordered in a "stable" manner
+                    ? recipeQuery.OrderByDescending(r => r.PublishedAt).ThenByDescending(r => r.Id)
+                    : recipeQuery.OrderBy(r => r.PublishedAt).ThenBy(r => r.Id)
             };
 
 

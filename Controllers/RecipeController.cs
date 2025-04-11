@@ -69,13 +69,14 @@ namespace foodtopia.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
             [FromQuery] string sortBy = "PublishedAt",
-            [FromQuery] string sortDirection = "desc")
+            [FromQuery] string sortDirection = "desc",
+            [FromQuery] string? visibility = null)
         {
             try
             {
                 var userId = User.GetUserIdFromClaims();
 
-                var myRecipesPagedResult = await _recipeService.GetMyCreatedRecipesAsync(userId, page, pageSize, sortBy, sortDirection);
+                var myRecipesPagedResult = await _recipeService.GetMyCreatedRecipesAsync(userId, page, pageSize, sortBy, sortDirection, visibility);
 
                 return Ok(myRecipesPagedResult);
             }
