@@ -257,14 +257,18 @@ namespace foodtopia.Services
 
         public async Task AddRecipeToPlaylistAsync(Guid userId, Guid playlistId, Guid recipeId)
         {
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
             var playlistQuery = await _context.Playlists
                                         .Include(p => p.PlaylistRecipes)
                                         .FirstOrDefaultAsync(p => p.UserId == userId && p.Id == playlistId);
-
             if (playlistQuery is null) throw new KeyNotFoundException("Playlist not found or not owner by the user.");
 
-            bool recipeExists = await _context.Recipes.AnyAsync(r => r.Id == recipeId);
-            if (!recipeExists) throw new KeyNotFoundException("The recipe you want to add does not exist.");
+            var recipeQuery = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
+            if (recipeQuery is null) throw new KeyNotFoundException("The recipe you want to add does not exist.");
+            if (recipeQuery.VisibilityStatus.ToLower() != "public") throw new ArgumentException("Only public recipes can be added to a playlist.");
+
 
             bool recipeInPlaylistExists = playlistQuery.PlaylistRecipes.Any(pr => pr.PlaylistId == playlistId && pr.RecipeId == recipeId);
             if (recipeInPlaylistExists) throw new ArgumentException("Recipe has already been added to the playlist.");
