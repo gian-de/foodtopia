@@ -57,8 +57,8 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpGet("my")]
         [Authorize]
+        [HttpGet("my")]
         public async Task<IActionResult> GetMyCreatedPlaylists(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
@@ -68,6 +68,7 @@ namespace foodtopia.Controllers
         {
             try
             {
+                if (User.IsGuest()) return Unauthorized("Only registered users are able to make their own playlist.");
                 var userId = User.GetUserIdFromClaims();
 
                 var myPlaylistPagedResult = await _playlistService.GetMyCreatedPlaylistsAsync(userId, page, pageSize, sortBy, sortDirection);
@@ -88,8 +89,8 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpPost]
         [Authorize]
+        [HttpPost]
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> CreatePlaylist([FromBody] PlaylistCreateRequestDTO playlistCreateDTO)
         {
@@ -123,8 +124,8 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpPut("{playlistId:guid}")]
         [Authorize]
+        [HttpPut("{playlistId:guid}")]
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> UpdatePlaylist([FromRoute] Guid playlistId, [FromBody] PlaylistUpdateRequestDTO playlistUpdateDTO)
         {
@@ -159,8 +160,8 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpDelete("{playlistId:guid}")]
         [Authorize]
+        [HttpDelete("{playlistId:guid}")]
         public async Task<IActionResult> DeletePlaylist([FromRoute] Guid playlistId)
         {
             try
@@ -189,8 +190,8 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpPost("{playlistId:guid}")]
         [Authorize]
+        [HttpPost("{playlistId:guid}")]
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> AddRecipeToPlaylist([FromRoute] Guid playlistId, [FromBody] PlaylistAddRecipeDTO addRecipeDTO)
         {
@@ -228,8 +229,8 @@ namespace foodtopia.Controllers
             }
         }
 
-        [HttpDelete("{playlistId:guid}/{recipeId:guid}")]
         [Authorize]
+        [HttpDelete("{playlistId:guid}/{recipeId:guid}")]
         public async Task<IActionResult> DeleteRecipeFromPlaylist([FromRoute] Guid playlistId, [FromRoute] Guid recipeId)
         {
             try
@@ -263,6 +264,37 @@ namespace foodtopia.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpPost("{playlistId:guid}/submissions")]
+        public async Task<IActionResult> CreatePlaylistSubmission([FromRoute] Guid playlistId)
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Only registered users can submit a playlist for submission.");
+                var userId = User.GetUserIdFromClaims();
+
+                var playlistSubmissionResult = await _playlistService.SubmitPlaylistSubmissionAsync(userId, playlistId);
+
+                return Ok(playlistSubmissionResult);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }

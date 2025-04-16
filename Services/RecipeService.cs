@@ -484,13 +484,13 @@ namespace foodtopia.Services
             if (recipeModel is null) throw new KeyNotFoundException("Recipe not found.");
             if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to submit this recipe for submission.");
 
-            var pendingSubmission = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
-            if (pendingSubmission is not null) throw new ArgumentException("This recipe already has a pending submission. Unsubmit previous submission in order to submit again.");
+            var pendingRecipeSubmission = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
+            if (pendingRecipeSubmission is not null) throw new ArgumentException("This recipe already has a pending submission. Unsubmit previous submission in order to submit again.");
 
             recipeModel.VisibilityStatus = "pending";
 
             // Even though these props are set as default value inside the Model "VisibilityReview", creating a new record allows to have a submission history since the Recipe only stores a reference (collection) 
-            var newVisibilityReview = new VisibilityReview
+            var newRecipeVisibilityReview = new VisibilityReview
             {
                 Id = Guid.NewGuid(),
                 VisibilityStatus = "pending",
@@ -498,7 +498,7 @@ namespace foodtopia.Services
                 RecipeId = recipeModel.Id
             };
 
-            _context.VisibilityReviews.Add(newVisibilityReview);
+            _context.VisibilityReviews.Add(newRecipeVisibilityReview);
             await _context.SaveChangesAsync();
 
             return new RecipeSubmissionResponseDTO(recipeId, "Your recipe has been submitted for review.");
@@ -516,10 +516,10 @@ namespace foodtopia.Services
             if (recipeModel is null) throw new KeyNotFoundException("Recipe not found.");
             if (recipeModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to unsubmit this recipe from submission.");
 
-            var pendingReview = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
-            if (pendingReview is null) throw new KeyNotFoundException("This recipe does not have a pending submission to cancel.");
+            var pendingRecipeReview = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
+            if (pendingRecipeReview is null) throw new KeyNotFoundException("This recipe does not have a pending submission to cancel.");
 
-            _context.VisibilityReviews.Remove(pendingReview);
+            _context.VisibilityReviews.Remove(pendingRecipeReview);
             recipeModel.VisibilityStatus = "private";
             await _context.SaveChangesAsync();
 

@@ -337,9 +337,9 @@ namespace foodtopia.Controllers
                 if (User.IsGuest()) return Unauthorized("Only verified users can submit recipes to global.");
                 var userId = User.GetUserIdFromClaims();
 
-                var submissionResult = await _recipeService.SubmitRecipeSubmissionAsync(userId, recipeId);
+                var recipeSubmissionResult = await _recipeService.SubmitRecipeSubmissionAsync(userId, recipeId);
 
-                return Ok(submissionResult);
+                return Ok(recipeSubmissionResult);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -368,8 +368,8 @@ namespace foodtopia.Controllers
                 if (User.IsGuest()) return Unauthorized("Only verified users can submit recipes to global.");
                 var userId = User.GetUserIdFromClaims();
 
-                var unsubmitResponse = await _recipeService.UnSubmitRecipeSubmissionAsync(userId, recipeId);
-                return Ok(unsubmitResponse);
+                var recipeUnsubmitResponse = await _recipeService.UnSubmitRecipeSubmissionAsync(userId, recipeId);
+                return Ok(recipeUnsubmitResponse);
             }
             catch (UnauthorizedAccessException ex)
             {

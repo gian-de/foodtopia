@@ -1,10 +1,10 @@
 using foodtopia.Database;
 using foodtopia.DTOs.Playlist;
+using foodtopia.DTOs.Playlist.Submission;
 using foodtopia.Helpers;
 using foodtopia.Interfaces;
 using foodtopia.Mappings.Playlists;
 using foodtopia.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace foodtopia.Services
@@ -295,6 +295,40 @@ namespace foodtopia.Services
             _context.PlaylistRecipes.Remove(playlistRecipeExists);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<PlaylistSubmissionResponseDTO> SubmitPlaylistSubmissionAsync(Guid userId, Guid playlistId)
+        {
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
+            var playlistModel = await _context.Playlists
+                                        .Include(p => p.VisibilityReviews)
+                                        .FirstOrDefaultAsync(p => p.UserId == userId && p.Id == playlistId);
+            if (playlistModel is null) throw new KeyNotFoundException("Playlist not found or not owner by the user.");
+
+            var pendingPlaylistSubmission = playlistModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
+            if (pendingPlaylistSubmission is not null) throw new ArgumentException("This playlist already has a pending submission. Unsubmit previous submission in order to submit again.");
+
+            playlistModel.VisibilityStatus = "pending";
+
+            var newPlaylistVisibilityReview = new VisibilityReview
+            {
+                Id = Guid.NewGuid(),
+                VisibilityStatus = "pending",
+                SubmittedAt = DateTime.UtcNow,
+                PlaylistId = playlistId
+            };
+
+            _context.VisibilityReviews.Add(newPlaylistVisibilityReview);
+            await _context.SaveChangesAsync();
+
+            return new PlaylistSubmissionResponseDTO(playlistId, "Your playlist has been submitted for review.");
+        }
+
+        public Task<PlaylistSubmissionResponseDTO> UnSubmitPlaylistSubmissionAsync(Guid userId, Guid playlistId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
