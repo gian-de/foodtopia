@@ -361,15 +361,15 @@ namespace foodtopia.Controllers
 
         [Authorize]
         [HttpDelete("{recipeId:guid}/submissions")]
-        public async Task<IActionResult> UnsubmitRecipeSubmission([FromRoute] Guid recipeId)
+        public async Task<IActionResult> UnSubmitRecipeSubmission([FromRoute] Guid recipeId)
         {
             try
             {
                 if (User.IsGuest()) return Unauthorized("Only verified users can submit recipes to global.");
                 var userId = User.GetUserIdFromClaims();
 
-                var recipeUnsubmitResponse = await _recipeService.UnSubmitRecipeSubmissionAsync(userId, recipeId);
-                return Ok(recipeUnsubmitResponse);
+                var recipeUnSubmitResponse = await _recipeService.UnSubmitRecipeSubmissionAsync(userId, recipeId);
+                return Ok(recipeUnSubmitResponse);
             }
             catch (UnauthorizedAccessException ex)
             {

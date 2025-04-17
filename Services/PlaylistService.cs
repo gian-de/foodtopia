@@ -305,9 +305,10 @@ namespace foodtopia.Services
             var playlistModel = await _context.Playlists
                                         .Include(p => p.VisibilityReviews)
                                         .FirstOrDefaultAsync(p => p.UserId == userId && p.Id == playlistId);
-            if (playlistModel is null) throw new KeyNotFoundException("Playlist not found or not owner by the user.");
+            if (playlistModel is null) throw new KeyNotFoundException("Playlist you've added not found.");
+            if (playlistModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to unsubmit this playlist's submission.");
 
-            var pendingPlaylistSubmission = playlistModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
+            var pendingPlaylistSubmission = playlistModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus.ToLower() == "pending");
             if (pendingPlaylistSubmission is not null) throw new ArgumentException("This playlist already has a pending submission. Unsubmit previous submission in order to submit again.");
 
             playlistModel.VisibilityStatus = "pending";
@@ -326,9 +327,25 @@ namespace foodtopia.Services
             return new PlaylistSubmissionResponseDTO(playlistId, "Your playlist has been submitted for review.");
         }
 
-        public Task<PlaylistSubmissionResponseDTO> UnSubmitPlaylistSubmissionAsync(Guid userId, Guid playlistId)
+        public async Task<PlaylistSubmissionResponseDTO> UnSubmitPlaylistSubmissionAsync(Guid userId, Guid playlistId)
         {
-            throw new NotImplementedException();
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
+            var playlistModel = await _context.Playlists
+                                    .Include(p => p.VisibilityReviews)
+                                    .FirstOrDefaultAsync(p => p.UserId == userId && p.Id == playlistId);
+            if (playlistModel is null) throw new KeyNotFoundException("Playlist you've added not found.");
+            if (playlistModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to unsubmit this playlist's submission.");
+
+            var pendingPlaylistSubmission = playlistModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus.ToLower() == "pending");
+            if (pendingPlaylistSubmission is null) throw new ArgumentNullException("This playlist doesn't have a pending submission at this time.");
+
+            _context.VisibilityReviews.Remove(pendingPlaylistSubmission);
+            playlistModel.VisibilityStatus = "unlisted";
+            await _context.SaveChangesAsync();
+
+            return new PlaylistSubmissionResponseDTO(playlistId, "Pending playlist submission successfully.");
         }
     }
 }

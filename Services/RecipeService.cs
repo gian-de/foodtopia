@@ -520,10 +520,10 @@ namespace foodtopia.Services
             if (pendingRecipeReview is null) throw new KeyNotFoundException("This recipe does not have a pending submission to cancel.");
 
             _context.VisibilityReviews.Remove(pendingRecipeReview);
-            recipeModel.VisibilityStatus = "private";
+            recipeModel.VisibilityStatus = "unlisted";
             await _context.SaveChangesAsync();
 
-            return new RecipeSubmissionResponseDTO(recipeModel.Id, "Pending submission has been cancelled.");
+            return new RecipeSubmissionResponseDTO(recipeModel.Id, "Pending recipe submission has been cancelled.");
         }
     }
 }

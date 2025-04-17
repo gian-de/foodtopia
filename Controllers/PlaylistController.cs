@@ -297,5 +297,36 @@ namespace foodtopia.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [Authorize]
+        [HttpDelete("{playlistId:guid}/submissions")]
+        public async Task<IActionResult> UnSubmitPlaylistSubmission([FromRoute] Guid playlistId)
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Only registered users have access to playlist features.");
+                var userId = User.GetUserIdFromClaims();
+
+                var playlistUnSubmitResult = await _playlistService.UnSubmitPlaylistSubmissionAsync(userId, playlistId);
+
+                return Ok(playlistUnSubmitResult);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
