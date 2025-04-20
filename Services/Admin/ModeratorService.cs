@@ -1,8 +1,10 @@
 using foodtopia.Database;
 using foodtopia.DTOs.Admin.Moderator;
+using foodtopia.DTOs.Playlist;
 using foodtopia.DTOs.Recipe;
 using foodtopia.Helpers;
 using foodtopia.Interfaces.Admin;
+using foodtopia.Mappings.Playlists;
 using foodtopia.Mappings.Recipes;
 using foodtopia.Models;
 using Microsoft.AspNetCore.Identity;
@@ -109,6 +111,56 @@ namespace foodtopia.Services.Admin
             await _context.SaveChangesAsync();
 
             return new ModeratorSubmissionResponseDTO(recipeId, "Your review has been posted successfully.");
+        }
+
+        public async Task<PagedResult<PlaylistSummaryDTO>> GetAllPlaylistPendingSubmissionsAsync(int page, int pageSize, string username)
+        {
+            if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1");
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
+                if (user is null) throw new KeyNotFoundException($"User with the username: '{username}' not found.");
+            }
+
+            var pendingPlaylistSubmissions = _context.VisibilityReviews
+                                                    .Where(vr => vr.VisibilityStatus == "pending" && vr.PlaylistId != null) // "&& vr.PlaylistId != null" explicitly added since we only want the Playlists submitted and not any Recipes since they're both saved to the 'VisibilityReviews' model/ dbset
+                                                    .Include(vr => vr.Playlist)
+                                                        .ThenInclude(p => p.User)
+                                                    .Include(vr => vr.Playlist)
+                                                        .ThenInclude(p => p.HeartedByUsers)
+                                                    .Include(vr => vr.Playlist)
+                                                        .ThenInclude(p => p.PlaylistRecipes)
+                                                            .ThenInclude(pr => pr.Recipe)
+                                                                .ThenInclude(r => r.Country)
+                                                    .Include(vr => vr.Playlist)
+                                                        .ThenInclude(p => p.PlaylistRecipes)
+                                                            .ThenInclude(pr => pr.Recipe)
+                                                                .ThenInclude(r => r.Ratings)
+                                                    // .Include(vr => vr.Playlist)
+                                                    //     .ThenInclude(p => p.PlaylistRecipes)
+                                                    //         .ThenInclude(pr => pr.Recipe)
+                                                    //             .ThenInclude(r => r.User)
+                                                    .OrderBy(vr => vr.SubmittedAt)
+                                                    .Select(vr => vr.Playlist)
+                                                    .AsQueryable();
+
+            int totalPendingPlaylists = await pendingPlaylistSubmissions.CountAsync();
+
+            var pendingPlaylistsDTOs = await pendingPlaylistSubmissions
+                                        .Skip((page - 1) * pageSize)
+                                        .Take(pageSize)
+                                        .Select(p => p.ToPlaylistSummaryDTO())
+                                        .ToListAsync();
+
+            return new PagedResult<PlaylistSummaryDTO>
+            {
+                TotalCount = totalPendingPlaylists,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((double)totalPendingPlaylists / pageSize),
+                Results = pendingPlaylistsDTOs
+            };
         }
     }
 }

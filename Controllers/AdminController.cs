@@ -149,5 +149,32 @@ namespace foodtopia.Controllers
                 return StatusCode(500, new { ex.Message });
             }
         }
+
+        [Authorize(Roles = "Senior Admin, Admin")]
+        [HttpGet("moderator/playlists/pending")]
+        public async Task<IActionResult> GetAllPlaylistPendingSubmissions(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? username = null)
+        {
+            try
+            {
+                var pendingPlaylistsResult = await _moderatorService.GetAllPlaylistPendingSubmissionsAsync(page, pageSize, username);
+
+                return Ok(pendingPlaylistsResult);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
     }
 }
