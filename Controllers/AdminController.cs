@@ -118,15 +118,15 @@ namespace foodtopia.Controllers
 
         [Authorize(Roles = "Senior Admin, Admin")]
         [HttpPost("moderator/recipes/{recipeId:guid}/submission")]
-        public async Task<IActionResult> ReviewRecipeSubmission([FromRoute] Guid recipeId, [FromBody] ModeratorSubmissionReviewDTO reviewDTO)
+        public async Task<IActionResult> ReviewRecipeSubmission([FromRoute] Guid recipeId, [FromBody] ModeratorSubmissionReviewDTO recipeReviewDTO)
         {
             try
             {
                 var adminId = User.GetUserIdFromClaims();
 
-                var reviewResponse = await _moderatorService.RecipeSubmissionReviewAsync(adminId, recipeId, reviewDTO);
+                var recipeReviewResponse = await _moderatorService.RecipeSubmissionReviewAsync(adminId, recipeId, recipeReviewDTO);
 
-                return Ok(reviewResponse);
+                return Ok(recipeReviewResponse);
             }
             catch (ArgumentNullException ex)
             {
@@ -166,6 +166,40 @@ namespace foodtopia.Controllers
             catch (ArgumentOutOfRangeException ex)
             {
                 return BadRequest(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "Senior Admin, Admin")]
+        [HttpPost("moderator/playlists/{playlistId:guid}/submission")]
+        public async Task<IActionResult> ReviewPlaylistSubmission([FromRoute] Guid playlistId, [FromBody] ModeratorSubmissionReviewDTO playlistReviewDTO)
+        {
+            try
+            {
+                var adminId = User.GetUserIdFromClaims();
+
+                var playlistReviewResponse = await _moderatorService.PlaylistSubmissionReviewAsync(adminId, playlistId, playlistReviewDTO);
+
+                return Ok(playlistReviewResponse);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
             }
             catch (KeyNotFoundException ex)
             {

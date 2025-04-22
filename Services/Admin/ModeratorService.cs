@@ -65,9 +65,9 @@ namespace foodtopia.Services.Admin
             };
         }
 
-        public async Task<ModeratorSubmissionResponseDTO> RecipeSubmissionReviewAsync(Guid adminId, Guid recipeId, ModeratorSubmissionReviewDTO reviewDTO)
+        public async Task<ModeratorSubmissionResponseDTO> RecipeSubmissionReviewAsync(Guid adminId, Guid recipeId, ModeratorSubmissionReviewDTO recipeReviewDTO)
         {
-            var newVisibilityStatus = reviewDTO.VisibilityStatus.ToLower();
+            var newVisibilityStatus = recipeReviewDTO.VisibilityStatus.ToLower();
             if (newVisibilityStatus != "approved" && newVisibilityStatus != "denied") throw new ArgumentException("Visibility status must be either 'approved' or 'denied'.");
 
             // verify Admin exists and create new var adminUser to pass into .GetRolesAsync() <- since that method requires an 'AppUser' as an argument and you can pass the 'Guid adminId'.
@@ -84,8 +84,8 @@ namespace foodtopia.Services.Admin
                                 .FirstOrDefaultAsync(r => r.Id == recipeId);
             if (recipeModel is null) throw new KeyNotFoundException("Recipe passed in was not found.");
 
-            var pendingSubmission = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
-            if (pendingSubmission is null)
+            var pendingRecipeSubmission = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
+            if (pendingRecipeSubmission is null)
             {
                 if (recipeModel.VisibilityReviews.Any(vr => vr.VisibilityStatus.ToLower() == "denied")) throw new ArgumentException("Unable to edit a 'denied' recipe to 'approved'. User must resubmit their submission for review again.");
                 throw new ArgumentNullException("Recipe has no 'pending' submissions.");
@@ -93,20 +93,20 @@ namespace foodtopia.Services.Admin
 
             if (newVisibilityStatus == "denied")
             {
-                if (string.IsNullOrWhiteSpace(reviewDTO.ReviewFeedback)) throw new ArgumentException("Review feedback is required when denying a submission.");
-                pendingSubmission.VisibilityStatus = "denied";
-                pendingSubmission.ReviewFeedback = reviewDTO.ReviewFeedback;
+                if (string.IsNullOrWhiteSpace(recipeReviewDTO.ReviewFeedback)) throw new ArgumentException("Review feedback is required when denying a submission.");
+                pendingRecipeSubmission.VisibilityStatus = "denied";
+                pendingRecipeSubmission.ReviewFeedback = recipeReviewDTO.ReviewFeedback;
                 recipeModel.VisibilityStatus = "denied";
             }
             else if (newVisibilityStatus == "approved")
             {
-                pendingSubmission.VisibilityStatus = "approved";
-                pendingSubmission.ReviewFeedback = null;
+                pendingRecipeSubmission.VisibilityStatus = "approved";
+                pendingRecipeSubmission.ReviewFeedback = null;
                 recipeModel.VisibilityStatus = "public";
             }
 
-            pendingSubmission.ReviewedAt = DateTime.UtcNow;
-            pendingSubmission.ReviewedById = adminId;
+            pendingRecipeSubmission.ReviewedAt = DateTime.UtcNow;
+            pendingRecipeSubmission.ReviewedById = adminId;
 
             await _context.SaveChangesAsync();
 
@@ -161,6 +161,54 @@ namespace foodtopia.Services.Admin
                 TotalPages = (int)Math.Ceiling((double)totalPendingPlaylists / pageSize),
                 Results = pendingPlaylistsDTOs
             };
+        }
+
+        public async Task<ModeratorSubmissionResponseDTO> PlaylistSubmissionReviewAsync(Guid adminId, Guid playlistId, ModeratorSubmissionReviewDTO playlistReviewDTO)
+        {
+            var newVisibilityStatus = playlistReviewDTO.VisibilityStatus.ToLower();
+            if (newVisibilityStatus != "approved" && newVisibilityStatus != "denied") throw new ArgumentException("Visibility status must be either 'approved' or 'denied'.");
+
+            // verify Admin exists and create new var adminUser to pass into .GetRolesAsync() <- since that method requires an 'AppUser' as an argument and you can pass the 'Guid adminId'.
+            var adminUser = await _userManager.FindByIdAsync(adminId.ToString());
+            if (adminUser is null) throw new UnauthorizedAccessException("Admin passed in was not found.");
+
+            var adminRoles = await _userManager.GetRolesAsync(adminUser);
+            if (!adminRoles.Contains("Senior Admin") && !adminRoles.Contains("Admin"))
+                throw new UnauthorizedAccessException("User is not authorized to review submissions.");
+
+            // load recipe to then pass into/update VisibilityReviews foreign table helps data integrity that whats being updated in the VisibilityReviews table is linked to an active Recipe
+            var playlistModel = await _context.Playlists
+                                .Include(r => r.VisibilityReviews)
+                                .FirstOrDefaultAsync(r => r.Id == playlistId);
+            if (playlistModel is null) throw new KeyNotFoundException("Playlist passed in was not found.");
+
+            var pendingPlaylistSubmission = playlistModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
+            if (pendingPlaylistSubmission is null)
+            {
+                if (playlistModel.VisibilityReviews.Any(vr => vr.VisibilityStatus.ToLower() == "denied")) throw new ArgumentException("Unable to edit a 'denied' playlist to 'approved'. User must resubmit their submission for review again.");
+                throw new ArgumentNullException("Playlist has no 'pending' submissions.");
+            }
+
+            if (newVisibilityStatus == "denied")
+            {
+                if (string.IsNullOrWhiteSpace(playlistReviewDTO.ReviewFeedback)) throw new ArgumentException("Review feedback is required when denying a submission.");
+                pendingPlaylistSubmission.VisibilityStatus = "denied";
+                pendingPlaylistSubmission.ReviewFeedback = playlistReviewDTO.ReviewFeedback;
+                playlistModel.VisibilityStatus = "denied";
+            }
+            else if (newVisibilityStatus == "approved")
+            {
+                pendingPlaylistSubmission.VisibilityStatus = "approved";
+                pendingPlaylistSubmission.ReviewFeedback = null;
+                playlistModel.VisibilityStatus = "public";
+            }
+
+            pendingPlaylistSubmission.ReviewedAt = DateTime.UtcNow;
+            pendingPlaylistSubmission.ReviewedById = adminId;
+
+            await _context.SaveChangesAsync();
+
+            return new ModeratorSubmissionResponseDTO(playlistId, "Your review has been posted successfully.");
         }
     }
 }
