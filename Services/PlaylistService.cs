@@ -303,10 +303,13 @@ namespace foodtopia.Services
             if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
 
             var playlistModel = await _context.Playlists
+                                        .Include(p => p.PlaylistRecipes)
                                         .Include(p => p.VisibilityReviews)
                                         .FirstOrDefaultAsync(p => p.UserId == userId && p.Id == playlistId);
             if (playlistModel is null) throw new KeyNotFoundException("Playlist you've added not found.");
             if (playlistModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to unsubmit this playlist's submission.");
+
+            if (playlistModel.PlaylistRecipes.Count() < 1) throw new ArgumentException("Cannot submit an empty playlist.");
 
             var pendingPlaylistSubmission = playlistModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus.ToLower() == "pending");
             if (pendingPlaylistSubmission is not null) throw new ArgumentException("This playlist already has a pending submission. Unsubmit previous submission in order to submit again.");
