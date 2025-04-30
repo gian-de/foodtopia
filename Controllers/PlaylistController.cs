@@ -100,6 +100,7 @@ namespace foodtopia.Controllers
                 var userId = User.GetUserIdFromClaims();
                 var createdPlaylist = await _playlistService.CreatePlaylistAsync(userId, playlistCreateDTO);
 
+                // return Ok(createdPlaylist);
                 return CreatedAtAction(nameof(GetPlaylistByFullSlug), new { fullSlug = createdPlaylist.FullSlug }, createdPlaylist);
             }
             catch (UnauthorizedAccessException ex)

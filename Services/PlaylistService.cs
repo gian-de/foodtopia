@@ -159,12 +159,29 @@ namespace foodtopia.Services
             bool fullSlugExists = await _context.Playlists.AnyAsync(p => p.FullSlug == fullSlug);
             if (fullSlugExists) throw new ArgumentException("A playlist with this slug already exists.");
 
-            var playlistModel = playlistCreateDTO.ToPlaylistModelFromDTO();
-            playlistModel.UserId = userId;
-            playlistModel.FullSlug = fullSlug;
+            var playlistModelCreated = playlistCreateDTO.ToPlaylistModelFromDTO();
+            playlistModelCreated.UserId = userId;
+            playlistModelCreated.FullSlug = fullSlug;
 
-            _context.Playlists.Add(playlistModel);
+            _context.Playlists.Add(playlistModelCreated);
             await _context.SaveChangesAsync();
+
+            var playlistModel = await _context.Playlists
+                                        .Include(p => p.User)
+                                        .Include(p => p.HeartedByUsers)
+                                        .Include(p => p.PlaylistRecipes)
+                                            .ThenInclude(pr => pr.Recipe)
+                                        // .ThenInclude(r => r.User)
+                                        .Include(p => p.PlaylistRecipes)
+                                            .ThenInclude(pr => pr.Recipe)
+                                                .ThenInclude(r => r.Country)
+                                        .Include(p => p.PlaylistRecipes)
+                                            .ThenInclude(pr => pr.Recipe)
+                                                .ThenInclude(r => r.Ratings)
+                                        .Include(p => p.PlaylistRecipes)
+                                            .ThenInclude(pr => pr.Recipe)
+                                                .ThenInclude(r => r.HeartedByUsers)
+                                        .FirstAsync(p => p.Id == playlistModelCreated.Id);
 
             return playlistModel.ToPlaylistSummaryDTO();
         }
@@ -180,6 +197,7 @@ namespace foodtopia.Services
                                         .Include(p => p.User)
                                         .Include(p => p.PlaylistRecipes)
                                             .ThenInclude(pr => pr.Recipe)
+                                                .ThenInclude(r => r.User)
                                         .Include(p => p.PlaylistRecipes)
                                             .ThenInclude(pr => pr.Recipe)
                                                 .ThenInclude(r => r.Country)
