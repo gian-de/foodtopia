@@ -297,6 +297,24 @@ namespace foodtopia.Services
             return true;
         }
 
+        // Playlist Submission Block start
+
+        public Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyPendingPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyDeniedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyApprovedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        {
+            throw new NotImplementedException();
+        }
+
+
         public async Task<PlaylistSubmissionResponseDTO> SubmitPlaylistSubmissionAsync(Guid userId, Guid playlistId)
         {
             bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
