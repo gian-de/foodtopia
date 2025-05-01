@@ -317,17 +317,74 @@ namespace foodtopia.Services
 
         // Playlist Submission Block start
 
-        public Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyPendingPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        public async Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyPendingPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        {
+            if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1.");
+
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
+            bool isDescending = sortDirection.ToLower() == "desc";
+
+            var pendingPlaylistsQuery = _context.Playlists
+                                .Where(p => p.UserId == userId && p.VisibilityReviews.Any(vr => vr.VisibilityStatus == "pending"))
+                                .Include(p => p.VisibilityReviews)
+                                .Include(p => p.User)
+                                .Include(p => p.HeartedByUsers)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.Country)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.User)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.Ratings)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.HeartedByUsers)
+                                .AsQueryable();
+
+            pendingPlaylistsQuery = sortBy.ToLower() switch
+            {
+                "submittedat" => isDescending
+                                    ? pendingPlaylistsQuery.OrderByDescending(
+                                        p => p.VisibilityReviews
+                                            .Where(vr => vr.VisibilityStatus == "pending")
+                                            .Max(vr => vr.SubmittedAt))
+                                    : pendingPlaylistsQuery.OrderBy(
+                                        p => p.VisibilityReviews
+                                            .Where(vr => vr.VisibilityStatus == "pending")
+                                            .Min(vr => vr.SubmittedAt)),
+                _ => pendingPlaylistsQuery.OrderByDescending(
+                        p => p.VisibilityReviews
+                                .Where(vr => vr.VisibilityStatus == "pending")
+                                .Max(vr => vr.SubmittedAt))
+            };
+
+            var totalPendingPlaylists = await pendingPlaylistsQuery.CountAsync();
+            var pendingPlaylistsDTOs = await pendingPlaylistsQuery
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .Select(r => r.ToPlaylistSubmissionDetailsDTO("pending"))
+                                    .ToListAsync();
+
+            return new PagedResult<PlaylistSubmissionDetailsDTO>
+            {
+                TotalCount = totalPendingPlaylists,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalPendingPlaylists / (double)pageSize),
+                Results = pendingPlaylistsDTOs
+            };
+        }
+
+        public async Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyDeniedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyDeniedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyApprovedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
+        public async Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyApprovedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
         {
             throw new NotImplementedException();
         }

@@ -100,7 +100,6 @@ namespace foodtopia.Controllers
                 var userId = User.GetUserIdFromClaims();
                 var createdPlaylist = await _playlistService.CreatePlaylistAsync(userId, playlistCreateDTO);
 
-                // return Ok(createdPlaylist);
                 return CreatedAtAction(nameof(GetPlaylistByFullSlug), new { fullSlug = createdPlaylist.FullSlug }, createdPlaylist);
             }
             catch (UnauthorizedAccessException ex)
@@ -245,6 +244,48 @@ namespace foodtopia.Controllers
                 if (!removeRecipeFromPlaylist) return NotFound("Recipe wasn't found in playlist.");
 
                 return Ok("Recipe removed from playlist");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        // Playlist Submission Block start
+
+        [Authorize]
+        [HttpGet("submissions/pending")]
+        public async Task<IActionResult> GetPendingPlaylists(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "SubmittedAt",
+            [FromQuery] string sortDirection = "asc")
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Playlist feature only available to registered users.");
+
+                var userId = User.GetUserIdFromClaims();
+
+                var pendingPlaylistsResult = await _playlistService.GetMyPendingPlaylistsAsync(userId, page, pageSize, sortBy, sortDirection);
+
+                return Ok(pendingPlaylistsResult);
             }
             catch (UnauthorizedAccessException ex)
             {

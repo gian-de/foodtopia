@@ -5,14 +5,14 @@ namespace foodtopia.DTOs.Playlist.Submission
 {
     public record PlaylistSubmissionDetailsDTO
     (
-        Guid Id,
+        Guid PlaylistId,
         string Name,
         string FullSlug,
         DateTime CreatedAt,
         string VisibilityStatus,
         int HeartedByCount,
         int RecipeCount,
-        DateTime SubmittedAt,
+        DateTime? SubmittedAt,
         DateTime? ReviewedAt,
         string? ReviewedByUsername,
         UserTldrDTO User,

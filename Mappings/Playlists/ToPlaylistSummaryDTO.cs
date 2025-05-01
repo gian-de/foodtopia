@@ -2,7 +2,6 @@ using foodtopia.DTOs.Country;
 using foodtopia.DTOs.Playlist;
 using foodtopia.DTOs.Recipe;
 using foodtopia.DTOs.User;
-using foodtopia.Mappings.Recipes;
 using foodtopia.Models;
 
 namespace foodtopia.Mappings.Playlists
