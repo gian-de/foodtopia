@@ -381,12 +381,126 @@ namespace foodtopia.Services
 
         public async Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyDeniedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
         {
-            throw new NotImplementedException();
+            if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1.");
+
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
+            bool isDescending = sortDirection.ToLower() == "desc";
+
+            var deniedPlaylistsQuery = _context.Playlists
+                                .Where(p => p.UserId == userId && p.VisibilityReviews.Any(vr => vr.VisibilityStatus == "denied"))
+                                .Include(p => p.VisibilityReviews)
+                                .Include(p => p.User)
+                                .Include(p => p.HeartedByUsers)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.Country)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.User)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.Ratings)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.HeartedByUsers)
+                                .AsQueryable();
+
+            deniedPlaylistsQuery = sortBy.ToLower() switch
+            {
+                "submittedat" => isDescending
+                                    ? deniedPlaylistsQuery.OrderByDescending(
+                                        p => p.VisibilityReviews
+                                            .Where(vr => vr.VisibilityStatus == "denied")
+                                            .Max(vr => vr.SubmittedAt))
+                                    : deniedPlaylistsQuery.OrderBy(
+                                        p => p.VisibilityReviews
+                                            .Where(vr => vr.VisibilityStatus == "denied")
+                                            .Min(vr => vr.SubmittedAt)),
+                _ => deniedPlaylistsQuery.OrderByDescending(
+                        p => p.VisibilityReviews
+                                .Where(vr => vr.VisibilityStatus == "denied")
+                                .Max(vr => vr.SubmittedAt))
+            };
+
+            var totalDeniedPlaylists = await deniedPlaylistsQuery.CountAsync();
+            var deniedPlaylistsDTOs = await deniedPlaylistsQuery
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .Select(r => r.ToPlaylistSubmissionDetailsDTO("denied"))
+                                    .ToListAsync();
+
+            return new PagedResult<PlaylistSubmissionDetailsDTO>
+            {
+                TotalCount = totalDeniedPlaylists,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalDeniedPlaylists / (double)pageSize),
+                Results = deniedPlaylistsDTOs
+            };
         }
 
         public async Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyApprovedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection)
         {
-            throw new NotImplementedException();
+            if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1.");
+
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
+            bool isDescending = sortDirection.ToLower() == "desc";
+
+            var approvedPlaylistsQuery = _context.Playlists
+                                .Where(p => p.UserId == userId && p.VisibilityReviews.Any(vr => vr.VisibilityStatus == "approved"))
+                                .Include(p => p.VisibilityReviews)
+                                .Include(p => p.User)
+                                .Include(p => p.HeartedByUsers)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.Country)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.User)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.Ratings)
+                                .Include(p => p.PlaylistRecipes)
+                                    .ThenInclude(pr => pr.Recipe)
+                                        .ThenInclude(r => r.HeartedByUsers)
+                                .AsQueryable();
+
+            approvedPlaylistsQuery = sortBy.ToLower() switch
+            {
+                "submittedat" => isDescending
+                                    ? approvedPlaylistsQuery.OrderByDescending(
+                                        p => p.VisibilityReviews
+                                            .Where(vr => vr.VisibilityStatus == "approved")
+                                            .Max(vr => vr.SubmittedAt))
+                                    : approvedPlaylistsQuery.OrderBy(
+                                        p => p.VisibilityReviews
+                                            .Where(vr => vr.VisibilityStatus == "approved")
+                                            .Min(vr => vr.SubmittedAt)),
+                _ => approvedPlaylistsQuery.OrderByDescending(
+                        p => p.VisibilityReviews
+                                .Where(vr => vr.VisibilityStatus == "approved")
+                                .Max(vr => vr.SubmittedAt))
+            };
+
+            var totalApprovedPlaylists = await approvedPlaylistsQuery.CountAsync();
+            var approvedPlaylistsDTOs = await approvedPlaylistsQuery
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .Select(r => r.ToPlaylistSubmissionDetailsDTO("approved"))
+                                    .ToListAsync();
+
+            return new PagedResult<PlaylistSubmissionDetailsDTO>
+            {
+                TotalCount = totalApprovedPlaylists,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalApprovedPlaylists / (double)pageSize),
+                Results = approvedPlaylistsDTOs
+            };
         }
 
 

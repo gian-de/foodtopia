@@ -310,6 +310,86 @@ namespace foodtopia.Controllers
         }
 
         [Authorize]
+        [HttpGet("submissions/denied")]
+        public async Task<IActionResult> GetDeniedPlaylists(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "SubmittedAt",
+            [FromQuery] string sortDirection = "asc")
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Playlist feature only available to registered users.");
+
+                var userId = User.GetUserIdFromClaims();
+
+                var deniedPlaylistsResult = await _playlistService.GetMyDeniedPlaylistsAsync(userId, page, pageSize, sortBy, sortDirection);
+
+                return Ok(deniedPlaylistsResult);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpGet("submissions/approved")]
+        public async Task<IActionResult> GetApprovedPlaylists(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string sortBy = "SubmittedAt",
+            [FromQuery] string sortDirection = "asc")
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Playlist feature only available to registered users.");
+
+                var userId = User.GetUserIdFromClaims();
+
+                var approvedPlaylistsResult = await _playlistService.GetMyApprovedPlaylistsAsync(userId, page, pageSize, sortBy, sortDirection);
+
+                return Ok(approvedPlaylistsResult);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [Authorize]
         [HttpPost("{playlistId:guid}/submissions")]
         public async Task<IActionResult> CreatePlaylistSubmission([FromRoute] Guid playlistId)
         {
