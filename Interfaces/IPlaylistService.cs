@@ -19,6 +19,7 @@ namespace foodtopia.Interfaces
         Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyPendingPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection);
         Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyDeniedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection);
         Task<PagedResult<PlaylistSubmissionDetailsDTO>> GetMyApprovedPlaylistsAsync(Guid userId, int page, int pageSize, string sortBy, string sortDirection);
+        Task<PagedResult<PlaylistSubmissionHistoryDTO>> GetPlaylistSubmissionHistoryAsync(Guid userId, Guid playlistId, int page, int pageSize);
 
 
         Task<PlaylistSubmissionResponseDTO> SubmitPlaylistSubmissionAsync(Guid userId, Guid playlistId);

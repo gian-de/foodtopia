@@ -503,6 +503,49 @@ namespace foodtopia.Services
             };
         }
 
+        public async Task<PagedResult<PlaylistSubmissionHistoryDTO>> GetPlaylistSubmissionHistoryAsync(Guid userId, Guid playlistId, int page, int pageSize)
+        {
+            if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1.");
+
+            bool userCheck = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userCheck) throw new UnauthorizedAccessException("User that was passed to query was not found.");
+
+            var playlistModel = await _context.Playlists
+                                        .Include(r => r.VisibilityReviews)
+                                            .ThenInclude(vr => vr.ReviewedBy)
+                                        .FirstOrDefaultAsync(r => r.UserId == userId && r.Id == playlistId);
+            if (playlistModel is null) throw new UnauthorizedAccessException("Playlist not found.");
+            if (playlistModel.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to view this playlist's submission history.");
+
+            var recipeSubmissionHistoryOrdered = playlistModel.VisibilityReviews
+                                            .OrderByDescending(vr => vr.SubmittedAt)
+                                            .ToList();
+
+            int totalSubmissions = recipeSubmissionHistoryOrdered.Count;
+
+            var playlistSubmissionDTOs = recipeSubmissionHistoryOrdered
+                                        .Skip((page - 1) * pageSize)
+                                        .Take(pageSize)
+                                        .Select(vr => new PlaylistSubmissionHistoryDTO(
+                                            ReviewId: vr.Id,
+                                            VisibilityStatus: vr.VisibilityStatus,
+                                            VisibilityFeedback: vr.ReviewFeedback,
+                                            SubmittedAt: vr.SubmittedAt,
+                                            ReviewedAt: vr.ReviewedAt,
+                                            ReviewedByUsername: vr.ReviewedBy?.UserName
+                                        ))
+                                        .ToList();
+
+            return new PagedResult<PlaylistSubmissionHistoryDTO>
+            {
+                TotalCount = totalSubmissions,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalSubmissions / (double)pageSize),
+                Results = playlistSubmissionDTOs
+            };
+        }
+
 
         public async Task<PlaylistSubmissionResponseDTO> SubmitPlaylistSubmissionAsync(Guid userId, Guid playlistId)
         {

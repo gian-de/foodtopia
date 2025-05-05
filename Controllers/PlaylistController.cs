@@ -390,6 +390,48 @@ namespace foodtopia.Controllers
         }
 
         [Authorize]
+        [HttpGet("{playlistId:guid}/submissions")]
+        public async Task<IActionResult> GetPlaylistSubmissionHistory(
+            [FromRoute] Guid playlistId,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                if (User.IsGuest()) return Unauthorized("Playlist feature only available to registered users.");
+
+                var userId = User.GetUserIdFromClaims();
+
+                var playlistSubmissionHistoryResult = await _playlistService.GetPlaylistSubmissionHistoryAsync(userId, playlistId, page, pageSize);
+
+                return Ok(playlistSubmissionHistoryResult);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new
+                {
+                    ex.Message
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [Authorize]
         [HttpPost("{playlistId:guid}/submissions")]
         public async Task<IActionResult> CreatePlaylistSubmission([FromRoute] Guid playlistId)
         {
