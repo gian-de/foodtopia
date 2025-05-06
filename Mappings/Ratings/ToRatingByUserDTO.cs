@@ -8,6 +8,9 @@ namespace foodtopia.Mappings.Ratings
     {
         public static RatingByUserDTO ToRatingByUserDTO(this Rating ratingModel)
         {
+            if (ratingModel.Recipe is null) throw new InvalidOperationException("Recipe not loaded");
+            if (ratingModel.Recipe.Country is null) throw new InvalidOperationException("Country not loaded");
+            
             return new RatingByUserDTO
             (
                 RecipeId: ratingModel.Recipe.Id,

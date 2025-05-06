@@ -42,11 +42,12 @@ namespace foodtopia.Controllers
 
                 var appUser = new AppUser
                 {
-                    UserName = registerDTO.Username,
-                    Email = registerDTO.Email,
+                    // null forgive both fields since there's validation in RegisterDTO
+                    UserName = registerDTO.Username!,
+                    Email = registerDTO.Email!,
                 };
 
-                var createdUser = await _userManager.CreateAsync(appUser, registerDTO.Password);
+                var createdUser = await _userManager.CreateAsync(appUser, registerDTO.Password!); // null forgive registerDTO.Password since there's validation in RegisterDTO
                 if (!createdUser.Succeeded) return BadRequest(createdUser.Errors);
 
                 // Email Confirmation workflow
@@ -62,11 +63,11 @@ namespace foodtopia.Controllers
 
                 return Ok(new NewUserDTO
                 {
-                    UserName = appUser.UserName,
+                    // null forgive both username and email since there's validation above
+                    UserName = appUser.UserName!,
                     Email = appUser.Email,
                     JwtToken = await _jwtTokenService.CreateTokenAsync(appUser)
-                }
-                    );
+                });
             }
             catch (Exception ex)
             {
@@ -110,8 +111,9 @@ namespace foodtopia.Controllers
             return Ok(
                 new NewUserDTO
                 {
-                    UserName = user.UserName,
-                    Email = user.Email,
+                    // null forgive both username and email since there's validation above 
+                    UserName = user.UserName!,
+                    Email = user.Email!,
                     JwtToken = await _jwtTokenService.CreateTokenAsync(user)
                 }
             );
@@ -160,7 +162,8 @@ namespace foodtopia.Controllers
 
             var passwordResetLink = $"{baseURL}/api/account/reset-password?token={tokenEncoded}&email={emailEncoded}";
 
-            await _emailService.SendEmailPasswordResetAsync(user.Email, passwordResetLink);
+            // null forgive 'user.email' since there's validation above line 154
+            await _emailService.SendEmailPasswordResetAsync(user.Email!, passwordResetLink);
 
             return Ok(new { Message = "Email to reset your password has been sent." });
         }
