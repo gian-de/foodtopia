@@ -95,7 +95,7 @@ namespace foodtopia.Services
 
                 return new UserLeaderboardStatsDTO(
                     u.Id,
-                    u.UserName,
+                    u.UserName!,
                     u.RecipeCount,
                     u.TotalHeartedRecipeCount,
                     mostHeartedRecipeDTO
