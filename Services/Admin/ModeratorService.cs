@@ -21,13 +21,15 @@ namespace foodtopia.Services.Admin
             _context = context;
             _userManager = userManager;
         }
-        public async Task<PagedResult<RecipeSummaryDTO>> GetAllRecipePendingSubmissionsAsync(int page, int pageSize, string username)
+        public async Task<PagedResult<RecipeSummaryDTO>> GetAllRecipePendingSubmissionsAsync(int page, int pageSize, string? username)
         {
             if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1");
 
             if (!string.IsNullOrEmpty(username))
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
+                var user = await _context.Users
+                                            .AsNoTracking()
+                                            .FirstOrDefaultAsync(u => u.UserName != null && u.UserName.ToLower() == username.ToLower());
                 if (user is null) throw new KeyNotFoundException($"User with the username: '{username}' not found.");
             }
 
@@ -80,8 +82,8 @@ namespace foodtopia.Services.Admin
 
             // load recipe to then pass into/update VisibilityReviews foreign table helps data integrity that whats being updated in the VisibilityReviews table is linked to an active Recipe
             var recipeModel = await _context.Recipes
-                                .Include(r => r.VisibilityReviews)
-                                .FirstOrDefaultAsync(r => r.Id == recipeId);
+                                                .Include(r => r.VisibilityReviews)
+                                                .FirstOrDefaultAsync(r => r.Id == recipeId);
             if (recipeModel is null) throw new KeyNotFoundException("Recipe passed in was not found.");
 
             var pendingRecipeSubmission = recipeModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");
@@ -113,13 +115,15 @@ namespace foodtopia.Services.Admin
             return new ModeratorSubmissionResponseDTO(recipeId, "Your review has been posted successfully.");
         }
 
-        public async Task<PagedResult<PlaylistSummaryDTO>> GetAllPlaylistPendingSubmissionsAsync(int page, int pageSize, string username)
+        public async Task<PagedResult<PlaylistSummaryDTO>> GetAllPlaylistPendingSubmissionsAsync(int page, int pageSize, string? username)
         {
             if (page < 1 || pageSize < 1) throw new ArgumentOutOfRangeException("Page and or page size can not be less than 1");
 
             if (!string.IsNullOrEmpty(username))
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
+                var user = await _context.Users
+                                            .AsNoTracking()
+                                            .FirstOrDefaultAsync(u => u.UserName != null && u.UserName.ToLower() == username.ToLower());
                 if (user is null) throw new KeyNotFoundException($"User with the username: '{username}' not found.");
             }
 
@@ -178,8 +182,8 @@ namespace foodtopia.Services.Admin
 
             // load recipe to then pass into/update VisibilityReviews foreign table helps data integrity that whats being updated in the VisibilityReviews table is linked to an active Recipe
             var playlistModel = await _context.Playlists
-                                .Include(r => r.VisibilityReviews)
-                                .FirstOrDefaultAsync(r => r.Id == playlistId);
+                                                .Include(r => r.VisibilityReviews)
+                                                .FirstOrDefaultAsync(r => r.Id == playlistId);
             if (playlistModel is null) throw new KeyNotFoundException("Playlist passed in was not found.");
 
             var pendingPlaylistSubmission = playlistModel.VisibilityReviews.FirstOrDefault(vr => vr.VisibilityStatus == "pending");

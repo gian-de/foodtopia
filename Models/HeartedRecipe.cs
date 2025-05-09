@@ -8,7 +8,7 @@ namespace foodtopia.Models
         public AppUser? User { get; set; }
 
         public Guid RecipeId { get; set; }
-        public Recipe? Recipe { get; set; }
+        public Recipe Recipe { get; set; } = default!;
 
         public DateTime HeartedAt { get; set; } = DateTime.UtcNow;
     }

@@ -19,6 +19,7 @@ namespace foodtopia.Services
             _userManager = userManager;
 
             var signingKey = Environment.GetEnvironmentVariable("JWT_SIGNING_KEY");
+            if (string.IsNullOrEmpty(signingKey)) throw new InvalidOperationException("JWT_SIGNING_KEY environment variable is not set.");
 
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
         }
@@ -26,6 +27,9 @@ namespace foodtopia.Services
         {
             // userManager check RETURNS EMPTY LIST (=/= null type) of roles if user doesn't exists (ex. not created yet) OR User's role has been removed and is now an empty list (ex. Admin demoted of perms)
             var roles = await _userManager.GetRolesAsync(user);
+
+            if (string.IsNullOrEmpty(user.UserName)) throw new ArgumentNullException("Cannot issue token: user has no UserName.");
+            if (string.IsNullOrEmpty(user.Email)) throw new ArgumentNullException("Cannot issue token: user has no Email.");
 
             var claims = new List<Claim>{
                 new Claim("user_id", user.Id.ToString()),

@@ -52,9 +52,10 @@ namespace foodtopia.Services.Admin
 
             var result = await _userManager.AddToRoleAsync(user, "Admin");
             if (!result.Succeeded) throw new KeyNotFoundException("user error");
+
             return new UserInfoDTO(
-                Username: user.UserName,
-                Email: user.Email,
+                Username: user.UserName!,
+                Email: user.Email!,
                 Role: "Admin"
             );
         }

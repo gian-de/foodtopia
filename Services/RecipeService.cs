@@ -27,9 +27,15 @@ namespace foodtopia.Services
 
             bool isDescending = sortDirection.ToLower() == "desc";
 
+            Guid? userIdFromSearchParams = null;
+
             if (!string.IsNullOrEmpty(username))
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
+                var user = await _context.Users
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(u =>
+                                                            u.UserName != null
+                                                            && u.UserName.ToLower() == username.ToLower());
                 if (user is null) throw new KeyNotFoundException($"User with the username: '{username}' not found.");
             }
 
@@ -43,7 +49,8 @@ namespace foodtopia.Services
 
             if (!string.IsNullOrWhiteSpace(username))
             {
-                recipeQuery = recipeQuery.Where(r => r.User.UserName.ToLower() == username.ToLower());
+                // recipeQuery = recipeQuery.Where(r => r.User.UserName.ToLower() == username.ToLower());
+                recipeQuery = recipeQuery.Where(r => r.UserId == userIdFromSearchParams);
             }
 
             recipeQuery = sortBy.ToLower() switch
@@ -247,10 +254,10 @@ namespace foodtopia.Services
                                         .Include(r => r.Ingredients)
                                         .Include(r => r.Instructions.OrderBy(ins => ins.Order))
                                         .Include(r => r.Ratings)
-                                        .FirstOrDefaultAsync(r => r.Id == recipeId);
+                                        .FirstAsync(r => r.Id == recipeId); // FirstAsync instead of FirstOrDefaultAsync since it should exists because it was just updated/saved to db.
 
             // map updated Recipe Model back to DTO
-            return updatedRecipeModel?.ToRecipeSummaryDTO();
+            return updatedRecipeModel.ToRecipeSummaryDTO();
         }
 
         public async Task<RecipeDeleteDTO> DeleteRecipeAsync(Guid userId, Guid recipeId)

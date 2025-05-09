@@ -1,7 +1,6 @@
 using foodtopia.DTOs.Playlist;
 using foodtopia.DTOs.Playlist.Submission;
 using foodtopia.Helpers;
-using Microsoft.AspNetCore.Mvc;
 
 namespace foodtopia.Interfaces
 {

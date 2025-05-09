@@ -259,7 +259,7 @@ namespace foodtopia.Services
                                     .Where(p => p.UserId == userId && p.Id == playlistId)
                                     .Include(p => p.PlaylistRecipes)
                                     .FirstOrDefaultAsync();
-
+            if (playlistQuery is null) throw new KeyNotFoundException("This playlist was not found.");
             if (playlistQuery.UserId != userId) throw new UnauthorizedAccessException("You are not authorized to delete this playlist.");
 
             int recipeCount = playlistQuery.PlaylistRecipes?.Count ?? 0;

@@ -33,7 +33,9 @@ namespace foodtopia.Services
 
                     var guestRecipes = await dbContext.Recipes
                                         .Include(r => r.User)
-                                        .Where(r => r.User.IsGuest && r.PublishedAt < recipeCutoff)
+                                        .Where(r => r.User != null
+                                                    && r.User.IsGuest
+                                                    && r.PublishedAt < recipeCutoff)
                                         .ToListAsync(stoppingToken);
 
                     if (guestRecipes.Any())

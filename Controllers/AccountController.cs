@@ -69,6 +69,14 @@ namespace foodtopia.Controllers
                     JwtToken = await _jwtTokenService.CreateTokenAsync(appUser)
                 });
             }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, new { ex.Message });
@@ -95,54 +103,84 @@ namespace foodtopia.Controllers
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            var incorrectLoginCredentialMessage = "Username or password incorrect.";
+            try
+            {
+                var incorrectLoginCredentialMessage = "Username or password incorrect.";
 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+                if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var user = await _userManager.FindByNameAsync(loginDTO.Username);
-            if (user is null) return Unauthorized(incorrectLoginCredentialMessage);
+                var user = await _userManager.FindByNameAsync(loginDTO.Username);
+                if (user is null) return Unauthorized(incorrectLoginCredentialMessage);
 
-            var validPassword = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
-            if (!validPassword) return Unauthorized(incorrectLoginCredentialMessage);
+                var validPassword = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
+                if (!validPassword) return Unauthorized(incorrectLoginCredentialMessage);
 
-            var confirmedEmail = await _userManager.IsEmailConfirmedAsync(user);
-            if (!confirmedEmail) return BadRequest("Please confirm your email address to be able to login.");
+                var confirmedEmail = await _userManager.IsEmailConfirmedAsync(user);
+                if (!confirmedEmail) return BadRequest("Please confirm your email address to be able to login.");
 
-            return Ok(
-                new NewUserDTO
-                {
-                    // null forgive both username and email since there's validation above 
-                    UserName = user.UserName!,
-                    Email = user.Email!,
-                    JwtToken = await _jwtTokenService.CreateTokenAsync(user)
-                }
-            );
+                return Ok(
+                    new NewUserDTO
+                    {
+                        // null forgive both username and email since there's validation above 
+                        UserName = user.UserName!,
+                        Email = user.Email!,
+                        JwtToken = await _jwtTokenService.CreateTokenAsync(user)
+                    }
+                );
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
         }
 
         [HttpPost("guest-login")]
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> LoginAsGuest()
         {
-            var guestUsername = $"Guest-{Guid.NewGuid().ToString().Substring(0, 11)}";
-
-            var guestUser = new AppUser
+            try
             {
-                UserName = guestUsername,
-                Email = $"{guestUsername}@guest.com",
-                IsGuest = true,
-            };
+                var guestUsername = $"Guest-{Guid.NewGuid().ToString().Substring(0, 11)}";
 
-            var result = await _userManager.CreateAsync(guestUser);
-            if (!result.Succeeded) return StatusCode(500, "Couldn't create guest account unfortunately.");
-
-            return Ok(
-                new NewUserDTO
+                var guestUser = new AppUser
                 {
                     UserName = guestUsername,
-                    Email = guestUser.Email,
-                    JwtToken = await _jwtTokenService.CreateTokenAsync(guestUser)
-                }
-            );
+                    Email = $"{guestUsername}@guest.com",
+                    IsGuest = true,
+                };
+
+                var result = await _userManager.CreateAsync(guestUser);
+                if (!result.Succeeded) return StatusCode(500, "Couldn't create guest account unfortunately.");
+
+                return Ok(
+                    new NewUserDTO
+                    {
+                        UserName = guestUsername,
+                        Email = guestUser.Email,
+                        JwtToken = await _jwtTokenService.CreateTokenAsync(guestUser)
+                    }
+                );
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
         }
 
         [HttpPost("forgot-password")]
