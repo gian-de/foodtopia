@@ -33,20 +33,36 @@ namespace foodtopia.Services.Admin
                 if (user is null) throw new KeyNotFoundException($"User with the username: '{username}' not found.");
             }
 
+            // var pendingRecipeSubmissions = _context.VisibilityReviews
+            //                                         .Where(vr => vr.VisibilityStatus == "pending" && vr.RecipeId != null) // "&& vr.RecipeId != null" explicitly added since we only want the Recipes submitted and not any Playlists since they're both saved to the 'VisibilityReviews' model/ dbset
+            //                                         .Include(vr => vr.Recipe)
+            //                                             .ThenInclude(r => r.User!)
+            //                                         .Include(vr => vr.Recipe)
+            //                                             .ThenInclude(r => r.Country!)
+            //                                         .Include(vr => vr.Recipe)
+            //                                             .ThenInclude(r => r.Ingredients!)
+            //                                         .Include(vr => vr.Recipe)
+            //                                             .ThenInclude(r => r.Instructions!)
+            //                                         .Include(vr => vr.Recipe)
+            //                                             .ThenInclude(r => r.Ratings!)
+            //                                         .OrderBy(vr => vr.SubmittedAt)
+            //                                         .Select(vr => vr.Recipe)
+            //                                         .AsQueryable();
+
             var pendingRecipeSubmissions = _context.VisibilityReviews
                                                     .Where(vr => vr.VisibilityStatus == "pending" && vr.RecipeId != null) // "&& vr.RecipeId != null" explicitly added since we only want the Recipes submitted and not any Playlists since they're both saved to the 'VisibilityReviews' model/ dbset
-                                                    .Include(vr => vr.Recipe)
-                                                        .ThenInclude(r => r.User)
-                                                    .Include(vr => vr.Recipe)
-                                                        .ThenInclude(r => r.Country)
-                                                    .Include(vr => vr.Recipe)
-                                                        .ThenInclude(r => r.Ingredients)
-                                                    .Include(vr => vr.Recipe)
-                                                        .ThenInclude(r => r.Instructions)
-                                                    .Include(vr => vr.Recipe)
-                                                        .ThenInclude(r => r.Ratings)
                                                     .OrderBy(vr => vr.SubmittedAt)
-                                                    .Select(vr => vr.Recipe)
+                                                    .Include(vr => vr.Recipe!)
+                                                        .ThenInclude(r => r.User)
+                                                    .Include(vr => vr.Recipe!)
+                                                        .ThenInclude(r => r.Country)
+                                                    .Include(vr => vr.Recipe!)
+                                                        .ThenInclude(r => r.Ingredients)
+                                                    .Include(vr => vr.Recipe!)
+                                                        .ThenInclude(r => r.Instructions.OrderBy(ins => ins.Order))
+                                                    .Include(vr => vr.Recipe!)
+                                                        .ThenInclude(r => r.Ratings)
+                                                    .Select(vr => vr.Recipe!)
                                                     .AsQueryable();
 
             int totalPendingRecipes = await pendingRecipeSubmissions.CountAsync();
@@ -127,26 +143,47 @@ namespace foodtopia.Services.Admin
                 if (user is null) throw new KeyNotFoundException($"User with the username: '{username}' not found.");
             }
 
+            // var pendingPlaylistSubmissions = _context.VisibilityReviews
+            //                                         .Where(vr => vr.VisibilityStatus == "pending" && vr.PlaylistId != null) // "&& vr.PlaylistId != null" explicitly added since we only want the Playlists submitted and not any Recipes since they're both saved to the 'VisibilityReviews' model/ dbset
+            //                                         .Include(vr => vr.Playlist)
+            //                                             .ThenInclude(p => p.User)
+            //                                         .Include(vr => vr.Playlist)
+            //                                             .ThenInclude(p => p.HeartedByUsers)
+            //                                         .Include(vr => vr.Playlist)
+            //                                             .ThenInclude(p => p.PlaylistRecipes)
+            //                                                 .ThenInclude(pr => pr.Recipe)
+            //                                                     .ThenInclude(r => r.Country)
+            //                                         .Include(vr => vr.Playlist)
+            //                                             .ThenInclude(p => p.PlaylistRecipes)
+            //                                                 .ThenInclude(pr => pr.Recipe)
+            //                                                     .ThenInclude(r => r.Ratings)
+            //                                         .Include(vr => vr.Playlist)
+            //                                             .ThenInclude(p => p.PlaylistRecipes)
+            //                                                 .ThenInclude(pr => pr.Recipe)
+            //                                                     .ThenInclude(r => r.User)
+            //                                         .OrderBy(vr => vr.SubmittedAt)
+            //                                         .Select(vr => vr.Playlist)
+            //                                         .AsQueryable();
             var pendingPlaylistSubmissions = _context.VisibilityReviews
                                                     .Where(vr => vr.VisibilityStatus == "pending" && vr.PlaylistId != null) // "&& vr.PlaylistId != null" explicitly added since we only want the Playlists submitted and not any Recipes since they're both saved to the 'VisibilityReviews' model/ dbset
-                                                    .Include(vr => vr.Playlist)
+                                                    .OrderBy(vr => vr.SubmittedAt)
+                                                    .Include(vr => vr.Playlist!)
                                                         .ThenInclude(p => p.User)
-                                                    .Include(vr => vr.Playlist)
+                                                    .Include(vr => vr.Playlist!)
                                                         .ThenInclude(p => p.HeartedByUsers)
-                                                    .Include(vr => vr.Playlist)
+                                                    .Include(vr => vr.Playlist!)
                                                         .ThenInclude(p => p.PlaylistRecipes)
-                                                            .ThenInclude(pr => pr.Recipe)
-                                                                .ThenInclude(r => r.Country)
-                                                    .Include(vr => vr.Playlist)
+                                                                .ThenInclude(pr => pr.Recipe)
+                                                                    .ThenInclude(r => r.Country)
+                                                    .Include(vr => vr.Playlist!)
                                                         .ThenInclude(p => p.PlaylistRecipes)
                                                             .ThenInclude(pr => pr.Recipe)
                                                                 .ThenInclude(r => r.Ratings)
-                                                    // .Include(vr => vr.Playlist)
-                                                    //     .ThenInclude(p => p.PlaylistRecipes)
-                                                    //         .ThenInclude(pr => pr.Recipe)
-                                                    //             .ThenInclude(r => r.User)
-                                                    .OrderBy(vr => vr.SubmittedAt)
-                                                    .Select(vr => vr.Playlist)
+                                                    .Include(vr => vr.Playlist!)
+                                                        .ThenInclude(p => p.PlaylistRecipes)
+                                                            .ThenInclude(pr => pr.Recipe)
+                                                                .ThenInclude(r => r.User)
+                                                    .Select(vr => vr.Playlist!)
                                                     .AsQueryable();
 
             int totalPendingPlaylists = await pendingPlaylistSubmissions.CountAsync();

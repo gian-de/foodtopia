@@ -27,8 +27,6 @@ namespace foodtopia.Services
 
             bool isDescending = sortDirection.ToLower() == "desc";
 
-            Guid? userIdFromSearchParams = null;
-
             if (!string.IsNullOrEmpty(username))
             {
                 var user = await _context.Users
@@ -49,8 +47,7 @@ namespace foodtopia.Services
 
             if (!string.IsNullOrWhiteSpace(username))
             {
-                // recipeQuery = recipeQuery.Where(r => r.User.UserName.ToLower() == username.ToLower());
-                recipeQuery = recipeQuery.Where(r => r.UserId == userIdFromSearchParams);
+                recipeQuery = recipeQuery.Where(r => r.User.UserName.ToLower() == username.ToLower());
             }
 
             recipeQuery = sortBy.ToLower() switch
@@ -71,6 +68,7 @@ namespace foodtopia.Services
 
 
             var totalRecipes = await recipeQuery.CountAsync();
+
             var recipesDTOs = await recipeQuery
                                 .Skip((page - 1) * pageSize)
                                 .Take(pageSize)

@@ -17,9 +17,9 @@ namespace foodtopia.Models
         public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
         public string VisibilityStatus { get; set; } = "unlisted";
         public Guid? UserId { get; set; }
-        public AppUser? User { get; set; }
+        public AppUser User { get; set; } = default!;
         public required Guid CountryId { get; set; }
-        public Country? Country { get; set; }
+        public Country Country { get; set; } = default!;
         public ICollection<HeartedRecipe> HeartedByUsers { get; set; } = new List<HeartedRecipe>();
         public required ICollection<Ingredient> Ingredients { get; set; }
         public required ICollection<Instruction> Instructions { get; set; }
