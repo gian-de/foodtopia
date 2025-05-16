@@ -47,7 +47,7 @@ namespace foodtopia.Services
 
             if (!string.IsNullOrWhiteSpace(username))
             {
-                recipeQuery = recipeQuery.Where(r => r.User.UserName.ToLower() == username.ToLower());
+                recipeQuery = recipeQuery.Where(r => r.User!.UserName!.ToLower() == username.ToLower());
             }
 
             recipeQuery = sortBy.ToLower() switch
