@@ -124,10 +124,28 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    // important - apply migrations before seeding 'AppDbSeeder.cs' file aka 'AppDbSeeder.SeedAsync' func a few lines below, so the 'owner' account/role doesn't default to 'user' - (if the other way around, the line 31 in 'AppDbSeeder.cs' returns an empty list since the '../Seeds/RoleSeed.cs' hasn't been called upon in the 'AppDbContext.cs' file 'OnModelCreating' line 134)
+    var db = services.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+
+    await AppDbSeeder.SeedAsync(userManager, roleManager);
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "OpenAPI V1");
+    });
 }
 
 app.UseStaticFiles();

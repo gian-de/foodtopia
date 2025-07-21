@@ -131,53 +131,9 @@ namespace foodtopia.Database
                 .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-
             modelBuilder.Entity<IdentityRole<Guid>>().HasData(RoleSeed.GetRoles());
 
-            var deletedUserGuid = Guid.Parse("00000000-0000-0000-0000-000000000001"); // Well-known GUID for "Deleted" user
-
-            var deletedUserHashedPassword = File.Exists("seed_deleteduser_password.txt")
-                                            ? File.ReadAllText("seed_deleteduser_password.txt").Trim()
-                                            : throw new Exception("Missing \"seed_deleteduser_password.txt\". Go to \"https://bcrypt-generator.com\" type a password and copy the new hashed password and paste just the hashed password inside a new created '.txt' file called \"seed_deleteduser_password.txt\". The file should be at the root of the project aka next to 'Program.cs'");
-
-            var deletedUser = new AppUser
-            {
-                Id = deletedUserGuid,
-                UserName = "deleted-user",
-                NormalizedUserName = "DELETED-USER",
-                Email = "deleted@foodtopia.com",
-                NormalizedEmail = "DELETED@FOODTOPIA.COM",
-                EmailConfirmed = true,
-                PasswordHash = deletedUserHashedPassword
-            };
-
-            var ownerUserGuid = Guid.Parse("f0d0acba-6cad-4081-a14b-9973f4444962");
-
-            var ownerUserHashedPassword = File.Exists("seed_senioradmin_password.txt")
-                                            ? File.ReadAllText("seed_senioradmin_password.txt").Trim()
-                                            : throw new Exception("Missing \"seed_senioradmin_password.txt\". Go to \"https://bcrypt-generator.com\" type a password and copy the new hashed password and paste just the hashed password inside a new created '.txt' file called \"seed_senioradmin_password.txt\". The file should be at the root of the project aka next to 'Program.cs'");
-
-            var ownerUser = new AppUser
-            {
-                Id = ownerUserGuid,
-                UserName = "Owner",
-                NormalizedUserName = "OWNER",
-                Email = "owner@foodtopia.com",
-                NormalizedEmail = "OWNER@FOODTOPIA.COM",
-                EmailConfirmed = true,
-                PasswordHash = ownerUserHashedPassword
-            };
-            modelBuilder.Entity<AppUser>().HasData(deletedUser, ownerUser);
-
             modelBuilder.Entity<AppUser>().HasData(AppUserSeed.GetAppUsers());
-            // after RoleSeed and UserSeed then add IdentityUserRole seed
-            modelBuilder.Entity<IdentityUserRole<Guid>>().HasData(
-                new IdentityUserRole<Guid>
-                {
-                    UserId = ownerUserGuid,
-                    RoleId = RoleSeedUUID.SeniorAdmin
-                }
-            );
 
             var countries = CountrySeed.GetCountries(); // variable to pass into both Country entity and argument for RecipeSeed Entity
             // Seed data for Country 1st because the Recipe seed is dependent of it

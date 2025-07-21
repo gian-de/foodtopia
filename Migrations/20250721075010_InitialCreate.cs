@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace foodtopia.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserSeedAndHeartedRecipeSeed1 : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,8 @@ namespace foodtopia.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    IsGuest = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -175,6 +176,30 @@ namespace foodtopia.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Playlists",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(75)", maxLength: 75, nullable: false),
+                    SlugText = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    SlugNumber = table.Column<int>(type: "integer", nullable: false),
+                    FullSlug = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    VisibilityStatus = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Playlists", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Playlists_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Recipes",
                 columns: table => new
                 {
@@ -186,6 +211,7 @@ namespace foodtopia.Migrations
                     TasteReviewCount = table.Column<int>(type: "integer", nullable: false),
                     DifficultyReviewCount = table.Column<int>(type: "integer", nullable: false),
                     PublishedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    VisibilityStatus = table.Column<string>(type: "text", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     CountryId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -202,6 +228,32 @@ namespace foodtopia.Migrations
                         name: "FK_Recipes_Countries_CountryId",
                         column: x => x.CountryId,
                         principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HeartedPlaylists",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PlaylistId = table.Column<Guid>(type: "uuid", nullable: false),
+                    HeartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HeartedPlaylists", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HeartedPlaylists_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_HeartedPlaylists_Playlists_PlaylistId",
+                        column: x => x.PlaylistId,
+                        principalTable: "Playlists",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -274,14 +326,38 @@ namespace foodtopia.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PlaylistRecipes",
+                columns: table => new
+                {
+                    PlaylistId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RecipeId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlaylistRecipes", x => new { x.PlaylistId, x.RecipeId });
+                    table.ForeignKey(
+                        name: "FK_PlaylistRecipes_Playlists_PlaylistId",
+                        column: x => x.PlaylistId,
+                        principalTable: "Playlists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PlaylistRecipes_Recipes_RecipeId",
+                        column: x => x.RecipeId,
+                        principalTable: "Recipes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Ratings",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     RecipeId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TasteRating = table.Column<decimal>(type: "numeric", nullable: false),
-                    DifficultyRating = table.Column<decimal>(type: "numeric", nullable: false),
+                    TasteRating = table.Column<double>(type: "double precision", precision: 2, scale: 1, nullable: false),
+                    DifficultyRating = table.Column<double>(type: "double precision", precision: 2, scale: 1, nullable: false),
                     ReviewedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -301,25 +377,59 @@ namespace foodtopia.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "VisibilityReviews",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    VisibilityStatus = table.Column<string>(type: "text", nullable: false),
+                    ReviewFeedback = table.Column<string>(type: "text", nullable: true),
+                    SubmittedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ReviewedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReviewedById = table.Column<Guid>(type: "uuid", nullable: true),
+                    RecipeId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PlaylistId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VisibilityReviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VisibilityReviews_AspNetUsers_ReviewedById",
+                        column: x => x.ReviewedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_VisibilityReviews_Playlists_PlaylistId",
+                        column: x => x.PlaylistId,
+                        principalTable: "Playlists",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_VisibilityReviews_Recipes_RecipeId",
+                        column: x => x.RecipeId,
+                        principalTable: "Recipes",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
                     { new Guid("42d39e76-14b3-41e5-827d-317cc9bd16a4"), null, "Admin", "ADMIN" },
-                    { new Guid("aaf339a6-d1de-47a9-8320-2cbb73af988c"), null, "User", "USER" }
+                    { new Guid("aaf339a6-d1de-47a9-8320-2cbb73af988c"), null, "User", "USER" },
+                    { new Guid("f5ec44f6-aa4d-47b4-908b-4c04b3029534"), null, "Senior Admin", "SENIOR ADMIN" }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "IsDeleted", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedAt", "Email", "EmailConfirmed", "IsGuest", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("4f533a33-a555-4490-92e1-6046a789efb4"), 0, "aa514423-005b-420a-ab63-0dfd239aa709", "ironfist@email.com", false, false, false, null, "IRONFIST@EMAIL.COM", "IRONFIST", "AQAAAAIAAYagAAAAEEAH2PoBQlr668Y+kX7OO9QZI8pfi1EdNOLgasxuS55u+f0LGXNfg2++YR09aXXPVw==", null, false, null, false, "IronFist" },
-                    { new Guid("7ade051b-43be-4938-8942-507046ab759a"), 0, "ca909d7a-7ac1-47ef-b747-d1be1c82beef", "rocketraccoon@email.com", false, false, false, null, "ROCKETRACCOON@EMAIL.COM", "ROCKET", "AQAAAAIAAYagAAAAEKuNo1WmClOwydn3nKYe8PpaUgvZwHnn4/5LhhgWtHB9HYJ90lqvY2rf68hmb1RsbQ==", null, false, null, false, "Rocket" },
-                    { new Guid("91d587d6-a100-415b-859a-a2631dbfd12d"), 0, "5823521f-a7bb-4809-9b16-103a979268a5", "adamwarlock@email.com", false, false, false, null, "ADAMWARLOCK@EMAIL.COM", "WARLOCK", "AQAAAAIAAYagAAAAEAKirpSFFCkPkvUGu57xfsMZXhNbLVPZgpud78l1qIBjsPGoOVB0u2/POZXB/WvTzw==", null, false, null, false, "Warlock" },
-                    { new Guid("afe80b95-1e55-4894-9507-81790f3d3424"), 0, "7f62366b-f780-4656-beb7-b0c7cb616bc5", "drstrange@email.com", false, false, false, null, "DRSTRANGE@EMAIL.COM", "DRSTRANGE", "AQAAAAIAAYagAAAAEIUgxF8k5CXbwhwKOMpdl/4Mwyx13P4YR8vHFXpKrHaxBOjtoJm7kIXxeMbVvPc9mA==", null, false, null, false, "DrStrange" },
-                    { new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17"), 0, "b1b8aaf2-d096-4803-8a36-983bfc17b506", "spiderman@email.com", false, false, false, null, "SPIDERMAN@EMAIL.COM", "SPIDER-MAN", "AQAAAAIAAYagAAAAEAdh3/CqibwTwV8uA7h0rAqEZSuaNeX8awCBcfp+augYbG5JaNRLZmETi+ySE2VrTQ==", null, false, null, false, "Spider-man" }
+                    { new Guid("4f533a33-a555-4490-92e1-6046a789efb4"), 0, "2a8cd15e-67db-4f81-b07c-33fe9e5341ba", new DateTime(2025, 7, 21, 7, 50, 9, 714, DateTimeKind.Utc).AddTicks(1520), "ironfist@email.com", true, false, false, null, "IRONFIST@EMAIL.COM", "IRONFIST", "AQAAAAIAAYagAAAAENWYm5+nVImlxUlb47qVMOnPkhFBlrhizkER7UVlC14lF9yY3uBJ1uEVpK4xzeaCZA==", null, false, null, false, "IronFist" },
+                    { new Guid("7ade051b-43be-4938-8942-507046ab759a"), 0, "0d004a6b-445b-4381-bb66-912dfbdf5b7c", new DateTime(2025, 7, 21, 7, 50, 9, 638, DateTimeKind.Utc).AddTicks(5520), "rocketraccoon@email.com", true, false, false, null, "ROCKETRACCOON@EMAIL.COM", "ROCKET", "AQAAAAIAAYagAAAAEKEcHSS00BV75PcLVa2XtDVRJ9ycvG/TFlP5bQTvvB36UeX2Q5skLXHJzLSmsNMQrQ==", null, false, null, false, "Rocket" },
+                    { new Guid("91d587d6-a100-415b-859a-a2631dbfd12d"), 0, "61dfa4e3-4d05-40ae-8f97-d1a6b9411b79", new DateTime(2025, 7, 21, 7, 50, 9, 598, DateTimeKind.Utc).AddTicks(5460), "adamwarlock@email.com", true, false, false, null, "ADAMWARLOCK@EMAIL.COM", "WARLOCK", "AQAAAAIAAYagAAAAEDEf0D/eXsN8MJtD3pJAXHSGhxEkQgx+CLX2TyD2ENIPhk3mhjEZC/P2BsuPjePFVQ==", null, false, null, false, "Warlock" },
+                    { new Guid("afe80b95-1e55-4894-9507-81790f3d3424"), 0, "6de8adce-7c43-4157-86de-1dc0494548dd", new DateTime(2025, 7, 21, 7, 50, 9, 676, DateTimeKind.Utc).AddTicks(6340), "drstrange@email.com", true, false, false, null, "DRSTRANGE@EMAIL.COM", "DRSTRANGE", "AQAAAAIAAYagAAAAEHS70hB3erml500+m9e3u/7gfc3SxFvdkFHyGZdaZMZTVotfUd49K/8KMLWTfaQtBw==", null, false, null, false, "DrStrange" },
+                    { new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17"), 0, "28d3c06d-1881-4f85-a43a-c157b3408a5c", new DateTime(2025, 7, 21, 7, 50, 9, 557, DateTimeKind.Utc).AddTicks(8960), "spiderman@email.com", true, false, false, null, "SPIDERMAN@EMAIL.COM", "SPIDER-MAN", "AQAAAAIAAYagAAAAEIOXNQYbNe58EE1KtGnqTGhhzu5NUXQp2UIyZ7p8LmftvoyJO6kpeXlftw8Vgl38xw==", null, false, null, false, "Spider-man" }
                 });
 
             migrationBuilder.InsertData(
@@ -406,30 +516,30 @@ namespace foodtopia.Migrations
 
             migrationBuilder.InsertData(
                 table: "Recipes",
-                columns: new[] { "Id", "CountryId", "DifficultyAverage", "DifficultyReviewCount", "ImageUrl", "Name", "PublishedAt", "TasteAverage", "TasteReviewCount", "UserId" },
+                columns: new[] { "Id", "CountryId", "DifficultyAverage", "DifficultyReviewCount", "ImageUrl", "Name", "PublishedAt", "TasteAverage", "TasteReviewCount", "UserId", "VisibilityStatus" },
                 values: new object[,]
                 {
-                    { new Guid("01f65cb2-826b-4ee2-88f9-fa7e95ebfd95"), new Guid("4b9baef3-b816-49b3-817c-f26abe012942"), 0m, 0, "images/recipes/bobotie.jpg", "Bobotie", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3330), 0m, 0, null },
-                    { new Guid("266aed83-7009-4250-881c-fb20cb3f0f1f"), new Guid("13e5d348-9fd9-4788-b33a-3ff80fd50ac1"), 0m, 0, "images/recipes/kimchi.jpg", "Kimchi", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3330), 0m, 0, null },
-                    { new Guid("2b53f900-d736-4393-a585-1f6624c177b2"), new Guid("fc61634e-ea99-43d5-9657-26745fc53530"), 0m, 0, "images/recipes/classic_cheeseburger.jpg", "Classic Cheeseburger", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3270), 0m, 0, new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
-                    { new Guid("2f5f5e32-253d-4132-a2f6-494d48fb15cd"), new Guid("93a2792c-5349-4b14-abc2-b4781395c394"), 0m, 0, "images/recipes/pad_thai.jpg", "Pad Thai", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3280), 0m, 0, new Guid("4f533a33-a555-4490-92e1-6046a789efb4") },
-                    { new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), new Guid("fc61634e-ea99-43d5-9657-26745fc53530"), 0m, 0, "images/recipes/low_calorie_pizza.jpg", "Low calorie pizza", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(1090), 0m, 0, new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
-                    { new Guid("58b9b0ab-aad1-43d0-b440-4add773b9b28"), new Guid("05472a5f-5c4c-4afc-bed2-d60a5b668823"), 0m, 0, "images/recipes/fish_and_chips.jpg", "Fish and Chips", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3340), 0m, 0, null },
-                    { new Guid("6792204d-6f00-4a94-923b-1a93564f4c49"), new Guid("f4eaf144-7d25-451f-886b-13805e41c0cf"), 0m, 0, "images/recipes/chicken_biryani.jpg", "Chicken Biryani", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3270), 0m, 0, new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
-                    { new Guid("7b4b3461-f83c-4809-a840-d81a874587ab"), new Guid("6b600158-b511-44bd-8a52-d4c88a78a1ca"), 0m, 0, "images/recipes/pho.jpg", "Pho", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3320), 0m, 0, new Guid("4f533a33-a555-4490-92e1-6046a789efb4") },
-                    { new Guid("8013d36f-1c68-4223-b4e4-49f91d9e17b5"), new Guid("7a5f9ebf-6d8e-4589-bbfb-d22739b1eb2b"), 0m, 0, "images/recipes/butter_chicken.jpg", "Butter Chicken", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3330), 0m, 0, null },
-                    { new Guid("89d816e6-a468-42c9-91a2-ead8fb21fe4c"), new Guid("e5336ea0-d112-4058-8360-de0ec32def0d"), 0m, 0, "images/recipes/peking_duck.jpg", "Peking Duck", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3270), 0m, 0, new Guid("91d587d6-a100-415b-859a-a2631dbfd12d") },
-                    { new Guid("8d600c3e-1849-4afb-86f8-446d4be2edb9"), new Guid("0898e080-716f-4413-91c4-e9c52c493834"), 0m, 0, "images/recipes/kebab.jpg", "Kebab", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3330), 0m, 0, null },
-                    { new Guid("8ef9e3ab-d115-46ec-8232-4b36f00cc771"), new Guid("b6ab2925-6097-48cc-a7f7-d4ed8c2b256a"), 0m, 0, "images/recipes/moussaka.jpg", "Moussaka", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3340), 0m, 0, null },
-                    { new Guid("9ae1f555-9bc4-498f-817d-e8c76f2095b0"), new Guid("278eaffa-f980-40d2-b014-10c04163c52a"), 0m, 0, "images/recipes/beef_stroganoff.jpg", "Beef Stroganoff", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3280), 0m, 0, new Guid("91d587d6-a100-415b-859a-a2631dbfd12d") },
-                    { new Guid("ba2a4db4-bbe5-4dde-a153-e46885b8c7c0"), new Guid("64c7e557-7a14-454b-97c5-bbcf4cb274dd"), 0m, 0, "images/recipes/feijoada.png", "Feijoada", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3280), 0m, 0, new Guid("7ade051b-43be-4938-8942-507046ab759a") },
-                    { new Guid("bc259740-607d-4a1d-9347-c38713669a6c"), new Guid("550054a5-1eb7-4468-b693-a1540a5d3131"), 0m, 0, "images/recipes/tacos_al_pastor.jpg", "Tacos al Pastor", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3270), 0m, 0, new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
-                    { new Guid("c0f46fa1-463f-47c4-a17f-02c8c417882a"), new Guid("36fa5cc9-e6a9-49cc-98d0-dd3c9aecce6c"), 0m, 0, "images/recipes/sushi.jpg", "Sushi", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3280), 0m, 0, new Guid("afe80b95-1e55-4894-9507-81790f3d3424") },
-                    { new Guid("c1471c8b-0f1f-4791-a65e-7a2d077e00d9"), new Guid("ca309321-8afa-468f-8ace-8027b519e2dc"), 0m, 0, "images/recipes/ceviche.jpeg", "Ceviche", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3320), 0m, 0, new Guid("4f533a33-a555-4490-92e1-6046a789efb4") },
-                    { new Guid("ce84d52a-bef3-4c3b-87b1-baf517596487"), new Guid("683b1e50-3f82-4310-93e5-00398707469f"), 0m, 0, "images/recipes/lasagna.jpg", "Lasagna", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3340), 0m, 0, null },
-                    { new Guid("d4d4a23b-2ccd-40de-a2e6-dd6457bc977a"), new Guid("9dc8871d-c338-4e12-b119-dcef98a5e7fa"), 0m, 0, "images/recipes/shawarma.jpg", "Shawarma", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3340), 0m, 0, null },
-                    { new Guid("dd094901-2566-4ce1-8213-457b1ed3703a"), new Guid("4c00e5af-921b-427c-962a-8e42fcd7db80"), 0m, 0, "images/recipes/croissant.jpg", "Croissant", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3340), 0m, 0, null },
-                    { new Guid("f70d9de1-a4fd-4422-97dd-f4615a9cff92"), new Guid("910a64c2-a8ef-42a7-b1b6-c96a08f3332b"), 0m, 0, "images/recipes/pierogi.jpg", "Pierogi", new DateTime(2025, 2, 4, 4, 28, 17, 358, DateTimeKind.Utc).AddTicks(3330), 0m, 0, null }
+                    { new Guid("01f65cb2-826b-4ee2-88f9-fa7e95ebfd95"), new Guid("4b9baef3-b816-49b3-817c-f26abe012942"), 0m, 0, "images/recipes/bobotie.jpg", "Bobotie", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3470), 0m, 0, null, "public" },
+                    { new Guid("266aed83-7009-4250-881c-fb20cb3f0f1f"), new Guid("13e5d348-9fd9-4788-b33a-3ff80fd50ac1"), 0m, 0, "images/recipes/kimchi.jpg", "Kimchi", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3480), 0m, 0, null, "public" },
+                    { new Guid("2b53f900-d736-4393-a585-1f6624c177b2"), new Guid("fc61634e-ea99-43d5-9657-26745fc53530"), 0m, 0, "images/recipes/classic_cheeseburger.jpg", "Classic Cheeseburger", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3440), 0m, 0, new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17"), "public" },
+                    { new Guid("2f5f5e32-253d-4132-a2f6-494d48fb15cd"), new Guid("93a2792c-5349-4b14-abc2-b4781395c394"), 0m, 0, "images/recipes/pad_thai.jpg", "Pad Thai", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3460), 0m, 0, new Guid("4f533a33-a555-4490-92e1-6046a789efb4"), "public" },
+                    { new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), new Guid("fc61634e-ea99-43d5-9657-26745fc53530"), 0m, 0, "images/recipes/low_calorie_pizza.jpg", "Low calorie pizza", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(1110), 0m, 0, new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17"), "public" },
+                    { new Guid("58b9b0ab-aad1-43d0-b440-4add773b9b28"), new Guid("05472a5f-5c4c-4afc-bed2-d60a5b668823"), 0m, 0, "images/recipes/fish_and_chips.jpg", "Fish and Chips", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3480), 0m, 0, null, "public" },
+                    { new Guid("6792204d-6f00-4a94-923b-1a93564f4c49"), new Guid("f4eaf144-7d25-451f-886b-13805e41c0cf"), 0m, 0, "images/recipes/chicken_biryani.jpg", "Chicken Biryani", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3450), 0m, 0, new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17"), "public" },
+                    { new Guid("7b4b3461-f83c-4809-a840-d81a874587ab"), new Guid("6b600158-b511-44bd-8a52-d4c88a78a1ca"), 0m, 0, "images/recipes/pho.jpg", "Pho", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3460), 0m, 0, new Guid("4f533a33-a555-4490-92e1-6046a789efb4"), "public" },
+                    { new Guid("8013d36f-1c68-4223-b4e4-49f91d9e17b5"), new Guid("7a5f9ebf-6d8e-4589-bbfb-d22739b1eb2b"), 0m, 0, "images/recipes/butter_chicken.jpg", "Butter Chicken", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3470), 0m, 0, null, "public" },
+                    { new Guid("89d816e6-a468-42c9-91a2-ead8fb21fe4c"), new Guid("e5336ea0-d112-4058-8360-de0ec32def0d"), 0m, 0, "images/recipes/peking_duck.jpg", "Peking Duck", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3450), 0m, 0, new Guid("91d587d6-a100-415b-859a-a2631dbfd12d"), "public" },
+                    { new Guid("8d600c3e-1849-4afb-86f8-446d4be2edb9"), new Guid("0898e080-716f-4413-91c4-e9c52c493834"), 0m, 0, "images/recipes/kebab.jpg", "Kebab", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3470), 0m, 0, null, "public" },
+                    { new Guid("8ef9e3ab-d115-46ec-8232-4b36f00cc771"), new Guid("b6ab2925-6097-48cc-a7f7-d4ed8c2b256a"), 0m, 0, "images/recipes/moussaka.jpg", "Moussaka", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3480), 0m, 0, null, "public" },
+                    { new Guid("9ae1f555-9bc4-498f-817d-e8c76f2095b0"), new Guid("278eaffa-f980-40d2-b014-10c04163c52a"), 0m, 0, "images/recipes/beef_stroganoff.jpg", "Beef Stroganoff", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3450), 0m, 0, new Guid("91d587d6-a100-415b-859a-a2631dbfd12d"), "public" },
+                    { new Guid("ba2a4db4-bbe5-4dde-a153-e46885b8c7c0"), new Guid("64c7e557-7a14-454b-97c5-bbcf4cb274dd"), 0m, 0, "images/recipes/feijoada.png", "Feijoada", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3460), 0m, 0, new Guid("7ade051b-43be-4938-8942-507046ab759a"), "unlisted" },
+                    { new Guid("bc259740-607d-4a1d-9347-c38713669a6c"), new Guid("550054a5-1eb7-4468-b693-a1540a5d3131"), 0m, 0, "images/recipes/tacos_al_pastor.jpg", "Tacos al Pastor", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3450), 0m, 0, new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17"), "public" },
+                    { new Guid("c0f46fa1-463f-47c4-a17f-02c8c417882a"), new Guid("36fa5cc9-e6a9-49cc-98d0-dd3c9aecce6c"), 0m, 0, "images/recipes/sushi.jpg", "Sushi", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3460), 0m, 0, new Guid("afe80b95-1e55-4894-9507-81790f3d3424"), "public" },
+                    { new Guid("c1471c8b-0f1f-4791-a65e-7a2d077e00d9"), new Guid("ca309321-8afa-468f-8ace-8027b519e2dc"), 0m, 0, "images/recipes/ceviche.jpeg", "Ceviche", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3470), 0m, 0, new Guid("4f533a33-a555-4490-92e1-6046a789efb4"), "public" },
+                    { new Guid("ce84d52a-bef3-4c3b-87b1-baf517596487"), new Guid("683b1e50-3f82-4310-93e5-00398707469f"), 0m, 0, "images/recipes/lasagna.jpg", "Lasagna", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3490), 0m, 0, null, "public" },
+                    { new Guid("d4d4a23b-2ccd-40de-a2e6-dd6457bc977a"), new Guid("9dc8871d-c338-4e12-b119-dcef98a5e7fa"), 0m, 0, "images/recipes/shawarma.jpg", "Shawarma", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3490), 0m, 0, null, "public" },
+                    { new Guid("dd094901-2566-4ce1-8213-457b1ed3703a"), new Guid("4c00e5af-921b-427c-962a-8e42fcd7db80"), 0m, 0, "images/recipes/croissant.jpg", "Croissant", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3490), 0m, 0, null, "public" },
+                    { new Guid("f70d9de1-a4fd-4422-97dd-f4615a9cff92"), new Guid("910a64c2-a8ef-42a7-b1b6-c96a08f3332b"), 0m, 0, "images/recipes/pierogi.jpg", "Pierogi", new DateTime(2025, 7, 21, 7, 50, 9, 755, DateTimeKind.Utc).AddTicks(3480), 0m, 0, null, "public" }
                 });
 
             migrationBuilder.InsertData(
@@ -437,17 +547,17 @@ namespace foodtopia.Migrations
                 columns: new[] { "Id", "HeartedAt", "RecipeId", "UserId" },
                 values: new object[,]
                 {
-                    { new Guid("27e6491c-0ca0-44e7-99e1-4badd4df766e"), new DateTime(2025, 2, 4, 4, 28, 17, 363, DateTimeKind.Utc).AddTicks(4660), new Guid("01f65cb2-826b-4ee2-88f9-fa7e95ebfd95"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
-                    { new Guid("4baa4456-d138-4181-a556-0c34ac9d399d"), new DateTime(2025, 2, 4, 4, 28, 17, 363, DateTimeKind.Utc).AddTicks(4670), new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), new Guid("91d587d6-a100-415b-859a-a2631dbfd12d") },
-                    { new Guid("4bd052d1-088b-463c-8281-b386bbbc056f"), new DateTime(2025, 2, 4, 4, 28, 17, 363, DateTimeKind.Utc).AddTicks(4660), new Guid("8013d36f-1c68-4223-b4e4-49f91d9e17b5"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
-                    { new Guid("5b97e40b-5155-41e5-923f-b9214cf840f8"), new DateTime(2025, 2, 4, 4, 28, 17, 363, DateTimeKind.Utc).AddTicks(4670), new Guid("2f5f5e32-253d-4132-a2f6-494d48fb15cd"), new Guid("91d587d6-a100-415b-859a-a2631dbfd12d") },
-                    { new Guid("5f14d4ea-69fd-4b99-8aca-d06659f1eed5"), new DateTime(2025, 2, 4, 4, 28, 17, 363, DateTimeKind.Utc).AddTicks(4670), new Guid("2f5f5e32-253d-4132-a2f6-494d48fb15cd"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
-                    { new Guid("61939421-e5cf-4700-82f1-8d103387170f"), new DateTime(2025, 2, 4, 4, 28, 17, 363, DateTimeKind.Utc).AddTicks(4670), new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), new Guid("afe80b95-1e55-4894-9507-81790f3d3424") },
-                    { new Guid("8c051925-1bdc-4643-b5bf-d682fa1f4c27"), new DateTime(2025, 2, 4, 4, 28, 17, 363, DateTimeKind.Utc).AddTicks(4280), new Guid("8d600c3e-1849-4afb-86f8-446d4be2edb9"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
-                    { new Guid("b5ae64ba-a904-4dee-8759-dc0722144058"), new DateTime(2025, 2, 4, 4, 28, 17, 363, DateTimeKind.Utc).AddTicks(4670), new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), new Guid("7ade051b-43be-4938-8942-507046ab759a") },
-                    { new Guid("d069c969-1acd-4f5c-a942-77a2b05499f5"), new DateTime(2025, 2, 4, 4, 28, 17, 363, DateTimeKind.Utc).AddTicks(4670), new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), new Guid("4f533a33-a555-4490-92e1-6046a789efb4") },
-                    { new Guid("e16d74fa-df41-4877-b3be-fc980fbe40df"), new DateTime(2025, 2, 4, 4, 28, 17, 363, DateTimeKind.Utc).AddTicks(4660), new Guid("7b4b3461-f83c-4809-a840-d81a874587ab"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
-                    { new Guid("e5ab974d-adca-46af-9173-c67a1dd0e8d5"), new DateTime(2025, 2, 4, 4, 28, 17, 363, DateTimeKind.Utc).AddTicks(4660), new Guid("9ae1f555-9bc4-498f-817d-e8c76f2095b0"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") }
+                    { new Guid("27e6491c-0ca0-44e7-99e1-4badd4df766e"), new DateTime(2025, 7, 21, 7, 50, 9, 760, DateTimeKind.Utc).AddTicks(4900), new Guid("01f65cb2-826b-4ee2-88f9-fa7e95ebfd95"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
+                    { new Guid("4baa4456-d138-4181-a556-0c34ac9d399d"), new DateTime(2025, 7, 21, 7, 50, 9, 760, DateTimeKind.Utc).AddTicks(4900), new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), new Guid("91d587d6-a100-415b-859a-a2631dbfd12d") },
+                    { new Guid("4bd052d1-088b-463c-8281-b386bbbc056f"), new DateTime(2025, 7, 21, 7, 50, 9, 760, DateTimeKind.Utc).AddTicks(4900), new Guid("8013d36f-1c68-4223-b4e4-49f91d9e17b5"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
+                    { new Guid("5b97e40b-5155-41e5-923f-b9214cf840f8"), new DateTime(2025, 7, 21, 7, 50, 9, 760, DateTimeKind.Utc).AddTicks(4900), new Guid("2f5f5e32-253d-4132-a2f6-494d48fb15cd"), new Guid("91d587d6-a100-415b-859a-a2631dbfd12d") },
+                    { new Guid("5f14d4ea-69fd-4b99-8aca-d06659f1eed5"), new DateTime(2025, 7, 21, 7, 50, 9, 760, DateTimeKind.Utc).AddTicks(4900), new Guid("2f5f5e32-253d-4132-a2f6-494d48fb15cd"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
+                    { new Guid("61939421-e5cf-4700-82f1-8d103387170f"), new DateTime(2025, 7, 21, 7, 50, 9, 760, DateTimeKind.Utc).AddTicks(4910), new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), new Guid("afe80b95-1e55-4894-9507-81790f3d3424") },
+                    { new Guid("8c051925-1bdc-4643-b5bf-d682fa1f4c27"), new DateTime(2025, 7, 21, 7, 50, 9, 760, DateTimeKind.Utc).AddTicks(4520), new Guid("8d600c3e-1849-4afb-86f8-446d4be2edb9"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
+                    { new Guid("b5ae64ba-a904-4dee-8759-dc0722144058"), new DateTime(2025, 7, 21, 7, 50, 9, 760, DateTimeKind.Utc).AddTicks(4910), new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), new Guid("7ade051b-43be-4938-8942-507046ab759a") },
+                    { new Guid("d069c969-1acd-4f5c-a942-77a2b05499f5"), new DateTime(2025, 7, 21, 7, 50, 9, 760, DateTimeKind.Utc).AddTicks(4910), new Guid("3968256e-9c61-4415-bfe2-4c1092be12d8"), new Guid("4f533a33-a555-4490-92e1-6046a789efb4") },
+                    { new Guid("e16d74fa-df41-4877-b3be-fc980fbe40df"), new DateTime(2025, 7, 21, 7, 50, 9, 760, DateTimeKind.Utc).AddTicks(4900), new Guid("7b4b3461-f83c-4809-a840-d81a874587ab"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") },
+                    { new Guid("e5ab974d-adca-46af-9173-c67a1dd0e8d5"), new DateTime(2025, 7, 21, 7, 50, 9, 760, DateTimeKind.Utc).AddTicks(4900), new Guid("9ae1f555-9bc4-498f-817d-e8c76f2095b0"), new Guid("f2c1a77d-cc69-4a7a-b58d-68481e19ed17") }
                 });
 
             migrationBuilder.InsertData(
@@ -698,6 +808,17 @@ namespace foodtopia.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_HeartedPlaylists_PlaylistId",
+                table: "HeartedPlaylists",
+                column: "PlaylistId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HeartedPlaylists_UserId_PlaylistId",
+                table: "HeartedPlaylists",
+                columns: new[] { "UserId", "PlaylistId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HeartedRecipes_RecipeId",
                 table: "HeartedRecipes",
                 column: "RecipeId");
@@ -719,6 +840,22 @@ namespace foodtopia.Migrations
                 column: "RecipeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PlaylistRecipes_RecipeId",
+                table: "PlaylistRecipes",
+                column: "RecipeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Playlists_FullSlug",
+                table: "Playlists",
+                column: "FullSlug",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Playlists_UserId",
+                table: "Playlists",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Ratings_RecipeId",
                 table: "Ratings",
                 column: "RecipeId");
@@ -737,6 +874,21 @@ namespace foodtopia.Migrations
                 name: "IX_Recipes_UserId",
                 table: "Recipes",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VisibilityReviews_PlaylistId",
+                table: "VisibilityReviews",
+                column: "PlaylistId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VisibilityReviews_RecipeId",
+                table: "VisibilityReviews",
+                column: "RecipeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VisibilityReviews_ReviewedById",
+                table: "VisibilityReviews",
+                column: "ReviewedById");
         }
 
         /// <inheritdoc />
@@ -758,6 +910,9 @@ namespace foodtopia.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "HeartedPlaylists");
+
+            migrationBuilder.DropTable(
                 name: "HeartedRecipes");
 
             migrationBuilder.DropTable(
@@ -767,10 +922,19 @@ namespace foodtopia.Migrations
                 name: "Instructions");
 
             migrationBuilder.DropTable(
+                name: "PlaylistRecipes");
+
+            migrationBuilder.DropTable(
                 name: "Ratings");
 
             migrationBuilder.DropTable(
+                name: "VisibilityReviews");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Playlists");
 
             migrationBuilder.DropTable(
                 name: "Recipes");
