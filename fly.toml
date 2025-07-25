@@ -6,6 +6,9 @@
 app = 'foodtopia-backend'
 primary_region = 'dfw'
 
+[env]
+  ASPNETCORE_URLS = "http://0.0.0.0:80"
+
 [build]
 
 [http_service]
