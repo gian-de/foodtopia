@@ -10,12 +10,12 @@ namespace foodtopia.Services
 {
     public class JwtTokenService : IJwtTokenService
     {
-        private readonly IConfiguration _config;
+        // private readonly IConfiguration _config;
         private readonly UserManager<AppUser> _userManager;
         private readonly SymmetricSecurityKey _key;
         public JwtTokenService(IConfiguration config, UserManager<AppUser> userManager)
         {
-            _config = config;
+            // _config = config;
             _userManager = userManager;
 
             var signingKey = Environment.GetEnvironmentVariable("JWT_SIGNING_KEY");
@@ -30,6 +30,12 @@ namespace foodtopia.Services
 
             if (string.IsNullOrEmpty(user.UserName)) throw new ArgumentNullException("Cannot issue token: user has no UserName.");
             if (string.IsNullOrEmpty(user.Email)) throw new ArgumentNullException("Cannot issue token: user has no Email.");
+
+            var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+            if (string.IsNullOrEmpty(jwtIssuer)) throw new InvalidOperationException("JWT_ISSUER environment variable is not set.");
+
+            var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+            if (string.IsNullOrEmpty(jwtAudience)) throw new InvalidOperationException("JWT_AUDIENCE environment variable is not set.");
 
             var claims = new List<Claim>{
                 new Claim("user_id", user.Id.ToString()),
@@ -57,8 +63,8 @@ namespace foodtopia.Services
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddDays(3),
                 SigningCredentials = creds,
-                Issuer = _config["JWT:Issuer"],
-                Audience = _config["JWT:Audience"]
+                Issuer = jwtIssuer,
+                Audience = jwtAudience
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

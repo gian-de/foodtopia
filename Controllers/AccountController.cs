@@ -18,7 +18,8 @@ namespace foodtopia.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        string baseURL = "http://localhost:5001";
+        // string baseURL = "http://localhost:5001";
+        string baseURL = Environment.GetEnvironmentVariable("BASE_URL") ?? "http://localhost:5001";
 
         private readonly UserManager<AppUser> _userManager;
         private readonly AccountService _accountService;

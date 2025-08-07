@@ -56,8 +56,8 @@ builder.Services.AddAuthentication(options =>
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidIssuer = builder.Configuration["JWT:Issuer"],
-            ValidAudience = builder.Configuration["JWT:Audience"],
+            ValidIssuer = Environment.GetEnvironmentVariable("") ?? builder.Configuration["JWT:Issuer"],
+            ValidAudience = Environment.GetEnvironmentVariable("") ?? builder.Configuration["JWT:Audience"],
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey))
         };
@@ -87,7 +87,9 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:5001")
+        var baseUrl = Environment.GetEnvironmentVariable("BASE_URL") ?? "http://localhost:8000";
+
+        policy.WithOrigins(baseUrl, "http://localhost:3000", "http://localhost:5001")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
