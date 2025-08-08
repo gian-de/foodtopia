@@ -88,16 +88,31 @@ namespace foodtopia.Controllers
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
         {
+            // needed for redirect when user checks email sent for 2fa
+            var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "http://localhost:3000";
             // decode email sent as encoded
             var decodedEmail = WebUtility.UrlDecode(email);
             var user = await _userManager.FindByEmailAsync(decodedEmail);
-            if (user is null) return NotFound("User not found");
+            // if (user is null) return NotFound("User not found");
+            if (user is null) return Redirect($"{frontendUrl}/email-confirmation?status=error&message=User not found.");
 
             var emailToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
 
+
             var result = await _userManager.ConfirmEmailAsync(user, emailToken);
 
-            return result.Succeeded ? Ok("Email confirmed") : BadRequest(result.Errors);
+            // return result.Succeeded ? Ok("Email confirmed") : BadRequest(result.Errors);
+            if (result.Succeeded)
+            {
+                var jwtToken = await _jwtTokenService.CreateTokenAsync(user);
+                var encodedToken = Uri.EscapeDataString(jwtToken);
+
+                return Redirect($"{frontendUrl}/email-confirmation?status=success&message=Email confirmed!&token={encodedToken}&username={Uri.EscapeDataString(user?.UserName)}&email={Uri.EscapeDataString(user?.Email)}");
+            }
+            else
+            {
+                return Redirect($"{frontendUrl}/email-confirmation?status=error&message=Error occurred, please try again another time.");
+            }
         }
 
         [HttpPost("login")]
@@ -218,6 +233,7 @@ namespace foodtopia.Controllers
 
             var user = await _userManager.FindByEmailAsync(decodedEmail);
             if (user is null) return BadRequest("Invalid payload.");
+
 
             var result = await _userManager.ResetPasswordAsync(user, decodedToken, requestDTO.Password);
             if (!result.Succeeded) return BadRequest("Something went wrong12.");
