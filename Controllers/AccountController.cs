@@ -33,6 +33,14 @@ namespace foodtopia.Controllers
             _emailService = emailService;
         }
 
+        private async Task<string> GenerateConfirmationLinkAsync(AppUser user)
+        {
+            var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailToken));
+            var emailEncoded = WebUtility.UrlEncode(user.Email);
+            return $"{baseURL}/api/account/confirm-email?email={emailEncoded}&token={tokenEncoded}";
+        }
+
         [HttpPost("register")]
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
@@ -51,11 +59,13 @@ namespace foodtopia.Controllers
                 var createdUser = await _userManager.CreateAsync(appUser, registerDTO.Password!); // null forgive registerDTO.Password since there's validation in RegisterDTO
                 if (!createdUser.Succeeded) return BadRequest(createdUser.Errors);
 
-                // Email Confirmation workflow
-                var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
-                var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailToken));
-                var emailEncoded = WebUtility.UrlEncode(appUser.Email);
-                var confirmationLink = $"{baseURL}/api/account/confirm-email?email={emailEncoded}&token={tokenEncoded}";
+                // // Email Confirmation workflow
+                // var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                // var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailToken));
+                // var emailEncoded = WebUtility.UrlEncode(appUser.Email);
+                // var confirmationLink = $"{baseURL}/api/account/confirm-email?email={emailEncoded}&token={tokenEncoded}";
+
+                var confirmationLink = await GenerateConfirmationLinkAsync(appUser);
 
                 var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
                 if (!roleResult.Succeeded) return StatusCode(500, new { Message = "Error when trying to add user to role", roleResult.Errors });
@@ -93,7 +103,6 @@ namespace foodtopia.Controllers
             // decode email sent as encoded
             var decodedEmail = WebUtility.UrlDecode(email);
             var user = await _userManager.FindByEmailAsync(decodedEmail);
-            // if (user is null) return NotFound("User not found");
             if (user is null) return Redirect($"{frontendUrl}/email-confirmation?status=error&message=User not found.");
 
             var emailToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
@@ -112,6 +121,31 @@ namespace foodtopia.Controllers
             else
             {
                 return Redirect($"{frontendUrl}/email-confirmation?status=error&message=Error occurred, please try again another time.");
+            }
+        }
+
+        [HttpPost("resend-email-confirmation")]
+        [EnableRateLimiting("fixed-limiter-strict")]
+        public async Task<IActionResult> ResendEmailConfirmation([FromBody] ResendEmailConfirmationDTO resendEmailDTO)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return BadRequest(ModelState);
+
+                var user = await _userManager.FindByEmailAsync(resendEmailDTO.Email);
+
+                if (user is not null)
+                {
+                    var confirmationLink = await GenerateConfirmationLinkAsync(user);
+
+                    await _emailService.SendEmailConfirmationAsync(user.Email!, confirmationLink);
+                }
+
+                return Ok(new { message = "A confirmation email has been sent just now." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Failed to resend email confirmation link, please try again at another time." });
             }
         }
 
