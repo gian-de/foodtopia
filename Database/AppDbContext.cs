@@ -26,6 +26,14 @@ namespace foodtopia.Database
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<AppUser>()
+                .HasIndex(u => u.UserName)
+                .IsUnique();
+
+            modelBuilder.Entity<AppUser>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
             modelBuilder.Entity<Recipe>()
                 .HasOne(r => r.Country)
                 .WithMany(c => c.Recipes)

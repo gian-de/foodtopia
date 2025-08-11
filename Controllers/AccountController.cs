@@ -49,6 +49,9 @@ namespace foodtopia.Controllers
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 
+                var emailExists = await _userManager.FindByEmailAsync(registerDTO.Email!);
+                if (emailExists is not null) return BadRequest(new { Message = "An account with this email already exists." });
+
                 var appUser = new AppUser
                 {
                     // null forgive both fields since there's validation in RegisterDTO
