@@ -48,5 +48,13 @@ namespace foodtopia.Services
 
             return SendEmailAsync(recipientEmail, subject, htmlBody);
         }
+
+        public Task SendEmailUsernameInfoAsync(string recipientEmail, string username)
+        {
+            string subject = "FOODTOPIA - Forgot Username";
+            string htmlBody = $"<p>Your login username is: <strong>{username}<strong></p>";
+
+            return SendEmailAsync(recipientEmail, subject, htmlBody);
+        }
     }
 }

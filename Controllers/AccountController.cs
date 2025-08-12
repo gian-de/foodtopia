@@ -236,6 +236,28 @@ namespace foodtopia.Controllers
             }
         }
 
+        [HttpPost("forgot-username")]
+        [EnableRateLimiting("fixed-limiter-strict")]
+        public async Task<IActionResult> ForgotUsername([FromBody] ForgotUsernameRequestDTO requestDTO)
+        {
+            try
+            {
+
+                if (!ModelState.IsValid) return BadRequest(ModelState);
+
+                var user = await _userManager.FindByEmailAsync(requestDTO.Email);
+
+                // for security reason, never return NotFound (it would reveal if the email is truthy for a bad actor)
+                if (user is not null) await _emailService.SendEmailUsernameInfoAsync(user.Email!, user.UserName!); // '!' to suppress warning, .Email and .Username should exists since this code will only run if the 'user' is truthy
+
+                return Ok(new { Message = "If an account with this email exists, the Username login info has been sent." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while processing your request." });
+            }
+        }
+
         [HttpPost("forgot-password")]
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO requestDTO)
@@ -273,7 +295,7 @@ namespace foodtopia.Controllers
 
 
             var result = await _userManager.ResetPasswordAsync(user, decodedToken, requestDTO.Password);
-            if (!result.Succeeded) return BadRequest("Something went wrong12.");
+            if (!result.Succeeded) return BadRequest("Something went wrong.");
 
             return Ok("Password has been reset successfully.");
         }
