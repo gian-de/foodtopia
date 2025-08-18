@@ -18,8 +18,8 @@ namespace foodtopia.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        // string baseURL = "http://localhost:5001";
-        string baseURL = Environment.GetEnvironmentVariable("BASE_URL") ?? "http://localhost:5001";
+        readonly string baseUrl = Environment.GetEnvironmentVariable("BASE_URL") ?? "http://localhost:5001";
+        readonly string frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "http://localhost:3000";
 
         private readonly UserManager<AppUser> _userManager;
         private readonly AccountService _accountService;
@@ -38,7 +38,7 @@ namespace foodtopia.Controllers
             var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailToken));
             var emailEncoded = WebUtility.UrlEncode(user.Email);
-            return $"{baseURL}/api/account/confirm-email?email={emailEncoded}&token={tokenEncoded}";
+            return $"{baseUrl}/api/account/confirm-email?email={emailEncoded}&token={tokenEncoded}";
         }
 
         [HttpPost("register")]
@@ -101,8 +101,7 @@ namespace foodtopia.Controllers
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
         {
-            // needed for redirect when user checks email sent for 2fa
-            var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "http://localhost:3000";
+            
             // decode email sent as encoded
             var decodedEmail = WebUtility.UrlDecode(email);
             var user = await _userManager.FindByEmailAsync(decodedEmail);
@@ -113,7 +112,6 @@ namespace foodtopia.Controllers
 
             var result = await _userManager.ConfirmEmailAsync(user, emailToken);
 
-            // return result.Succeeded ? Ok("Email confirmed") : BadRequest(result.Errors);
             if (result.Succeeded)
             {
                 var jwtToken = await _jwtTokenService.CreateTokenAsync(user);
@@ -273,7 +271,7 @@ namespace foodtopia.Controllers
             var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetPasswordToken));
             var emailEncoded = WebUtility.UrlEncode(user.Email);
 
-            var passwordResetLink = $"{baseURL}/api/account/reset-password?token={tokenEncoded}&email={emailEncoded}";
+            var passwordResetLink = $"{frontendUrl}/api/account/reset-password?token={tokenEncoded}&email={emailEncoded}";
 
             // null forgive 'user.email' since there's validation above line 154
             await _emailService.SendEmailPasswordResetAsync(user.Email!, passwordResetLink);
