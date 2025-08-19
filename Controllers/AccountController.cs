@@ -101,27 +101,51 @@ namespace foodtopia.Controllers
         [EnableRateLimiting("fixed-limiter-strict")]
         public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
         {
-            
-            // decode email sent as encoded
-            var decodedEmail = WebUtility.UrlDecode(email);
-            var user = await _userManager.FindByEmailAsync(decodedEmail);
-            if (user is null) return Redirect($"{frontendUrl}/email-confirmation?status=error&message=User not found.");
-
-            var emailToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
-
-
-            var result = await _userManager.ConfirmEmailAsync(user, emailToken);
-
-            if (result.Succeeded)
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
             {
-                var jwtToken = await _jwtTokenService.CreateTokenAsync(user);
-                var encodedToken = Uri.EscapeDataString(jwtToken);
-
-                return Redirect($"{frontendUrl}/email-confirmation?status=success&message=Email confirmed!&token={encodedToken}&username={Uri.EscapeDataString(user?.UserName)}&email={Uri.EscapeDataString(user?.Email)}");
+                return Redirect($"{frontendUrl}/email-confirmation?status=error&message=Invalid confirmation link.");
             }
-            else
+
+            try
             {
-                return Redirect($"{frontendUrl}/email-confirmation?status=error&message=Error occurred, please try again another time.");
+                // decode email sent as encoded
+                var decodedEmail = WebUtility.UrlDecode(email);
+                var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+
+                var user = await _userManager.FindByEmailAsync(decodedEmail);
+                if (user is null) return Redirect($"{frontendUrl}/email-confirmation?status=error&message=User not found.");
+
+                var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+
+                if (result.Succeeded)
+                {
+                    var jwtToken = await _jwtTokenService.CreateTokenAsync(user);
+                    var encodedToken = Uri.EscapeDataString(jwtToken);
+                    var encodedUsername = Uri.EscapeDataString(user?.UserName ?? "");
+                    var encodedEmail = Uri.EscapeDataString(user?.Email ?? "");
+
+                    return Redirect($"{frontendUrl}/email-confirmation?status=success&message=Email confirmed!&token={encodedToken}&username={encodedUsername}&email={encodedEmail}");
+                }
+                else
+                {
+                    Console.WriteLine("=== EMAIL CONFIRMATION FAILED ===");
+                    foreach (var error in result.Errors)
+                    {
+                        Console.WriteLine($"Error Code: {error.Code}");
+                        Console.WriteLine($"Error Description: {error.Description}");
+                    }
+
+                    // Create a detailed error message for debugging
+                    var errorDetails = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                    var encodedErrors = Uri.EscapeDataString(errorDetails);
+
+                    return Redirect($"{frontendUrl}/email-confirmation?status=error&message={encodedErrors}");
+                    // return Redirect($"{frontendUrl}/email-confirmation?status=error&message=Error occurred, please try again another time.")
+                }
+            }
+            catch (Exception ex)
+            {
+                return Redirect($"{frontendUrl}/email-confirmation?status=error&message=Invalid or expired confirmation link.");
             }
         }
 
