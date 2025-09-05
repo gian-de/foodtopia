@@ -21,6 +21,9 @@ namespace foodtopia.Controllers
         readonly string baseUrl = Environment.GetEnvironmentVariable("BASE_URL") ?? "http://localhost:5001";
         readonly string frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "http://localhost:3000";
 
+        // readonly string baseUrl = "http://localhost:5001";
+        // readonly string frontendUrl = "http://localhost:3000";
+
         private readonly UserManager<AppUser> _userManager;
         private readonly AccountService _accountService;
         private readonly IJwtTokenService _jwtTokenService;
@@ -55,8 +58,8 @@ namespace foodtopia.Controllers
                 var appUser = new AppUser
                 {
                     // null forgive both fields since there's validation in RegisterDTO
-                    UserName = registerDTO.Username!,
-                    Email = registerDTO.Email!,
+                    UserName = registerDTO.Username!.ToLowerInvariant(),
+                    Email = registerDTO.Email!.ToLowerInvariant(),
                 };
 
                 var createdUser = await _userManager.CreateAsync(appUser, registerDTO.Password!); // null forgive registerDTO.Password since there's validation in RegisterDTO
@@ -128,19 +131,7 @@ namespace foodtopia.Controllers
                 }
                 else
                 {
-                    Console.WriteLine("=== EMAIL CONFIRMATION FAILED ===");
-                    foreach (var error in result.Errors)
-                    {
-                        Console.WriteLine($"Error Code: {error.Code}");
-                        Console.WriteLine($"Error Description: {error.Description}");
-                    }
-
-                    // Create a detailed error message for debugging
-                    var errorDetails = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
-                    var encodedErrors = Uri.EscapeDataString(errorDetails);
-
-                    return Redirect($"{frontendUrl}/email-confirmation?status=error&message={encodedErrors}");
-                    // return Redirect($"{frontendUrl}/email-confirmation?status=error&message=Error occurred, please try again another time.")
+                    return Redirect($"{frontendUrl}/email-confirmation?status=error&message=Error occurred, please try again another time.");
                 }
             }
             catch (Exception ex)
@@ -184,7 +175,7 @@ namespace foodtopia.Controllers
 
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 
-                var user = await _userManager.FindByNameAsync(loginDTO.Username);
+                var user = await _userManager.FindByNameAsync(loginDTO.Username.ToLowerInvariant());
                 if (user is null) return Unauthorized(incorrectLoginCredentialMessage);
 
                 var validPassword = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
