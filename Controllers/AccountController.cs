@@ -83,7 +83,8 @@ namespace foodtopia.Controllers
                     // null forgive both username and email since there's validation above
                     UserName = appUser.UserName!,
                     Email = appUser.Email,
-                    JwtToken = await _jwtTokenService.CreateTokenAsync(appUser)
+                    JwtToken = await _jwtTokenService.CreateTokenAsync(appUser),
+                    Role = "User"
                 });
             }
             catch (KeyNotFoundException ex)
@@ -190,7 +191,8 @@ namespace foodtopia.Controllers
                         // null forgive both username and email since there's validation above 
                         UserName = user.UserName!,
                         Email = user.Email!,
-                        JwtToken = await _jwtTokenService.CreateTokenAsync(user)
+                        JwtToken = await _jwtTokenService.CreateTokenAsync(user),
+                        Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault() ?? "User"
                     }
                 );
             }
@@ -231,7 +233,8 @@ namespace foodtopia.Controllers
                     {
                         UserName = guestUsername,
                         Email = guestUser.Email,
-                        JwtToken = await _jwtTokenService.CreateTokenAsync(guestUser)
+                        JwtToken = await _jwtTokenService.CreateTokenAsync(guestUser),
+                        Role = "Guest"
                     }
                 );
             }
