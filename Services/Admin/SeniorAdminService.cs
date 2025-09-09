@@ -39,8 +39,16 @@ namespace foodtopia.Services.Admin
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null) throw new KeyNotFoundException("User info passed in wasn't found.");
 
-            bool isAdminAlready = await _userManager.IsInRoleAsync(user, "Admin");
-            if (isAdminAlready) throw new ArgumentException("This user is already an admin.");
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            var currentRole = currentRoles.FirstOrDefault();
+            if (currentRole == "Owner" || currentRole == "Senior Admin") throw new UnauthorizedAccessException($"Cannot modify a {currentRole}'s role.");
+            if (currentRole == "Admin") throw new ArgumentException("User is already an admin.");
+
+            if (currentRoles.Any())
+            {
+                var removedRoleResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                if (!removedRoleResult.Succeeded) throw new InvalidOperationException("Failed to remove existing role.");
+            }
 
             if (string.IsNullOrEmpty(user.SecurityStamp))
             {
@@ -51,7 +59,7 @@ namespace foodtopia.Services.Admin
             }
 
             var result = await _userManager.AddToRoleAsync(user, "Admin");
-            if (!result.Succeeded) throw new KeyNotFoundException("user error");
+            if (!result.Succeeded) throw new KeyNotFoundException("Failed to add admin role.");
 
             return new UserInfoDTO(
                 Username: user.UserName!,
@@ -66,8 +74,10 @@ namespace foodtopia.Services.Admin
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null) throw new KeyNotFoundException("User info passed in wasn't found.");
 
-            var roles = await _userManager.GetRolesAsync(user);
-            if (!roles.Contains("Admin")) throw new KeyNotFoundException("User is not an Admin.");
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            var currentRole = currentRoles.FirstOrDefault();
+            if (currentRole == "Owner" || currentRole == "Senior Admin")
+                if (currentRole != "Admin") throw new KeyNotFoundException("User is not an Admin.");
 
             var result = await _userManager.RemoveFromRoleAsync(user, "Admin");
             if (!result.Succeeded) return false;

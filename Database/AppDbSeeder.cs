@@ -28,7 +28,15 @@ public static class AppDbSeeder
             };
 
             await userManager.CreateAsync(ownerUser, ownerUserPassword);
-            await userManager.AddToRoleAsync(ownerUser, "Senior Admin");
+            if (await roleManager.RoleExistsAsync("Owner"))
+            {
+
+                await userManager.AddToRoleAsync(ownerUser, "Owner");
+            }
+            else
+            {
+                throw new InvalidOperationException("Owner role doesn't exist, double check seeding logic/flow");
+            }
         }
 
         if (await userManager.FindByIdAsync(deletedUserGuid.ToString()) is null)

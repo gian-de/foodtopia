@@ -19,7 +19,8 @@ namespace foodtopia.Controllers
             _moderatorService = moderatorService;
         }
         // ONLY 'Senior Admin' endpoints START - Normal Admin endpoints further below 
-        [Authorize(Roles = "Senior Admin")]
+        // [Authorize(Roles = "Senior Admin")]
+        [Authorize(Roles = "Owner, Senior Admin")]
         [HttpGet("senior-admin/admins")]
         public async Task<IActionResult> GetAllAdmins()
         {
@@ -34,7 +35,7 @@ namespace foodtopia.Controllers
             }
         }
 
-        [Authorize(Roles = "Senior Admin")]
+        [Authorize(Roles = "Owner, Senior Admin")]
         [HttpPost("senior-admin/admins")]
         public async Task<IActionResult> AddAdminRole([FromBody] AddAdminRoleDTO dto)
         {
@@ -51,6 +52,10 @@ namespace foodtopia.Controllers
             {
                 return BadRequest(new { ex.Message });
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
             catch (InvalidOperationException ex)
             {
                 return BadRequest(new { ex.Message });
@@ -61,7 +66,7 @@ namespace foodtopia.Controllers
             }
         }
 
-        [Authorize(Roles = "Senior Admin")]
+        [Authorize(Roles = "Owner, Senior Admin")]
         [HttpDelete("senior-admin/admins/{userId:guid}")]
         public async Task<IActionResult> RemoveAdminRole([FromRoute] Guid userId)
         {
@@ -89,7 +94,7 @@ namespace foodtopia.Controllers
         // ONLY Senior Admins endpoints END
 
         // ALL Admins endpoints START
-        [Authorize(Roles = "Senior Admin, Admin")]
+        [Authorize(Roles = "Owner, Senior Admin, Admin")]
         [HttpGet("moderator/recipes/pending")]
         public async Task<IActionResult> GetAllRecipePendingSubmissions(
             [FromQuery] int page = 1,
@@ -116,7 +121,7 @@ namespace foodtopia.Controllers
             }
         }
 
-        [Authorize(Roles = "Senior Admin, Admin")]
+        [Authorize(Roles = "Owner, Senior Admin, Admin")]
         [HttpPost("moderator/recipes/{recipeId:guid}/submission")]
         public async Task<IActionResult> ReviewRecipeSubmission([FromRoute] Guid recipeId, [FromBody] ModeratorSubmissionReviewDTO recipeReviewDTO)
         {
@@ -150,7 +155,7 @@ namespace foodtopia.Controllers
             }
         }
 
-        [Authorize(Roles = "Senior Admin, Admin")]
+        [Authorize(Roles = "Owner, Senior Admin, Admin")]
         [HttpGet("moderator/playlists/pending")]
         public async Task<IActionResult> GetAllPlaylistPendingSubmissions(
             [FromQuery] int page = 1,
@@ -177,7 +182,7 @@ namespace foodtopia.Controllers
             }
         }
 
-        [Authorize(Roles = "Senior Admin, Admin")]
+        [Authorize(Roles = "Owner, Senior Admin, Admin")]
         [HttpPost("moderator/playlists/{playlistId:guid}/submission")]
         public async Task<IActionResult> ReviewPlaylistSubmission([FromRoute] Guid playlistId, [FromBody] ModeratorSubmissionReviewDTO playlistReviewDTO)
         {

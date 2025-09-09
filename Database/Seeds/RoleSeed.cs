@@ -10,6 +10,12 @@ namespace foodtopia.Database.Seeds
             {
                 new IdentityRole<Guid>
                 {
+                    Id = RoleSeedUUID.Owner,
+                    Name = "Owner",
+                    NormalizedName = "OWNER"
+                },
+                new IdentityRole<Guid>
+                {
                     Id = RoleSeedUUID.SeniorAdmin,
                     Name = "Senior Admin",
                     NormalizedName = "SENIOR ADMIN"
