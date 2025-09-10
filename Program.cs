@@ -66,6 +66,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<ISeniorAdminService, SeniorAdminService>();
 builder.Services.AddScoped<IModeratorService, ModeratorService>();
+builder.Services.AddScoped<IOwnerService, OwnerService>();
 
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();

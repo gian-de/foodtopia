@@ -1,4 +1,5 @@
 using foodtopia.DTOs.User;
+using foodtopia.Helpers;
 using foodtopia.Interfaces.Admin;
 using foodtopia.Models;
 using Microsoft.AspNetCore.Identity;
@@ -12,26 +13,106 @@ namespace foodtopia.Services.Admin
         {
             _userManager = userManager;
         }
-        public async Task<List<UserInfoDTO>> GetAllAdminsAsync()
+        public async Task<PagedResult<UserInfoDTO>> GetAllBothSeniorAndAdminsAsync(int page, int pageSize)
         {
             var admins = await _userManager.GetUsersInRoleAsync("Admin");
             var seniorAdmins = await _userManager.GetUsersInRoleAsync("Senior Admin");
 
             var allUsers = admins.Concat(seniorAdmins).ToList();
 
-            var allAdmins = new List<UserInfoDTO>();
+            var allAdminsDTOs = new List<UserInfoDTO>();
 
             foreach (var user in allUsers)
             {
                 var roles = await _userManager.GetRolesAsync(user);
-                allAdmins.Add(new UserInfoDTO(
+                allAdminsDTOs.Add(new UserInfoDTO(
                     Username: user.UserName!,
                     Email: user.Email!,
                     Role: roles.FirstOrDefault()!
                 ));
             }
 
-            return allAdmins;
+            var totalAdmins = allAdminsDTOs.Count();
+            var totalPages = (int)Math.Ceiling((double)totalAdmins / pageSize);
+            var pagedAdminsDTOs = allAdminsDTOs
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+            return new PagedResult<UserInfoDTO>
+            {
+                TotalCount = totalAdmins,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = totalPages,
+                Results = pagedAdminsDTOs
+            };
+        }
+        public async Task<PagedResult<UserInfoDTO>> GetAllSeniorAdminsAsync(int page, int pageSize)
+        {
+            var seniorAdmins = await _userManager.GetUsersInRoleAsync("Senior Admin");
+
+
+            var allSeniorAdminsDTOs = new List<UserInfoDTO>();
+
+            foreach (var admin in seniorAdmins)
+            {
+                var roles = await _userManager.GetRolesAsync(admin);
+                allSeniorAdminsDTOs.Add(new UserInfoDTO(
+                    Username: admin.UserName!,
+                    Email: admin.Email!,
+                    Role: roles.FirstOrDefault()!
+                ));
+            }
+
+            var totalSeniorAdmins = allSeniorAdminsDTOs.Count();
+            var totalPages = (int)Math.Ceiling((double)totalSeniorAdmins / pageSize);
+            var pagedSeniorAdminsDTOs = allSeniorAdminsDTOs
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+            return new PagedResult<UserInfoDTO>
+            {
+                TotalCount = totalSeniorAdmins,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = totalPages,
+                Results = pagedSeniorAdminsDTOs
+            };
+        }
+        public async Task<PagedResult<UserInfoDTO>> GetAllNonSeniorAdminsAsync(int page, int pageSize)
+        {
+            var nonSeniorAdmins = await _userManager.GetUsersInRoleAsync("Admin");
+
+
+            var allNonSeniorAdminsDTOs = new List<UserInfoDTO>();
+
+            foreach (var admin in nonSeniorAdmins)
+            {
+                var roles = await _userManager.GetRolesAsync(admin);
+                allNonSeniorAdminsDTOs.Add(new UserInfoDTO(
+                    Username: admin.UserName!,
+                    Email: admin.Email!,
+                    Role: roles.FirstOrDefault()!
+                ));
+            }
+
+            var totalNonSeniorAdmins = allNonSeniorAdminsDTOs.Count();
+            var totalPages = (int)Math.Ceiling((double)totalNonSeniorAdmins / pageSize);
+            var pagedNonSeniorAdminsDTOs = allNonSeniorAdminsDTOs
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+            return new PagedResult<UserInfoDTO>
+            {
+                TotalCount = totalNonSeniorAdmins,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = totalPages,
+                Results = pagedNonSeniorAdminsDTOs
+            };
         }
 
         public async Task<UserInfoDTO> AddAdminRoleAsync(Guid userId)

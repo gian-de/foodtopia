@@ -22,12 +22,42 @@ namespace foodtopia.Controllers
         // [Authorize(Roles = "Senior Admin")]
         [Authorize(Roles = "Owner, Senior Admin")]
         [HttpGet("senior-admin/admins")]
-        public async Task<IActionResult> GetAllAdmins()
+        public async Task<IActionResult> GetAllAdmins([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var admins = await _seniorAdminService.GetAllAdminsAsync();
+                var admins = await _seniorAdminService.GetAllBothSeniorAndAdminsAsync(page, pageSize);
                 return Ok(admins);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "Owner, Senior Admin")]
+        [HttpGet("senior-admin/senior-admins")]
+        public async Task<IActionResult> GetAllSeniorAdmins([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var seniorAdmins = await _seniorAdminService.GetAllSeniorAdminsAsync(page, pageSize);
+                return Ok(seniorAdmins);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "Owner, Senior Admin")]
+        [HttpGet("senior-admin/non-senior-admins")]
+        public async Task<IActionResult> GetAllNonSeniorAdmins([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var nonSeniorAdmins = await _seniorAdminService.GetAllNonSeniorAdminsAsync(page, pageSize);
+                return Ok(nonSeniorAdmins);
             }
             catch (Exception ex)
             {
