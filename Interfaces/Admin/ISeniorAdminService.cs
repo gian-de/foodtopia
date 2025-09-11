@@ -8,7 +8,7 @@ namespace foodtopia.Interfaces.Admin
         Task<PagedResult<UserInfoDTO>> GetAllBothSeniorAndAdminsAsync(int page, int pageSize);
         Task<PagedResult<UserInfoDTO>> GetAllSeniorAdminsAsync(int page, int pageSize);
         Task<PagedResult<UserInfoDTO>> GetAllNonSeniorAdminsAsync(int page, int pageSize);
-        Task<UserInfoDTO> AddAdminRoleAsync(Guid userId);
-        Task<bool> RemoveAdminRoleAsync(Guid userId);
+        Task<UserInfoDTO> PromoteToAdminRoleAsync(Guid userId);
+        Task<UserInfoDTO> DemoteToUserRoleAsync(Guid userId);
     }
 }

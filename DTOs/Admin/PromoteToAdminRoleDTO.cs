@@ -1,6 +1,6 @@
 namespace foodtopia.DTOs.Admin
 {
-    public record AddAdminRoleDTO
+    public record PromoteToAdminRoleDTO
     (
         Guid userId
     );

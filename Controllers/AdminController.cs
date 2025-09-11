@@ -67,11 +67,11 @@ namespace foodtopia.Controllers
 
         [Authorize(Roles = "Owner, Senior Admin")]
         [HttpPost("senior-admin/admins")]
-        public async Task<IActionResult> AddAdminRole([FromBody] AddAdminRoleDTO dto)
+        public async Task<IActionResult> AddAdminRole([FromBody] PromoteToAdminRoleDTO dto)
         {
             try
             {
-                var result = await _seniorAdminService.AddAdminRoleAsync(dto.userId);
+                var result = await _seniorAdminService.PromoteToAdminRoleAsync(dto.userId);
                 return Ok(result);
             }
             catch (KeyNotFoundException ex)
@@ -102,17 +102,22 @@ namespace foodtopia.Controllers
         {
             try
             {
-                var resultSuccess = await _seniorAdminService.RemoveAdminRoleAsync(userId);
-
-                if (!resultSuccess) return BadRequest("User wasn't able to be unmodded.");
-
-                return Ok(new { Message = "User has been remove as Admin successfully." });
+                var demoteAdminResult = await _seniorAdminService.DemoteToUserRoleAsync(userId);
+                return Ok(demoteAdminResult);
             }
             catch (KeyNotFoundException ex)
             {
                 return NotFound(new { ex.Message });
             }
             catch (ArgumentException ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { ex.Message });
+            }
+            catch (InvalidOperationException ex)
             {
                 return BadRequest(new { ex.Message });
             }

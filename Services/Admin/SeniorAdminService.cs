@@ -115,7 +115,7 @@ namespace foodtopia.Services.Admin
             };
         }
 
-        public async Task<UserInfoDTO> AddAdminRoleAsync(Guid userId)
+        public async Task<UserInfoDTO> PromoteToAdminRoleAsync(Guid userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null) throw new KeyNotFoundException("User info passed in wasn't found.");
@@ -150,19 +150,43 @@ namespace foodtopia.Services.Admin
         }
 
 
-        public async Task<bool> RemoveAdminRoleAsync(Guid userId)
+        public async Task<UserInfoDTO> DemoteToUserRoleAsync(Guid userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null) throw new KeyNotFoundException("User info passed in wasn't found.");
 
             var currentRoles = await _userManager.GetRolesAsync(user);
             var currentRole = currentRoles.FirstOrDefault();
-            if (currentRole == "Owner" || currentRole == "Senior Admin")
-                if (currentRole != "Admin") throw new KeyNotFoundException("User is not an Admin.");
 
-            var result = await _userManager.RemoveFromRoleAsync(user, "Admin");
-            if (!result.Succeeded) return false;
-            return true;
+            if (currentRole == "Owner" || currentRole == "Senior Admin")
+            {
+                throw new CannotUnloadAppDomainException($"Cannot modify a {currentRole}'s role.");
+            }
+            if (currentRole != "Admin") throw new ArgumentException("User must be an \"Admin\" to be able to demote to \"User\".");
+
+            if (currentRoles.Any())
+            {
+                var removedRoleResult = await _userManager.RemoveFromRoleAsync(user, "Admin");
+                if (!removedRoleResult.Succeeded) throw new InvalidOperationException("Failed to remove existing role.");
+            }
+
+            if (string.IsNullOrEmpty(user.SecurityStamp))
+            {
+                user.SecurityStamp = Guid.NewGuid().ToString();
+
+                var updatedUserRole = await _userManager.UpdateAsync(user);
+
+                if (!updatedUserRole.Succeeded) throw new InvalidOperationException("Failed to update user's security stamp.");
+            }
+
+            var result = await _userManager.AddToRoleAsync(user, "User");
+            if (!result.Succeeded) throw new InvalidOperationException("Failed to add role \"User\" to user.");
+
+            return new UserInfoDTO(
+                    Username: user.UserName!,
+                    Email: user.Email!,
+                    Role: "User"
+                );
         }
     }
 }
